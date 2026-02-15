@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScotFund Pro Ultimate | Scottish Funding Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .scanning-active { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .log-container::-webkit-scrollbar { width: 4px; }
+        .log-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @media (max-width: 1023px) {
+            #sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+            #sidebar.open { transform: translateX(0); }
+        }
+        .quality-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        .quality-high { background: #dcfce7; color: #166534; }
+        .quality-medium { background: #fef3c7; color: #854d0e; }
+        .quality-low { background: #fee2e2; color: #991b1b; }
+        .blacklisted-item { opacity: 0.5; text-decoration: line-through; }
+        .whitelist-badge { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-[#1e293b]">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden bg-white border-b border-slate-200 p-4 flex items-center justify-between sticky top-0 z-[60]">
+        <button onclick="showSection('dashboard')" class="flex items-center gap-2">
+            <div class="bg-indigo-600 p-1.5 rounded-lg text-white">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span></h1>
+        </button>
+        <button onclick="toggleSidebar()" class="p-2 bg-slate-100 rounded-lg">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 flex flex-col p-6 z-50 lg:translate-x-0 overflow-y-auto">
+        <button onclick="showSection('dashboard')" class="hidden lg:flex items-center gap-3 mb-10 hover:opacity-80 transition-opacity">
+            <div class="bg-indigo-600 p-2 rounded-xl text-white">
+                <i data-lucide="shield-check"></i>
+            </div>
+            <h1 class="text-xl font-bold">ScotFund<span class="text-indigo-600">Pro</span></h1>
+        </button>
+        
+        <nav class="space-y-1 flex-1">
+            <button onclick="showSection('dashboard')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="dashboard">
+                <i data-lucide="home" class="w-5 h-5"></i> Home
+            </button>
+            <button onclick="showSection('sources')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="sources">
+                <i data-lucide="globe" class="w-5 h-5"></i> Sources
+            </button>
+            <button onclick="showSection('blacklist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="blacklist">
+                <i data-lucide="shield-ban" class="w-5 h-5"></i> Blacklist
+            </button>
+            <button onclick="showSection('scheduler')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="scheduler">
+                <i data-lucide="clock" class="w-5 h-5"></i> Scheduler
+            </button>
+            <button onclick="showSection('reports')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="reports">
+                <i data-lucide="file-text" class="w-5 h-5"></i> Console
+            </button>
+            <button onclick="showSection('settings')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="settings">
+                <i data-lucide="settings" class="w-5 h-5"></i> Settings
+            </button>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-slate-100 space-y-3">
+            <div id="scan-status-indicator" class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span> System Idle
+            </div>
+            <button onclick="runUltimateScan()" id="main-scan-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 transition-transform active:scale-95">
+                <i data-lucide="zap" class="w-4 h-4" id="btn-icon"></i> <span id="btn-text">Scan</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/20 z-40 hidden lg:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 p-4 md:p-8">
+        
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="space-y-8">
+            <header class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2">Ultimate Funding Intelligence</h2>
+                    <p class="text-slate-500">Advanced tracker with intelligent filtering for Scottish organisations</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="runUltimateScan()" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-bold hover:from-indigo-700 hover:to-purple-700 transition-all flex items-center gap-2">
+                        <i data-lucide="zap" class="w-4 h-4"></i> Scan
+                    </button>
+                    <button onclick="generatePDFReport()" class="px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all flex items-center gap-2">
+                        <i data-lucide="file-down" class="w-4 h-4"></i> PDF Report
+                    </button>
+                </div>
+            </header>
+
+            <!-- Enhanced Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Total</p>
+                    <p id="stat-total" class="text-3xl font-bold text-slate-900">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Verified</p>
+                    <p id="stat-verified" class="text-3xl font-bold text-green-600">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Closing Soon</p>
+                    <p id="stat-closing" class="text-3xl font-bold text-orange-600">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Large Grants</p>
+                    <p id="stat-large" class="text-3xl font-bold text-purple-600">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Avg Amount</p>
+                    <p id="stat-avg" class="text-2xl font-bold text-slate-900">£0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Last Scan</p>
+                    <p id="stat-last-scan" class="text-xs font-bold text-slate-900">Never</p>
+                </div>
+            </div>
+
+            <!-- Top Pick -->
+            <div id="top-pick-container" class="bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 rounded-2xl p-8 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="text-indigo-300 text-xs font-bold uppercase tracking-widest mb-3">⭐ Top Verified Opportunity</p>
+                    <h3 id="top-pick-title" class="text-2xl font-bold mb-3">Ready to Scan</h3>
+                    <p id="top-pick-desc" class="text-indigo-200 mb-4 max-w-2xl">Click "Scan" to analyse funding portals with advanced pattern matching and intelligent filtering.</p>
+                    <div id="top-pick-meta" class="hidden flex flex-wrap gap-4 mb-4 text-sm">
+                        <span class="flex items-center gap-2"><i data-lucide="coins" class="w-4 h-4"></i> <span id="top-pick-amount"></span></span>
+                        <span class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4"></i> <span id="top-pick-deadline"></span></span>
+                        <span class="flex items-center gap-2"><i data-lucide="building" class="w-4 h-4"></i> <span id="top-pick-funder"></span></span>
+                    </div>
+                    <a id="top-pick-link" href="#" target="_blank" class="hidden inline-flex items-center gap-2 bg-white text-indigo-900 px-5 py-2.5 rounded-lg font-bold hover:bg-indigo-50 transition-all">
+                        View Application <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Enhanced Filters -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Search</label>
+                        <input type="text" id="search-input" oninput="applyFilters()" placeholder="Search opportunities..." class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Sector</label>
+                        <select id="filter-category" onchange="applyFilters()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">All Sectors</option>
+                            <option value="community">Community</option>
+                            <option value="play">Play & Outdoor</option>
+                            <option value="youth">Youth & Children</option>
+                            <option value="charity">Charity & Third Sector</option>
+                            <option value="arts">Arts & Culture</option>
+                            <option value="sport">Sport & Recreation</option>
+                            <option value="education">Education & Training</option>
+                            <option value="environment">Environment</option>
+                            <option value="health">Health & Wellbeing</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Amount Range</label>
+                        <select id="filter-amount" onchange="applyFilters()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">All Amounts</option>
+                            <option value="0-1000">Under £1,000</option>
+                            <option value="1000-5000">£1,000 - £5,000</option>
+                            <option value="5000-25000">£5,000 - £25,000</option>
+                            <option value="25000-100000">£25,000 - £100,000</option>
+                            <option value="100000+">Over £100,000</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Quality</label>
+                        <select id="filter-quality" onchange="applyFilters()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">All Quality</option>
+                            <option value="high">⭐ Verified Only</option>
+                            <option value="medium">📋 Partial+</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Deadline</label>
+                        <select id="filter-deadline" onchange="applyFilters()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">All Deadlines</option>
+                            <option value="urgent">This Week</option>
+                            <option value="soon">This Month</option>
+                            <option value="quarter">Next 3 Months</option>
+                            <option value="rolling">Rolling/Open</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opportunities Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="font-bold text-lg">Verified Opportunities <span id="filtered-count" class="text-slate-400 text-sm font-normal"></span></h3>
+                    <button onclick="exportToCSV()" class="px-4 py-2 bg-slate-100 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left min-w-[1100px]">
+                        <thead class="bg-slate-50 text-slate-500 text-xs font-bold uppercase">
+                            <tr>
+                                <th class="px-6 py-4">Opportunity</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Deadline</th>
+                                <th class="px-6 py-4">Sectors</th>
+                                <th class="px-6 py-4">Quality</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="opp-tbody" class="text-sm divide-y divide-slate-100">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="empty-state" class="p-20 text-center">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                        <i data-lucide="database" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-slate-500 font-medium mb-2">No opportunities found</p>
+                    <p class="text-slate-400 text-sm">Run a scan to discover verified funding opportunities</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLACKLIST MANAGEMENT SECTION -->
+        <section id="blacklist" class="hidden space-y-6">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">Blacklist Management</h2>
+                <p class="text-slate-500">Block specific pages or patterns without removing sources</p>
+            </header>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Current Blacklist -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="shield-ban" class="w-5 h-5"></i> Active Blacklist
+                    </h3>
+                    <div id="blacklist-items" class="space-y-2 mb-4 max-h-96 overflow-y-auto">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button onclick="showAddBlacklistModal()" class="w-full px-4 py-2 bg-red-50 text-red-700 rounded-lg font-bold hover:bg-red-100 transition-all">
+                        Add Blacklist Pattern
+                    </button>
+                </div>
+
+                <!-- Blocked Results -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="eye-off" class="w-5 h-5"></i> Recently Blocked
+                    </h3>
+                    <div id="blocked-results" class="space-y-2 max-h-96 overflow-y-auto text-sm text-slate-600">
+                        <p class="text-slate-400 italic">No blocked results yet. Run a scan to see what gets filtered.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <h4 class="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                    <i data-lucide="info" class="w-4 h-4"></i> How Blacklisting Works
+                </h4>
+                <ul class="text-sm text-amber-900 space-y-1 ml-6 list-disc">
+                    <li>Blocks individual pages/URLs without removing entire sources</li>
+                    <li>Supports partial matches (e.g., "newsletter" blocks all newsletter pages)</li>
+                    <li>Case-insensitive matching</li>
+                    <li>Can be restored anytime</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SOURCES SECTION -->
+        <section id="sources" class="hidden space-y-6">
+            <header class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">Premium Funding Sources</h2>
+                    <p class="text-slate-500">15+ verified Scottish funding portals</p>
+                </div>
+                <button onclick="showAddSourceModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Add Source
+                </button>
+            </header>
+
+            <div id="sources-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            </div>
+        </section>
+
+        <!-- SCHEDULER, REPORTS, SETTINGS (Same as v3) -->
+        <section id="scheduler" class="hidden space-y-6">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">Automated Scanning</h2>
+                <p class="text-slate-500">Configure automatic scans and email notifications</p>
+            </header>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-5 h-5"></i> Scan Schedule
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-bold text-slate-700 mb-2 block">Frequency</label>
+                            <select id="scan-frequency" onchange="updateSchedule()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg">
+                                <option value="manual">Manual Only</option>
+                                <option value="hourly">Every Hour</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                        <div id="schedule-time-picker" class="hidden">
+                            <label class="text-sm font-bold text-slate-700 mb-2 block">Time</label>
+                            <input type="time" id="scan-time" onchange="updateSchedule()" value="09:00" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg">
+                        </div>
+                        <div class="p-4 bg-indigo-50 rounded-lg">
+                            <p class="text-sm text-indigo-900" id="next-scan-text">Next scan: Manual trigger</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="mail" class="w-5 h-5"></i> Email Notifications
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-bold text-slate-700 mb-2 block">Recipients</label>
+                            <input type="text" id="email-recipients" placeholder="email@example.com" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-slate-700 mb-2 block">Frequency</label>
+                            <select id="email-frequency" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg">
+                                <option value="none">No Emails</option>
+                                <option value="new">New Opportunities</option>
+                                <option value="weekly">Weekly Digest</option>
+                            </select>
+                        </div>
+                        <button onclick="sendTestEmail()" class="w-full px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200 transition-all">
+                            Send Test Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reports" class="hidden space-y-6">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">System Console</h2>
+                <p class="text-slate-500">Real-time scanning logs and activity</p>
+            </header>
+
+            <div class="bg-slate-900 rounded-2xl p-6 text-white font-mono text-xs">
+                <div id="console-logs" class="space-y-1 h-96 overflow-y-auto log-container">
+                    <p class="text-slate-500">> System initialised and ready</p>
+                </div>
+            </div>
+
+            <button onclick="clearLogs()" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200 transition-all">
+                Clear Logs
+            </button>
+        </section>
+
+        <section id="settings" class="hidden space-y-6">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">Settings</h2>
+                <p class="text-slate-500">Configure application preferences</p>
+            </header>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+                <div>
+                    <h3 class="font-bold mb-4">Data Management</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="exportData()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
+                            Export All Data
+                        </button>
+                        <button onclick="importData()" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">
+                            Import Data
+                        </button>
+                        <button onclick="clearAllData()" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200">
+                            Clear All Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-6">
+                    <h3 class="font-bold mb-2">About ScotFund Pro Ultimate</h3>
+                    <p class="text-sm text-slate-600">Version 4.0 - Ultimate funding intelligence with advanced pattern matching.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Add Blacklist Pattern -->
+    <div id="add-blacklist-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6">
+            <h3 class="text-xl font-bold mb-4">Add Blacklist Pattern</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-bold text-slate-700 mb-2 block">Pattern (URL or keyword)</label>
+                    <input type="text" id="new-blacklist-pattern" placeholder="e.g., newsletter, /about, map-of-scotland" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+                    <p class="text-xs text-slate-500 mt-1">Blocks any URL containing this text (case-insensitive)</p>
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-slate-700 mb-2 block">Description (optional)</label>
+                    <input type="text" id="new-blacklist-desc" placeholder="e.g., Newsletter signup pages" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="addBlacklistPattern()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700">
+                    Add to Blacklist
+                </button>
+                <button onclick="hideAddBlacklistModal()" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add Source -->
+    <div id="add-source-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6">
+            <h3 class="text-xl font-bold mb-4">Add Funding Source</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm font-bold text-slate-700 mb-2 block">Source Name</label>
+                    <input type="text" id="new-source-name" placeholder="e.g., Scottish Government Funding" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-slate-700 mb-2 block">Website URL</label>
+                    <input type="url" id="new-source-url" placeholder="https://example.com/funding" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-slate-700 mb-2 block">Keywords (comma-separated)</label>
+                    <input type="text" id="new-source-keywords" placeholder="grant, community, scotland" class="w-full px-4 py-2 border border-slate-200 rounded-lg">
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="addSource()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
+                    Add Source
+                </button>
+                <button onclick="hideAddSourceModal()" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Opportunity Details -->
+    <div id="details-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-8 my-8">
+            <div class="flex items-start justify-between mb-6">
+                <h3 id="detail-title" class="text-2xl font-bold pr-8"></h3>
+                <button onclick="hideDetailsModal()" class="p-2 hover:bg-slate-100 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase mb-1">Funder</p>
+                        <p id="detail-funder" class="font-bold text-slate-900"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase mb-1">Amount</p>
+                        <p id="detail-amount" class="font-bold text-green-600"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase mb-1">Deadline</p>
+                        <p id="detail-deadline" class="font-bold text-orange-600"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase mb-1">Sectors</p>
+                        <div id="detail-category"></div>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">Eligibility Criteria</p>
+                    <div id="detail-criteria" class="text-sm text-slate-700 bg-slate-50 p-4 rounded-lg"></div>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">Description</p>
+                    <p id="detail-description" class="text-sm text-slate-700"></p>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase mb-2">Keywords</p>
+                    <div id="detail-keywords" class="flex flex-wrap gap-2"></div>
+                </div>
+                <div class="flex gap-3">
+                    <a id="detail-link" href="#" target="_blank" class="flex-1 text-center px-6 py-3 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all">
+                        Visit Application Page
+                    </a>
+                    <button onclick="blacklistThisURL()" class="px-6 py-3 bg-red-50 text-red-700 rounded-lg font-bold hover:bg-red-100 transition-all">
+                        Blacklist This
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== ENHANCED CONFIGURATION ==========
+        const PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest='
+        ];
+        
+        let currentProxyIndex = 0;
+        let currentDetailURL = '';
+
+        // PREMIUM SCOTTISH SOURCES - 15+ verified funding portals
+        const DEFAULT_SOURCES = [
+            // Major National Funders
+            { id: 'tnl', name: 'TNL Community Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes?location=scotland', keywords: ['lottery', 'community', 'scotland', 'grant', 'funding'] },
+            { id: 'foundation', name: 'Foundation Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/', keywords: ['foundation', 'grant', 'scotland', 'charity', 'funding'] },
+            { id: 'youthlink', name: 'YouthLink Scotland', url: 'https://www.youthlink.scot/funds/', keywords: ['youth', 'young people', 'community', 'play', 'outdoor'] },
+            { id: 'inspiring', name: 'Inspiring Scotland', url: 'https://inspiringscotland.org.uk/funds/', keywords: ['community', 'scotland', 'grant', 'funding', 'social'] },
+            
+            // Government & Public Sector
+            { id: 'scotgov', name: 'Scottish Government', url: 'https://www.gov.scot/policies/third-sector/grants-and-funding/', keywords: ['government', 'grant', 'scotland', 'public', 'funding'] },
+            { id: 'sportscotland', name: 'sportscotland', url: 'https://sportscotland.org.uk/funding/', keywords: ['sport', 'active', 'physical', 'community', 'facility'] },
+            { id: 'creative', name: 'Creative Scotland', url: 'https://www.creativescotland.com/funding', keywords: ['arts', 'creative', 'culture', 'funding', 'scotland'] },
+            { id: 'historic', name: 'Historic Environment Scotland', url: 'https://www.historicenvironment.scot/grants-and-funding/', keywords: ['heritage', 'historic', 'building', 'conservation', 'grant'] },
+            
+            // Third Sector Support
+            { id: 'scvo', name: 'SCVO', url: 'https://scvo.scot/support/funding', keywords: ['voluntary', 'third sector', 'scotland', 'funding', 'charity'] },
+            { id: 'coss', name: 'Coalition of Care Scotland', url: 'https://www.ccpscotland.org/funding/', keywords: ['care', 'social', 'support', 'community', 'funding'] },
+            
+            // Regional & Lottery Distributors
+            { id: 'nhs-endowments', name: 'NHS Scotland Endowments', url: 'https://www.nhsscotlandendowments.org/', keywords: ['health', 'wellbeing', 'community', 'scotland', 'grant'] },
+            { id: 'corra', name: 'Corra Foundation', url: 'https://www.corra.scot/grant-programmes/', keywords: ['community', 'grant', 'scotland', 'change', 'funding'] },
+            
+            // Environment & Rural
+            { id: 'nature-scot', name: 'NatureScot', url: 'https://www.nature.scot/professional-advice/funding', keywords: ['nature', 'environment', 'biodiversity', 'conservation', 'scotland'] },
+            { id: 'snh', name: 'Scottish Land Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/scottish-land-fund', keywords: ['land', 'community', 'rural', 'scotland', 'ownership'] },
+            
+            // Community & Local
+            { id: 'communityshares', name: 'Community Shares Scotland', url: 'https://communityshares.scot/grants-and-funding/', keywords: ['community', 'shares', 'enterprise', 'scotland', 'funding'] }
+        ];
+
+        // ENHANCED BLACKLIST - Comprehensive pattern matching
+        const DEFAULT_BLACKLIST = [
+            // Charity Registers & Databases
+            { pattern: 'oscr.org.uk', description: 'Scottish Charity Register', active: true },
+            { pattern: '/charity-details', description: 'Charity detail pages', active: true },
+            { pattern: '/search-the-register', description: 'Charity search results', active: true },
+            { pattern: 'companies-house', description: 'Companies House', active: true },
+            
+            // Generic Pages
+            { pattern: '/about', description: 'About pages', active: true },
+            { pattern: '/about-us', description: 'About us pages', active: true },
+            { pattern: '/contact', description: 'Contact pages', active: true },
+            { pattern: '/news', description: 'News articles', active: true },
+            { pattern: '/blog', description: 'Blog posts', active: true },
+            { pattern: '/events', description: 'Events pages', active: true },
+            { pattern: '/privacy', description: 'Privacy policies', active: true },
+            { pattern: '/terms', description: 'Terms & conditions', active: true },
+            { pattern: '/cookie', description: 'Cookie policies', active: true },
+            
+            // Newsletters & Signup
+            { pattern: 'newsletter', description: 'Newsletter pages', active: true },
+            { pattern: '/sign-up', description: 'Signup pages', active: true },
+            { pattern: '/subscribe', description: 'Subscribe pages', active: true },
+            { pattern: '/join', description: 'Join/membership pages', active: true },
+            
+            // Maps & Location Finders
+            { pattern: 'map-of-scotland', description: 'Map pages', active: true },
+            { pattern: '/map', description: 'Map/location pages', active: true },
+            { pattern: "where-we've-funded", description: 'Funded project maps', active: true },
+            { pattern: '/funded-projects', description: 'Past funded projects', active: true },
+            
+            // Social Media & External
+            { pattern: 'facebook.com', description: 'Facebook', active: true },
+            { pattern: 'twitter.com', description: 'Twitter', active: true },
+            { pattern: 'linkedin.com', description: 'LinkedIn', active: true },
+            { pattern: 'instagram.com', description: 'Instagram', active: true },
+            { pattern: 'youtube.com', description: 'YouTube', active: true },
+            
+            // Search & Navigation
+            { pattern: '/search?', description: 'Search results', active: true },
+            { pattern: '/tag/', description: 'Tag pages', active: true },
+            { pattern: '/category/', description: 'Category archives', active: true },
+            { pattern: '/author/', description: 'Author pages', active: true },
+            
+            // User-Added Patterns (examples)
+            { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
+            { pattern: 'fairer-life-chances', description: 'Past programme names', active: true },
+            { pattern: 'people-and-places', description: 'Closed programmes', active: true }
+        ];
+
+        let state = {
+            opportunities: [],
+            blockedResults: [],
+            sources: JSON.parse(localStorage.getItem('scotfund_sources')) || [...DEFAULT_SOURCES],
+            blacklist: JSON.parse(localStorage.getItem('scotfund_blacklist')) || [...DEFAULT_BLACKLIST],
+            isScanning: false,
+            schedule: JSON.parse(localStorage.getItem('scotfund_schedule')) || { frequency: 'manual', time: '09:00' },
+            email: JSON.parse(localStorage.getItem('scotfund_email')) || { recipients: '', frequency: 'none' },
+            lastScan: localStorage.getItem('scotfund_lastScan') || null,
+            scanInterval: null
+        };
+
+        // ========== INITIALISATION ==========
+        function init() {
+            lucide.createIcons();
+            loadSavedData();
+            renderDashboard();
+            renderSources();
+            renderBlacklist();
+            loadScheduleSettings();
+            showSection('dashboard');
+            initScheduler();
+        }
+
+        function loadSavedData() {
+            const saved = localStorage.getItem('scotfund_opportunities');
+            if (saved) {
+                state.opportunities = JSON.parse(saved);
+                updateStats();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('scotfund_opportunities', JSON.stringify(state.opportunities));
+            localStorage.setItem('scotfund_sources', JSON.stringify(state.sources));
+            localStorage.setItem('scotfund_blacklist', JSON.stringify(state.blacklist));
+            localStorage.setItem('scotfund_schedule', JSON.stringify(state.schedule));
+            localStorage.setItem('scotfund_email', JSON.stringify(state.email));
+            localStorage.setItem('scotfund_lastScan', state.lastScan);
+        }
+
+        // ========== UI CONTROLS ==========
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('hidden');
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.toggle('bg-indigo-50', l.dataset.id === id);
+                l.classList.toggle('text-indigo-600', l.dataset.id === id);
+            });
+            if (window.innerWidth < 1024) toggleSidebar();
+            lucide.createIcons();
+        }
+
+        function log(msg, type = 'info') {
+            const container = document.getElementById('console-logs');
+            const p = document.createElement('p');
+            const colours = { info: 'text-slate-400', success: 'text-green-400', error: 'text-red-400', warn: 'text-yellow-400' };
+            p.className = colours[type];
+            p.innerText = `> [${new Date().toLocaleTimeString('en-GB')}] ${msg}`;
+            container.appendChild(p);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('console-logs').innerHTML = '<p class="text-slate-500">> Logs cleared</p>';
+        }
+
+        // ========== ULTIMATE SCANNING ENGINE ==========
+        async function runUltimateScan() {
+            if (state.isScanning) return;
+            
+            toggleScanUI(true);
+            updateScanProgress('Initialising scan...');
+            state.opportunities = [];
+            state.blockedResults = [];
+            
+            log("═══════════════════════════════════════", 'info');
+            log("ULTIMATE SCAN INITIATED", 'success');
+            log("Using Advanced Pattern Matching & Intelligent Filtering", 'info');
+            log("═══════════════════════════════════════", 'info');
+
+            for (let i = 0; i < state.sources.length; i++) {
+                const source = state.sources[i];
+                updateScanProgress(`Scanning ${i + 1}/${state.sources.length}: ${source.name}`);
+                log(`→ Scanning: ${source.name}`, 'info');
+                
+                try {
+                    const html = await fetchWithFallback(source.url);
+                    const doc = new DOMParser().parseFromString(html, 'text/html');
+                    
+                    log(`✓ Page loaded (${(html.length / 1024).toFixed(1)} KB)`, 'success');
+                    updateScanProgress(`Analysing ${source.name}...`);
+                    
+                    const opportunities = await ultimateParse(doc, source, html);
+                    
+                    if (opportunities.length > 0) {
+                        state.opportunities.push(...opportunities);
+                        log(`✓ Verified ${opportunities.length} genuine opportunities`, 'success');
+                    } else {
+                        log(`⚠ No matches after filtering`, 'warn');
+                    }
+                    
+                } catch (err) {
+                    log(`✗ Error: ${err.message}`, 'error');
+                }
+                
+                await sleep(800);
+            }
+
+            updateScanProgress('Finalising results...');
+            state.lastScan = new Date().toISOString();
+            saveData();
+            
+            log("═══════════════════════════════════════", 'info');
+            log(`SCAN COMPLETE: ${state.opportunities.length} verified opportunities`, 'success');
+            log(`Blocked ${state.blockedResults.length} irrelevant pages`, 'warn');
+            log("═══════════════════════════════════════", 'info');
+
+            renderDashboard();
+            renderBlockedResults();
+            updateStats();
+            toggleScanUI(false);
+            
+            if (state.email.frequency === 'new' && state.opportunities.length > 0) {
+                sendEmailNotification();
+            }
+        }
+
+        function updateScanProgress(message) {
+            const btnText = document.getElementById('btn-text');
+            if (btnText) {
+                btnText.textContent = message;
+            }
+        }
+
+        async function fetchWithFallback(url, maxRetries = 3) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const proxy = PROXIES[currentProxyIndex];
+                    const response = await fetch(proxy + encodeURIComponent(url), {
+                        signal: AbortSignal.timeout(15000)
+                    });
+                    
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const text = await response.text();
+                    if (!text.includes('<html') && !text.includes('<body')) throw new Error('Invalid HTML');
+                    
+                    return text;
+                } catch (err) {
+                    currentProxyIndex = (currentProxyIndex + 1) % PROXIES.length;
+                    if (i === maxRetries - 1) throw err;
+                    await sleep(1000);
+                }
+            }
+        }
+
+        // ========== ULTIMATE PARSING WITH WHITELIST PATTERN MATCHING ==========
+        async function ultimateParse(doc, source, html) {
+            const results = [];
+            const seen = new Set();
+            
+            const bodyText = doc.body?.textContent?.toLowerCase() || '';
+            const links = Array.from(doc.querySelectorAll('a[href]'));
+            
+            log(`  Analysing ${links.length} links with whitelist patterns...`, 'info');
+            
+            // WHITELIST PATTERNS - Only allow these types of links
+            const whitelistPatterns = [
+                /apply/i, /application/i, /guidance/i, /criteria/i, /eligibility/i,
+                /fund/i, /grant/i, /programme/i, /scheme/i, /award/i,
+                /how-to/i, /information/i, /details/i, /guidelines/i,
+                /\.pdf$/i, /download/i
+            ];
+            
+            let whitelistPassed = 0;
+            let blacklistBlocked = 0;
+            
+            for (const link of links) {
+                const href = link.getAttribute('href');
+                const text = link.textContent.trim();
+                const fullUrl = resolveUrl(source.url, href);
+                
+                // Basic validation
+                if (!href || seen.has(fullUrl)) continue;
+                if (href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href === '#') continue;
+                if (href.length < 5 || text.length < 5) continue;
+                
+                // BLACKLIST CHECK FIRST
+                if (isBlacklisted(fullUrl, text)) {
+                    blacklistBlocked++;
+                    state.blockedResults.push({
+                        url: fullUrl,
+                        title: text.substring(0, 80),
+                        source: source.name,
+                        reason: 'Blacklist match'
+                    });
+                    continue;
+                }
+                
+                // WHITELIST CHECK - Must match funding patterns
+                const combined = (text + ' ' + href).toLowerCase();
+                const passesWhitelist = whitelistPatterns.some(pattern => pattern.test(combined));
+                
+                if (!passesWhitelist) {
+                    // Additional check: if it contains funding keywords AND action keywords, allow it
+                    const hasFunding = /fund|grant|award|scheme|programme|bursary/i.test(combined);
+                    const hasAction = /apply|application|criteria|guidance|information|detail/i.test(combined);
+                    if (!(hasFunding && hasAction)) {
+                        continue;
+                    }
+                }
+                
+                whitelistPassed++;
+                
+                // Get context
+                const parent = link.closest('article, section, div, li, tr, td');
+                const context = parent ? parent.textContent : '';
+                const fullCombined = (text + ' ' + href + ' ' + context).toLowerCase();
+                
+                // Relevance analysis
+                const match = analyseRelevance(fullCombined, source.keywords);
+                
+                if (match.score >= 40) { // Higher threshold for ultimate quality
+                    const details = await extractDetails(parent, link, fullCombined, bodyText);
+                    
+                    // QUALITY GATE - Only include if we have substantial info
+                    const quality = calculateQuality(details);
+                    
+                    if (quality.score >= 30) { // Minimum quality threshold
+                        results.push({
+                            id: crypto.randomUUID(),
+                            title: text.length > 120 ? text.substring(0, 117) + '...' : text,
+                            funder: source.name,
+                            url: fullUrl,
+                            amount: details.amount,
+                            deadline: details.deadline,
+                            category: details.category,
+                            criteria: details.criteria,
+                            description: details.description,
+                            keywords: match.keywords,
+                            score: match.score,
+                            quality: quality.level,
+                            qualityScore: quality.score,
+                            type: href.endsWith('.pdf') ? 'PDF Application' : 'Web Portal',
+                            dateAdded: new Date().toISOString(),
+                            verified: quality.score >= 70
+                        });
+                        
+                        seen.add(fullUrl);
+                    }
+                }
+            }
+            
+            log(`  Whitelist passed: ${whitelistPassed}, Blacklist blocked: ${blacklistBlocked}`, 'info');
+            
+            return results;
+        }
+
+        function isBlacklisted(url, text = '') {
+            const urlLower = url.toLowerCase();
+            const textLower = text.toLowerCase();
+            const combined = urlLower + ' ' + textLower;
+            
+            return state.blacklist.some(item => {
+                if (!item.active) return false;
+                const pattern = item.pattern.toLowerCase();
+                return combined.includes(pattern);
+            });
+        }
+
+        function analyseRelevance(text, sourceKeywords) {
+            let score = 0;
+            const foundKeywords = [];
+            
+            // ENHANCED KEYWORD MATCHING
+            const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money'];
+            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba'];
+            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social'];
+            const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details'];
+            
+            fundingTerms.forEach(term => { if (text.includes(term)) { score += 15; foundKeywords.push('funding'); } });
+            scotlandTerms.forEach(term => { if (text.includes(term)) { score += 12; foundKeywords.push('scotland'); } });
+            targetTerms.forEach(term => { if (text.includes(term)) { score += 18; foundKeywords.push(term); } });
+            actionTerms.forEach(term => { if (text.includes(term)) { score += 8; foundKeywords.push('actionable'); } });
+            sourceKeywords.forEach(term => { if (text.includes(term.toLowerCase())) score += 10; });
+            
+            // Bonus for specific amounts and dates
+            if (/£[\d,]+/.test(text)) score += 10;
+            if (/\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2}\s+\w+\s+\d{4}/.test(text)) score += 10;
+            
+            return { score, keywords: [...new Set(foundKeywords)] };
+        }
+
+        async function extractDetails(element, link, text, fullText) {
+            const details = {
+                amount: 'Amount varies - see website',
+                deadline: 'Rolling deadline',
+                category: [],
+                criteria: 'Visit the website for full eligibility criteria and application details',
+                description: 'Funding opportunity for Scottish organisations'
+            };
+            
+            // IMPROVED AMOUNT EXTRACTION with more patterns
+            const amountPatterns = [
+                /£([\d,]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£([\d,]+(?:\.\d{2})?)/i,
+                /(?:between|from)\s*£([\d,]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£([\d,]+(?:\.\d{2})?)/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of)\s*£([\d,]+(?:\.\d{2})?)/i,
+                /£([\d,]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award)/i,
+                /grants?\s+(?:of|up to)\s*£([\d,]+)/i
+            ];
+            
+            for (const pattern of amountPatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    if (match[2]) {
+                        details.amount = `£${match[1]} - £${match[2]}`;
+                    } else {
+                        details.amount = match[0].includes('up to') || match[0].includes('max') ? `Up to £${match[1]}` : `£${match[1]}`;
+                    }
+                    break;
+                }
+            }
+            
+            // IMPROVED DEADLINE EXTRACTION
+            const deadlinePatterns = [
+                /deadline[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
+                /closes?[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
+                /(?:by|before)[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
+                /apply by[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
+                /(\d{1,2}\/\d{1,2}\/\d{4})/,
+                /(\d{1,2}\s+\w+\s+\d{4})/
+            ];
+            
+            for (const pattern of deadlinePatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    details.deadline = match[1];
+                    break;
+                }
+            }
+            
+            if (text.includes('rolling') || text.includes('ongoing') || text.includes('no deadline') || text.includes('open')) {
+                details.deadline = 'Rolling deadline';
+            }
+            
+            // ENHANCED CATEGORISATION (9 categories)
+            const categories = [];
+            if (text.includes('play') || text.includes('outdoor') || text.includes('recreation')) categories.push('play');
+            if (text.includes('community') || text.includes('local') || text.includes('neighbourhood')) categories.push('community');
+            if (text.includes('youth') || text.includes('children') || text.includes('young people')) categories.push('youth');
+            if (text.includes('charity') || text.includes('charitable') || text.includes('third sector')) categories.push('charity');
+            if (text.includes('arts') || text.includes('culture') || text.includes('creative')) categories.push('arts');
+            if (text.includes('sport') || text.includes('physical') || text.includes('fitness') || text.includes('active')) categories.push('sport');
+            if (text.includes('education') || text.includes('training') || text.includes('learning') || text.includes('skills')) categories.push('education');
+            if (text.includes('environment') || text.includes('conservation') || text.includes('green') || text.includes('nature')) categories.push('environment');
+            if (text.includes('health') || text.includes('wellbeing') || text.includes('mental') || text.includes('care')) categories.push('health');
+            
+            details.category = categories.length > 0 ? categories : ['general'];
+            
+            // IMPROVED CRITERIA & DESCRIPTION EXTRACTION
+            if (element) {
+                const paragraphs = Array.from(element.querySelectorAll('p, li, dd, td'));
+                let criteriaText = '';
+                let descText = '';
+                
+                paragraphs.forEach(p => {
+                    const pText = p.textContent.trim();
+                    if (pText.length > 50 && pText.length < 700) {
+                        const pLower = pText.toLowerCase();
+                        if (pLower.includes('eligib') || pLower.includes('criteria') || pLower.includes('who can apply') || pLower.includes('can apply')) {
+                            criteriaText += pText + ' ';
+                        } else if (pLower.includes('purpose') || pLower.includes('aim') || pLower.includes('support') || pLower.includes('fund') || pLower.includes('help')) {
+                            descText += pText + ' ';
+                        }
+                    }
+                });
+                
+                if (criteriaText.length > 50) details.criteria = criteriaText.trim().substring(0, 500);
+                if (descText.length > 50) details.description = descText.trim().substring(0, 600);
+            }
+            
+            return details;
+        }
+
+        function calculateQuality(details) {
+            let score = 0;
+            
+            // Amount quality (max 35)
+            if (!details.amount.includes('varies') && !details.amount.includes('see website')) score += 35;
+            else if (details.amount.match(/£[\d,]+/)) score += 20;
+            
+            // Deadline quality (max 25)
+            if (!details.deadline.includes('Rolling') && details.deadline.match(/\d{1,2}/)) score += 25;
+            else if (details.deadline.includes('Rolling')) score += 15;
+            
+            // Criteria quality (max 20)
+            if (details.criteria.length > 150) score += 20;
+            else if (details.criteria.length > 75) score += 10;
+            
+            // Description quality (max 20)
+            if (details.description.length > 150) score += 20;
+            else if (details.description.length > 75) score += 10;
+            
+            let level = 'low';
+            if (score >= 75) level = 'high'; // Verified
+            else if (score >= 45) level = 'medium'; // Partial
+            
+            return { score, level };
+        }
+
+        function resolveUrl(base, relative) {
+            try { return new URL(relative, base).href; } 
+            catch(e) { return relative.startsWith('http') ? relative : base; }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ========== BLACKLIST MANAGEMENT ==========
+        function renderBlacklist() {
+            const container = document.getElementById('blacklist-items');
+            if (state.blacklist.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 italic text-sm">No blacklist patterns added</p>';
+                return;
+            }
+            
+            container.innerHTML = state.blacklist.map((item, index) => `
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg ${!item.active ? 'blacklisted-item' : ''}">
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">${item.pattern}</p>
+                        ${item.description ? `<p class="text-xs text-slate-500">${item.description}</p>` : ''}
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="toggleBlacklistItem(${index})" class="p-1.5 hover:bg-white rounded text-slate-600" title="${item.active ? 'Disable' : 'Enable'}">
+                            <i data-lucide="${item.active ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="removeBlacklistItem(${index})" class="p-1.5 hover:bg-red-50 rounded text-red-600" title="Remove">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderBlockedResults() {
+            const container = document.getElementById('blocked-results');
+            if (state.blockedResults.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 italic">No blocked results yet. Run a scan to see what gets filtered.</p>';
+                return;
+            }
+            
+            container.innerHTML = state.blockedResults.slice(0, 20).map(item => `
+                <div class="p-2 bg-red-50 rounded border border-red-100">
+                    <p class="font-bold text-xs text-slate-700 truncate">${item.title}</p>
+                    <p class="text-xs text-slate-500 truncate">${item.url}</p>
+                    <p class="text-xs text-red-700 mt-1">From: ${item.source}</p>
+                </div>
+            `).join('');
+        }
+
+        function showAddBlacklistModal() {
+            document.getElementById('add-blacklist-modal').classList.remove('hidden');
+        }
+
+        function hideAddBlacklistModal() {
+            document.getElementById('add-blacklist-modal').classList.add('hidden');
+            document.getElementById('new-blacklist-pattern').value = '';
+            document.getElementById('new-blacklist-desc').value = '';
+        }
+
+        function addBlacklistPattern() {
+            const pattern = document.getElementById('new-blacklist-pattern').value.trim();
+            const description = document.getElementById('new-blacklist-desc').value.trim();
+            
+            if (!pattern) {
+                alert('Please enter a pattern');
+                return;
+            }
+            
+            state.blacklist.push({
+                pattern,
+                description: description || `Custom: ${pattern}`,
+                active: true
+            });
+            
+            saveData();
+            renderBlacklist();
+            hideAddBlacklistModal();
+            log(`✓ Added blacklist pattern: ${pattern}`, 'success');
+        }
+
+        function toggleBlacklistItem(index) {
+            state.blacklist[index].active = !state.blacklist[index].active;
+            saveData();
+            renderBlacklist();
+            log(`${state.blacklist[index].active ? '✓ Enabled' : '⚠ Disabled'} blacklist: ${state.blacklist[index].pattern}`, 'warn');
+        }
+
+        function removeBlacklistItem(index) {
+            if (!confirm('Remove this blacklist pattern?')) return;
+            const pattern = state.blacklist[index].pattern;
+            state.blacklist.splice(index, 1);
+            saveData();
+            renderBlacklist();
+            log(`✗ Removed blacklist: ${pattern}`, 'warn');
+        }
+
+        function blacklistThisURL() {
+            if (!currentDetailURL) return;
+            
+            const url = new URL(currentDetailURL);
+            const path = url.pathname;
+            
+            if (confirm(`Block all pages containing: "${path}"`)) {
+                state.blacklist.push({
+                    pattern: path,
+                    description: `User-blocked: ${path}`,
+                    active: true
+                });
+                saveData();
+                renderBlacklist();
+                hideDetailsModal();
+                log(`✓ Blacklisted: ${path}`, 'success');
+            }
+        }
+
+        // ========== ENHANCED UI RENDERING ==========
+        function renderDashboard() {
+            const tbody = document.getElementById('opp-tbody');
+            const empty = document.getElementById('empty-state');
+            
+            const filtered = applyFilters(true);
+            
+            document.getElementById('filtered-count').textContent = filtered.length > 0 ? `(${filtered.length} showing)` : '';
+            
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                
+                // Update top pick - prioritise verified
+                const top = filtered.find(o => o.verified) || filtered[0];
+                if (top) {
+                    document.getElementById('top-pick-title').textContent = top.title;
+                    document.getElementById('top-pick-desc').textContent = top.description;
+                    document.getElementById('top-pick-amount').textContent = top.amount;
+                    document.getElementById('top-pick-deadline').textContent = top.deadline;
+                    document.getElementById('top-pick-funder').textContent = top.funder;
+                    document.getElementById('top-pick-meta').classList.remove('hidden');
+                    document.getElementById('top-pick-link').classList.remove('hidden');
+                    document.getElementById('top-pick-link').href = top.url;
+                }
+                
+                tbody.innerHTML = filtered.map(opp => {
+                    const qualityBadge = opp.verified ? 
+                        `<span class="quality-badge quality-high">⭐ Verified</span>` :
+                        opp.quality === 'medium' ?
+                        `<span class="quality-badge quality-medium">📋 Partial</span>` :
+                        `<span class="quality-badge quality-low">⚠️ Basic</span>`;
+                    
+                    return `
+                        <tr class="hover:bg-slate-50 cursor-pointer" onclick="showDetails('${opp.id}')">
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-slate-900 mb-1">${opp.title}</div>
+                                <div class="text-xs text-slate-500">${opp.funder}</div>
+                            </td>
+                            <td class="px-6 py-4 font-bold ${opp.amount.includes('varies') ? 'text-slate-500' : 'text-green-600'}">${opp.amount}</td>
+                            <td class="px-6 py-4 text-sm ${opp.deadline.includes('Rolling') ? 'text-slate-500' : 'text-orange-600'}">${opp.deadline}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-wrap gap-1">
+                                    ${opp.category.slice(0, 2).map(cat => `<span class="inline-block px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-xs font-bold">${cat}</span>`).join('')}
+                                    ${opp.category.length > 2 ? `<span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold">+${opp.category.length - 2}</span>` : ''}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">${qualityBadge}</td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-slate-100 rounded-lg inline-block hover:bg-indigo-600 hover:text-white transition-all">
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            lucide.createIcons();
+        }
+
+        function applyFilters(returnData = false) {
+            const search = document.getElementById('search-input')?.value.toLowerCase() || '';
+            const category = document.getElementById('filter-category')?.value || '';
+            const amount = document.getElementById('filter-amount')?.value || '';
+            const deadline = document.getElementById('filter-deadline')?.value || '';
+            const quality = document.getElementById('filter-quality')?.value || '';
+            
+            let filtered = [...state.opportunities];
+            
+            if (search) {
+                filtered = filtered.filter(opp => 
+                    opp.title.toLowerCase().includes(search) ||
+                    opp.funder.toLowerCase().includes(search) ||
+                    opp.description.toLowerCase().includes(search) ||
+                    opp.keywords.some(k => k.toLowerCase().includes(search))
+                );
+            }
+            
+            if (category) {
+                filtered = filtered.filter(opp => opp.category.includes(category));
+            }
+            
+            if (amount) {
+                filtered = filtered.filter(opp => {
+                    const oppAmount = extractNumericAmount(opp.amount);
+                    if (oppAmount === 0) return false;
+                    const [min, max] = amount.split('-').map(v => parseInt(v) || Infinity);
+                    return oppAmount >= min && (max ? oppAmount <= max : true);
+                });
+            }
+            
+            if (quality) {
+                if (quality === 'high') filtered = filtered.filter(opp => opp.verified);
+                else if (quality === 'medium') filtered = filtered.filter(opp => opp.quality !== 'low');
+            }
+            
+            if (deadline) {
+                filtered = filtered.filter(opp => {
+                    if (deadline === 'rolling') return opp.deadline.includes('Rolling');
+                    return !opp.deadline.includes('Rolling');
+                });
+            }
+            
+            filtered.sort((a, b) => {
+                // Prioritise verified, then quality score, then relevance
+                if (a.verified !== b.verified) return b.verified ? 1 : -1;
+                if (b.qualityScore !== a.qualityScore) return b.qualityScore - a.qualityScore;
+                return b.score - a.score;
+            });
+            
+            if (returnData) return filtered;
+            
+            renderDashboard();
+        }
+
+        function extractNumericAmount(amountStr) {
+            const match = amountStr.match(/£([\d,]+)/);
+            return match ? parseInt(match[1].replace(/,/g, '')) : 0;
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = state.opportunities.length;
+            
+            const verified = state.opportunities.filter(opp => opp.verified).length;
+            document.getElementById('stat-verified').textContent = verified;
+            
+            const closingSoon = state.opportunities.filter(opp => {
+                if (opp.deadline.includes('Rolling')) return false;
+                const currentMonth = new Date().toLocaleDateString('en-GB', { month: 'long' });
+                return opp.deadline.includes(currentMonth);
+            }).length;
+            document.getElementById('stat-closing').textContent = closingSoon;
+            
+            const largeGrants = state.opportunities.filter(opp => extractNumericAmount(opp.amount) >= 25000).length;
+            document.getElementById('stat-large').textContent = largeGrants;
+            
+            const amounts = state.opportunities.map(opp => extractNumericAmount(opp.amount)).filter(a => a > 0);
+            const avg = amounts.length > 0 ? Math.round(amounts.reduce((a, b) => a + b, 0) / amounts.length) : 0;
+            document.getElementById('stat-avg').textContent = avg > 0 ? `£${avg.toLocaleString('en-GB')}` : '£0';
+            
+            if (state.lastScan) {
+                const lastScan = new Date(state.lastScan);
+                document.getElementById('stat-last-scan').textContent = lastScan.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            }
+        }
+
+        function toggleScanUI(active) {
+            state.isScanning = active;
+            const btn = document.getElementById('main-scan-btn');
+            const btnText = document.getElementById('btn-text');
+            const icon = document.getElementById('btn-icon');
+            const indicator = document.getElementById('scan-status-indicator');
+
+            if (active) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+                icon.classList.add('animate-spin');
+                btnText.textContent = 'Fetching...';
+                indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-purple-500 scanning-active"></span> Scanning...`;
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+                icon.classList.remove('animate-spin');
+                btnText.textContent = 'Scan';
+                indicator.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-500"></span> Ready`;
+                lucide.createIcons();
+            }
+        }
+
+        // ========== DETAILS MODAL ==========
+        function showDetails(id) {
+            const opp = state.opportunities.find(o => o.id === id);
+            if (!opp) return;
+            
+            currentDetailURL = opp.url;
+            
+            document.getElementById('detail-title').textContent = opp.title;
+            document.getElementById('detail-funder').textContent = opp.funder;
+            document.getElementById('detail-amount').textContent = opp.amount;
+            document.getElementById('detail-deadline').textContent = opp.deadline;
+            document.getElementById('detail-category').innerHTML = opp.category.map(cat => 
+                `<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-bold">${cat}</span>`
+            ).join(' ');
+            document.getElementById('detail-criteria').textContent = opp.criteria;
+            document.getElementById('detail-description').textContent = opp.description;
+            document.getElementById('detail-keywords').innerHTML = opp.keywords.map(kw => 
+                `<span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs font-medium">${kw}</span>`
+            ).join('');
+            document.getElementById('detail-link').href = opp.url;
+            
+            document.getElementById('details-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function hideDetailsModal() {
+            document.getElementById('details-modal').classList.add('hidden');
+            currentDetailURL = '';
+        }
+
+        // ========== SOURCE MANAGEMENT ==========
+        function renderSources() {
+            const grid = document.getElementById('sources-grid');
+            grid.innerHTML = state.sources.map(s => `
+                <div class="bg-white rounded-xl border border-slate-200 p-4">
+                    <div class="flex items-start justify-between mb-3">
+                        <h4 class="font-bold text-slate-900">${s.name}</h4>
+                        <button onclick="removeSource('${s.id}')" class="p-1.5 hover:bg-red-50 rounded text-red-600">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-400 truncate mb-3">${s.url}</p>
+                    <div class="flex flex-wrap gap-1">
+                        ${s.keywords.map(kw => `<span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded">${kw}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function showAddSourceModal() {
+            document.getElementById('add-source-modal').classList.remove('hidden');
+        }
+
+        function hideAddSourceModal() {
+            document.getElementById('add-source-modal').classList.add('hidden');
+            document.getElementById('new-source-name').value = '';
+            document.getElementById('new-source-url').value = '';
+            document.getElementById('new-source-keywords').value = '';
+        }
+
+        function addSource() {
+            const name = document.getElementById('new-source-name').value.trim();
+            const url = document.getElementById('new-source-url').value.trim();
+            const keywords = document.getElementById('new-source-keywords').value.split(',').map(k => k.trim()).filter(k => k);
+            
+            if (!name || !url || keywords.length === 0) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const newSource = {
+                id: crypto.randomUUID(),
+                name,
+                url,
+                keywords
+            };
+            
+            state.sources.push(newSource);
+            saveData();
+            renderSources();
+            hideAddSourceModal();
+            log(`✓ Added source: ${name}`, 'success');
+        }
+
+        function removeSource(id) {
+            if (!confirm('Remove this source?')) return;
+            state.sources = state.sources.filter(s => s.id !== id);
+            saveData();
+            renderSources();
+            log(`✓ Source removed`, 'success');
+        }
+
+        // ========== PDF, SCHEDULER, EMAIL (Same as v3 but with verified stat) ==========
+        function generatePDFReport() {
+            if (state.opportunities.length === 0) {
+                alert('No opportunities to export. Run a scan first.');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.text('ScotFund Pro Ultimate - Funding Report', 14, 20);
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Generated: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`, 14, 28);
+            doc.text(`Total: ${state.opportunities.length} | Verified: ${state.opportunities.filter(o => o.verified).length}`, 14, 34);
+            
+            let y = 45;
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('Summary Statistics', 14, y);
+            y += 8;
+            
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            const verified = state.opportunities.filter(o => o.verified).length;
+            const closingSoon = state.opportunities.filter(o => !o.deadline.includes('Rolling')).length;
+            const largeGrants = state.opportunities.filter(o => extractNumericAmount(o.amount) >= 25000).length;
+            
+            doc.text(`• Verified opportunities: ${verified}`, 14, y); y += 6;
+            doc.text(`• Opportunities with deadlines: ${closingSoon}`, 14, y); y += 6;
+            doc.text(`• Large grants (£25,000+): ${largeGrants}`, 14, y); y += 12;
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('All Opportunities', 14, y);
+            y += 8;
+            
+            const tableData = state.opportunities.map(opp => [
+                opp.title.substring(0, 45),
+                opp.funder,
+                opp.amount,
+                opp.deadline,
+                opp.verified ? 'Verified' : 'Partial'
+            ]);
+            
+            doc.autoTable({
+                startY: y,
+                head: [['Opportunity', 'Funder', 'Amount', 'Deadline', 'Quality']],
+                body: tableData,
+                styles: { fontSize: 8, cellPadding: 2 },
+                headStyles: { fillColor: [79, 70, 229], fontStyle: 'bold' },
+                columnStyles: {
+                    0: { cellWidth: 50 },
+                    1: { cellWidth: 35 },
+                    2: { cellWidth: 35 },
+                    3: { cellWidth: 30 },
+                    4: { cellWidth: 25 }
+                }
+            });
+            
+            doc.addPage();
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Top Verified Opportunities - Details', 14, 20);
+            
+            y = 30;
+            const top10 = state.opportunities.filter(o => o.verified).slice(0, 10);
+            
+            if (top10.length === 0) {
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'normal');
+                doc.text('No verified opportunities found. All opportunities:', 14, y);
+                y += 10;
+            }
+            
+            const oppsToPrint = top10.length > 0 ? top10 : state.opportunities.slice(0, 10);
+            
+            oppsToPrint.forEach((opp, index) => {
+                if (y > 260) {
+                    doc.addPage();
+                    y = 20;
+                }
+                
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'bold');
+                doc.text(`${index + 1}. ${opp.title.substring(0, 65)}`, 14, y);
+                y += 7;
+                
+                doc.setFontSize(9);
+                doc.setFont(undefined, 'normal');
+                doc.text(`Funder: ${opp.funder}`, 14, y); y += 5;
+                doc.text(`Amount: ${opp.amount}`, 14, y); y += 5;
+                doc.text(`Deadline: ${opp.deadline}`, 14, y); y += 5;
+                doc.text(`Sectors: ${opp.category.join(', ')}`, 14, y); y += 7;
+                
+                doc.setFontSize(8);
+                const description = doc.splitTextToSize(opp.description, 180);
+                doc.text(description, 14, y);
+                y += description.length * 4 + 8;
+                
+                if (opp.criteria && !opp.criteria.includes('Visit the website')) {
+                    doc.text('Eligibility: ' + doc.splitTextToSize(opp.criteria.substring(0, 200), 180), 14, y);
+                    y += 12;
+                }
+                
+                doc.setTextColor(79, 70, 229);
+                doc.textWithLink('Application Link', 14, y, { url: opp.url });
+                doc.setTextColor(0, 0, 0);
+                y += 10;
+            });
+            
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                doc.text(`ScotFund Pro Ultimate - Page ${i} of ${pageCount}`, 14, 285);
+                doc.setTextColor(0);
+            }
+            
+            doc.save(`ScotFund-Ultimate-${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`);
+            log('✓ PDF report generated', 'success');
+        }
+
+        // SCHEDULER, EMAIL, DATA EXPORT (Same as v3)
+        function initScheduler() {
+            const freq = state.schedule.frequency;
+            if (freq !== 'manual') scheduleNextScan();
+        }
+
+        function loadScheduleSettings() {
+            document.getElementById('scan-frequency').value = state.schedule.frequency;
+            document.getElementById('scan-time').value = state.schedule.time;
+            document.getElementById('email-recipients').value = state.email.recipients;
+            document.getElementById('email-frequency').value = state.email.frequency;
+            updateScheduleDisplay();
+        }
+
+        function updateSchedule() {
+            state.schedule.frequency = document.getElementById('scan-frequency').value;
+            state.schedule.time = document.getElementById('scan-time').value;
+            saveData();
+            
+            if (state.scanInterval) {
+                clearInterval(state.scanInterval);
+                state.scanInterval = null;
+            }
+            
+            if (state.schedule.frequency !== 'manual') scheduleNextScan();
+            updateScheduleDisplay();
+        }
+
+        function scheduleNextScan() {
+            const freq = state.schedule.frequency;
+            let interval;
+            
+            switch(freq) {
+                case 'hourly': interval = 60 * 60 * 1000; break;
+                case 'daily': interval = 24 * 60 * 60 * 1000; break;
+                case 'weekly': interval = 7 * 24 * 60 * 60 * 1000; break;
+                default: return;
+            }
+            
+            state.scanInterval = setInterval(() => {
+                log('⏰ Automatic scan triggered', 'info');
+                runUltimateScan();
+            }, interval);
+            
+            log(`✓ Scheduler activated: ${freq}`, 'success');
+        }
+
+        function updateScheduleDisplay() {
+            const freq = state.schedule.frequency;
+            const timePicker = document.getElementById('schedule-time-picker');
+            const nextScanText = document.getElementById('next-scan-text');
+            
+            if (freq === 'manual') {
+                timePicker.classList.add('hidden');
+                nextScanText.textContent = 'Next scan: Manual trigger';
+            } else {
+                if (freq === 'daily' || freq === 'weekly') {
+                    timePicker.classList.remove('hidden');
+                } else {
+                    timePicker.classList.add('hidden');
+                }
+                nextScanText.textContent = `Next scan: ${freq} ${freq !== 'hourly' ? 'at ' + state.schedule.time : ''}`;
+            }
+        }
+
+        function sendTestEmail() {
+            const recipients = document.getElementById('email-recipients').value;
+            if (!recipients) {
+                alert('Please enter email recipients first');
+                return;
+            }
+            
+            state.email.recipients = recipients;
+            state.email.frequency = document.getElementById('email-frequency').value;
+            saveData();
+            
+            const emailBody = generateEmailContent();
+            const subject = encodeURIComponent('ScotFund Pro Ultimate - Test');
+            const body = encodeURIComponent(emailBody);
+            window.open(`mailto:${recipients}?subject=${subject}&body=${body}`);
+            
+            log('✓ Test email generated', 'success');
+        }
+
+        function sendEmailNotification() {
+            if (!state.email.recipients) return;
+            
+            const emailBody = generateEmailContent();
+            const subject = encodeURIComponent('ScotFund Pro Ultimate - New Opportunities');
+            const body = encodeURIComponent(emailBody);
+            window.open(`mailto:${state.email.recipients}?subject=${subject}&body=${body}`);
+        }
+
+        function generateEmailContent() {
+            const top5 = state.opportunities.slice(0, 5);
+            
+            let content = `ScotFund Pro Ultimate - Funding Opportunities\n\n`;
+            content += `Scan Date: ${new Date().toLocaleDateString('en-GB')}\n`;
+            content += `Total: ${state.opportunities.length} | Verified: ${state.opportunities.filter(o => o.verified).length}\n\n`;
+            content += `Top Opportunities:\n\n`;
+            
+            top5.forEach((opp, i) => {
+                content += `${i + 1}. ${opp.title}\n`;
+                content += `   Funder: ${opp.funder}\n`;
+                content += `   Amount: ${opp.amount}\n`;
+                content += `   Deadline: ${opp.deadline}\n`;
+                content += `   Quality: ${opp.verified ? 'Verified' : 'Partial'}\n`;
+                content += `   Link: ${opp.url}\n\n`;
+            });
+            
+            return content;
+        }
+
+        function exportToCSV() {
+            if (state.opportunities.length === 0) {
+                alert('No data to export');
+                return;
+            }
+            
+            const headers = ['Title', 'Funder', 'Amount', 'Deadline', 'Sectors', 'Quality', 'Verified', 'Criteria', 'Description', 'URL'];
+            const rows = state.opportunities.map(opp => [
+                opp.title,
+                opp.funder,
+                opp.amount,
+                opp.deadline,
+                opp.category.join('; '),
+                opp.quality,
+                opp.verified ? 'Yes' : 'No',
+                opp.criteria,
+                opp.description,
+                opp.url
+            ]);
+            
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',') + '\n';
+            });
+            
+            downloadFile('scotfund-ultimate-opportunities.csv', csv, 'text/csv');
+            log('✓ Data exported to CSV', 'success');
+        }
+
+        function exportData() {
+            const data = {
+                opportunities: state.opportunities,
+                blockedResults: state.blockedResults,
+                sources: state.sources,
+                blacklist: state.blacklist,
+                schedule: state.schedule,
+                email: state.email,
+                exportDate: new Date().toISOString(),
+                version: '4.0-ultimate'
+            };
+            
+            downloadFile('scotfund-ultimate-backup.json', JSON.stringify(data, null, 2), 'application/json');
+            log('✓ Full backup exported', 'success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        state.opportunities = data.opportunities || [];
+                        state.sources = data.sources || state.sources;
+                        state.blacklist = data.blacklist || state.blacklist;
+                        state.schedule = data.schedule || state.schedule;
+                        state.email = data.email || state.email;
+                        saveData();
+                        renderDashboard();
+                        renderSources();
+                        renderBlacklist();
+                        updateStats();
+                        log('✓ Data imported successfully', 'success');
+                    } catch (err) {
+                        alert('Invalid backup file');
+                        log('✗ Import failed', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function clearAllData() {
+            if (!confirm('This will delete all data. Continue?')) return;
+            
+            state.opportunities = [];
+            state.blockedResults = [];
+            state.sources = [...DEFAULT_SOURCES];
+            state.blacklist = [...DEFAULT_BLACKLIST];
+            state.schedule = { frequency: 'manual', time: '09:00' };
+            state.email = { recipients: '', frequency: 'none' };
+            state.lastScan = null;
+            
+            localStorage.clear();
+            saveData();
+            renderDashboard();
+            renderSources();
+            renderBlacklist();
+            updateStats();
+            log('✓ All data cleared', 'warn');
+        }
+
+        function downloadFile(filename, content, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
