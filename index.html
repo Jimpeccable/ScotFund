@@ -63,6 +63,9 @@
             <button onclick="showSection('sources')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="sources">
                 <i data-lucide="globe" class="w-5 h-5"></i> Sources
             </button>
+            <button onclick="showSection('shortlist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="shortlist">
+                <i data-lucide="star" class="w-5 h-5"></i> Shortlist
+            </button>
             <button onclick="showSection('blacklist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="blacklist">
                 <i data-lucide="shield-ban" class="w-5 h-5"></i> Blacklist
             </button>
@@ -198,6 +201,13 @@
                         </select>
                     </div>
                     <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Priority Area</label>
+                        <select id="filter-council" onchange="updatePrimaryCouncil()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="">National / All Areas</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div>
                         <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Deadline</label>
                         <select id="filter-deadline" onchange="applyFilters()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                             <option value="">All Deadlines</option>
@@ -240,6 +250,44 @@
                     </div>
                     <p class="text-slate-500 font-medium mb-2">No opportunities found</p>
                     <p class="text-slate-400 text-sm">Run a scan to discover verified funding opportunities</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SHORTLIST SECTION -->
+        <section id="shortlist" class="hidden space-y-6">
+            <header class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">My Shortlist</h2>
+                    <p class="text-slate-500">Saved funding opportunities for review</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportShortlistCSV()" class="px-4 py-2 bg-slate-100 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all flex items-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export Shortlist
+                    </button>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left min-w-[1000px]">
+                        <thead class="bg-slate-50 text-slate-500 text-xs font-bold uppercase">
+                            <tr>
+                                <th class="px-6 py-4">Opportunity</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shortlist-tbody" class="text-sm divide-y divide-slate-100">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="shortlist-empty" class="p-20 text-center">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                        <i data-lucide="star" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-slate-500 font-medium mb-2">Your shortlist is empty</p>
+                    <p class="text-slate-400 text-sm">Star an opportunity to save it here for later</p>
                 </div>
             </div>
         </section>
@@ -403,7 +451,7 @@
 
                 <div class="border-t border-slate-200 pt-6">
                     <h3 class="font-bold mb-2">About ScotFund Pro Ultimate</h3>
-                    <p class="text-sm text-slate-600">Version 5.0 - Ultimate funding intelligence with persistence and smart merging.</p>
+                    <p class="text-sm text-slate-600">Version 6.0 - Ultimate funding intelligence with Regional Intelligence and Workflow tools.</p>
                 </div>
             </div>
         </section>
@@ -516,6 +564,13 @@
                         </div>
                         <div id="detail-criteria" class="text-sm text-slate-600 leading-relaxed pl-3 italic border-l-2 border-slate-50 ml-0.5"></div>
                     </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-1 h-4 bg-green-600 rounded-full"></div>
+                            <p class="text-xs font-bold text-slate-500 uppercase">Application Checklist (Extracted)</p>
+                        </div>
+                        <div id="detail-checklist" class="grid grid-cols-1 gap-2 pl-3"></div>
+                    </div>
                 </div>
                 <div>
                     <p class="text-xs font-bold text-slate-500 uppercase mb-2">Keywords</p>
@@ -527,6 +582,12 @@
                     </a>
                     <button onclick="shareOpportunity()" class="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="share-2" class="w-4 h-4"></i> Share
+                    </button>
+                    <button id="modal-shortlist-btn" onclick="toggleShortlistFromModal()" class="px-6 py-3 bg-amber-50 text-amber-700 rounded-lg font-bold hover:bg-amber-100 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="star" class="w-4 h-4" id="modal-shortlist-icon"></i> <span id="modal-shortlist-text">Shortlist</span>
+                    </button>
+                    <button id="modal-calendar-btn" onclick="exportToICSFromModal()" class="px-6 py-3 bg-indigo-50 text-indigo-700 rounded-lg font-bold hover:bg-indigo-100 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="calendar-plus" class="w-4 h-4"></i> Add to Calendar
                     </button>
                     <button onclick="blacklistThisURL()" class="px-6 py-3 bg-red-50 text-red-700 rounded-lg font-bold hover:bg-red-100 transition-all flex items-center justify-center gap-2">
                         <i data-lucide="shield-ban" class="w-4 h-4"></i> Blacklist
@@ -542,6 +603,17 @@
             'https://api.allorigins.win/raw?url=',
             'https://corsproxy.io/?',
             'https://api.codetabs.com/v1/proxy?quest='
+        ];
+
+        const SCOTTISH_COUNCILS = [
+            "Aberdeen City", "Aberdeenshire", "Angus", "Argyll and Bute",
+            "City of Edinburgh", "Clackmannanshire", "Dumfries and Galloway", "Dundee City",
+            "East Ayrshire", "East Dunbartonshire", "East Lothian", "East Renfrewshire",
+            "Falkirk", "Fife", "Glasgow City", "Highland", "Inverclyde", "Midlothian",
+            "Moray", "Na h-Eileanan Siar", "North Ayrshire", "North Lanarkshire",
+            "Orkney Islands", "Perth and Kinross", "Renfrewshire", "Scottish Borders",
+            "Shetland Islands", "South Ayrshire", "South Lanarkshire", "Stirling",
+            "West Dunbartonshire", "West Lothian"
         ];
         
         let currentProxyIndex = 0;
@@ -667,10 +739,12 @@
 
         let state = {
             opportunities: [],
+            shortlist: JSON.parse(localStorage.getItem('scotfund_shortlist')) || [],
             blockedResults: [],
             sources: JSON.parse(localStorage.getItem('scotfund_sources')) || [...DEFAULT_SOURCES],
             blacklist: JSON.parse(localStorage.getItem('scotfund_blacklist')) || [...DEFAULT_BLACKLIST],
             isScanning: false,
+            primaryCouncil: localStorage.getItem('scotfund_primaryCouncil') || '',
             schedule: JSON.parse(localStorage.getItem('scotfund_schedule')) || { frequency: 'manual', time: '09:00' },
             email: JSON.parse(localStorage.getItem('scotfund_email')) || { recipients: '', frequency: 'none' },
             lastScan: localStorage.getItem('scotfund_lastScan') || null,
@@ -681,12 +755,33 @@
         function init() {
             lucide.createIcons();
             loadSavedData();
+            populateCouncilList();
             renderDashboard();
+            renderShortlist();
             renderSources();
             renderBlacklist();
             loadScheduleSettings();
             showSection('dashboard');
             initScheduler();
+        }
+
+        function populateCouncilList() {
+            const select = document.getElementById('filter-council');
+            if (!select) return;
+            SCOTTISH_COUNCILS.forEach(council => {
+                const opt = document.createElement('option');
+                opt.value = council;
+                opt.textContent = council;
+                if (council === state.primaryCouncil) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        function updatePrimaryCouncil() {
+            state.primaryCouncil = document.getElementById('filter-council').value;
+            saveData();
+            log(`📍 Primary area set to: ${state.primaryCouncil || 'National'}`, 'info');
+            applyFilters();
         }
 
         function loadSavedData() {
@@ -695,15 +790,19 @@
                 state.opportunities = JSON.parse(saved);
                 updateStats();
             }
+            state.shortlist = JSON.parse(localStorage.getItem('scotfund_shortlist')) || [];
+            state.primaryCouncil = localStorage.getItem('scotfund_primaryCouncil') || '';
         }
 
         function saveData() {
             localStorage.setItem('scotfund_opportunities', JSON.stringify(state.opportunities));
+            localStorage.setItem('scotfund_shortlist', JSON.stringify(state.shortlist));
             localStorage.setItem('scotfund_sources', JSON.stringify(state.sources));
             localStorage.setItem('scotfund_blacklist', JSON.stringify(state.blacklist));
             localStorage.setItem('scotfund_schedule', JSON.stringify(state.schedule));
             localStorage.setItem('scotfund_email', JSON.stringify(state.email));
             localStorage.setItem('scotfund_lastScan', state.lastScan);
+            localStorage.setItem('scotfund_primaryCouncil', state.primaryCouncil);
         }
 
         // ========== UI CONTROLS ==========
@@ -719,6 +818,10 @@
                 l.classList.toggle('bg-indigo-50', l.dataset.id === id);
                 l.classList.toggle('text-indigo-600', l.dataset.id === id);
             });
+
+            if (id === 'shortlist') renderShortlist();
+            if (id === 'dashboard') renderDashboard();
+
             if (window.innerWidth < 1024) toggleSidebar();
             lucide.createIcons();
         }
@@ -996,6 +1099,12 @@
             actionTerms.forEach(term => { if (text.includes(term)) { score += 8; foundKeywords.push('actionable'); } });
             sourceKeywords.forEach(term => { if (text.includes(term.toLowerCase())) score += 10; });
             
+            // Regional boost
+            if (state.primaryCouncil && text.includes(state.primaryCouncil.toLowerCase())) {
+                score += 25;
+                foundKeywords.push('local-priority');
+            }
+
             // Bonus for specific amounts and dates
             if (/£[\d,]+/.test(text)) score += 10;
             if (/\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2}\s+\w+\s+\d{4}/.test(text)) score += 10;
@@ -1240,6 +1349,70 @@
             }
         }
 
+        // ========== SHORTLIST MANAGEMENT ==========
+        function toggleShortlist(id) {
+            const index = state.shortlist.findIndex(o => o.id === id);
+            if (index === -1) {
+                const opp = state.opportunities.find(o => o.id === id);
+                if (opp) {
+                    state.shortlist.push(opp);
+                    log(`⭐ Added to Shortlist: ${opp.title}`, 'success');
+                }
+            } else {
+                const removed = state.shortlist.splice(index, 1);
+                log(`⭐ Removed from Shortlist: ${removed[0].title}`, 'warn');
+            }
+            saveData();
+            renderDashboard();
+            renderShortlist();
+        }
+
+        function renderShortlist() {
+            const tbody = document.getElementById('shortlist-tbody');
+            const empty = document.getElementById('shortlist-empty');
+
+            if (!tbody) return;
+
+            if (state.shortlist.length === 0) {
+                tbody.innerHTML = '';
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                tbody.innerHTML = state.shortlist.map(opp => `
+                    <tr class="hover:bg-slate-50 cursor-pointer" onclick="showDetails('${opp.id}')">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-slate-900 mb-1">${opp.title}</div>
+                            <div class="text-xs text-slate-500">${opp.funder}</div>
+                        </td>
+                        <td class="px-6 py-4 font-bold text-green-600">${opp.amount}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <button onclick="event.stopPropagation(); toggleShortlist('${opp.id}')" class="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-all" title="Remove from Shortlist">
+                                    <i data-lucide="star" class="w-4 h-4 fill-amber-500"></i>
+                                </button>
+                                <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-slate-100 rounded-lg inline-block hover:bg-indigo-600 hover:text-white transition-all">
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        function exportShortlistCSV() {
+            if (state.shortlist.length === 0) {
+                alert('Shortlist is empty');
+                return;
+            }
+            const headers = ['Title', 'Funder', 'Amount', 'Deadline', 'URL'];
+            const rows = state.shortlist.map(opp => [opp.title, opp.funder, opp.amount, opp.deadline, opp.url]);
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => { csv += row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',') + '\n'; });
+            downloadFile('scotfund-shortlist.csv', csv, 'text/csv');
+        }
+
         // ========== ENHANCED UI RENDERING ==========
         function renderDashboard() {
             const tbody = document.getElementById('opp-tbody');
@@ -1282,9 +1455,14 @@
                                         <span class="flex items-center gap-1.5"><i data-lucide="coins" class="w-3.5 h-3.5"></i> ${opp.amount}</span>
                                         <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${opp.deadline}</span>
                                     </div>
-                                    <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="w-full bg-white/10 hover:bg-white/20 text-white text-center py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2">
-                                        View Portal <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                    </a>
+                                    <div class="flex gap-2">
+                                        <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="flex-1 bg-white/10 hover:bg-white/20 text-white text-center py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2">
+                                            View Portal <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                        </a>
+                                        <button onclick="event.stopPropagation(); toggleShortlist('${opp.id}')" class="px-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all" title="Shortlist">
+                                            <i data-lucide="star" class="w-3.5 h-3.5 ${state.shortlist.some(s => s.id === opp.id) ? 'fill-white' : ''}"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -1315,9 +1493,14 @@
                             </td>
                             <td class="px-6 py-4">${qualityBadge}</td>
                             <td class="px-6 py-4 text-right">
-                                <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-slate-100 rounded-lg inline-block hover:bg-indigo-600 hover:text-white transition-all">
-                                    <i data-lucide="external-link" class="w-4 h-4"></i>
-                                </a>
+                                <div class="flex justify-end gap-2">
+                                    <button onclick="event.stopPropagation(); toggleShortlist('${opp.id}')" class="p-2 hover:bg-amber-50 rounded-lg transition-all ${state.shortlist.some(s => s.id === opp.id) ? 'text-amber-500' : 'text-slate-400'}" title="Shortlist">
+                                        <i data-lucide="star" class="w-4 h-4 ${state.shortlist.some(s => s.id === opp.id) ? 'fill-amber-500' : ''}"></i>
+                                    </button>
+                                    <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-slate-100 rounded-lg inline-block hover:bg-indigo-600 hover:text-white transition-all">
+                                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -1453,12 +1636,79 @@
         }
 
         // ========== DETAILS MODAL ==========
+        let currentDetailID = '';
+
+        function toggleShortlistFromModal() {
+            if (currentDetailID) {
+                toggleShortlist(currentDetailID);
+                updateModalShortlistButton();
+            }
+        }
+
+        function updateModalShortlistButton() {
+            const isShortlisted = state.shortlist.some(s => s.id === currentDetailID);
+            const btn = document.getElementById('modal-shortlist-btn');
+            const icon = document.getElementById('modal-shortlist-icon');
+            const text = document.getElementById('modal-shortlist-text');
+
+            if (isShortlisted) {
+                icon.classList.add('fill-amber-500');
+                text.textContent = 'Saved';
+            } else {
+                icon.classList.remove('fill-amber-500');
+                text.textContent = 'Shortlist';
+            }
+        }
+
+        function generateChecklist(text) {
+            const container = document.getElementById('detail-checklist');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Heuristic for actionable items
+            const actionablePatterns = [
+                /must (?:have|be|provide|include|show)/i,
+                /provide (?:a|your|details|copies)/i,
+                /include (?:a|your|details)/i,
+                /show (?:how|that)/i,
+                /eligible (?:to|if)/i,
+                /applicants (?:must|should)/i,
+                /copy of/i,
+                /application form/i,
+                /constitution/i,
+                /accounts/i,
+                /bank statement/i
+            ];
+
+            const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 20);
+            const items = sentences.filter(s => actionablePatterns.some(p => p.test(s)));
+
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">No specific checklist items extracted. Review the guidelines below.</p>';
+                return;
+            }
+
+            items.slice(0, 6).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-start gap-3 bg-slate-50 p-2 rounded-lg border border-slate-100';
+                div.innerHTML = `
+                    <input type="checkbox" class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                    <p class="text-xs text-slate-700 leading-tight">${item}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
         function showDetails(id) {
-            const opp = state.opportunities.find(o => o.id === id);
+            const opp = state.opportunities.find(o => o.id === id) || state.shortlist.find(o => o.id === id);
             if (!opp) return;
             
+            currentDetailID = id;
             currentDetailURL = opp.url;
             
+            updateModalShortlistButton();
+            generateChecklist(opp.criteria + ' ' + opp.description);
+
             document.getElementById('detail-title').textContent = opp.title;
             document.getElementById('detail-funder').textContent = opp.funder;
             document.getElementById('detail-amount').textContent = opp.amount;
@@ -1494,6 +1744,53 @@
             } catch (err) {
                 log('Failed to copy link', 'error');
             }
+        }
+
+        function exportToICSFromModal() {
+            const opp = state.opportunities.find(o => o.id === currentDetailID) || state.shortlist.find(o => o.id === currentDetailID);
+            if (!opp) return;
+
+            if (opp.deadline.toLowerCase().includes('rolling')) {
+                alert('This is a rolling fund with no fixed deadline.');
+                return;
+            }
+
+            const cleanDeadline = opp.deadline.replace(/(st|nd|rd|th)/g, '');
+            const date = new Date(cleanDeadline);
+
+            if (isNaN(date.getTime())) {
+                alert('Could not determine a precise date for this deadline: ' + opp.deadline);
+                return;
+            }
+
+            // Create ICS content
+            const start = date.toISOString().replace(/-|:|\.\d+/g, '').split('T')[0] + 'T090000Z';
+            const end = date.toISOString().replace(/-|:|\.\d+/g, '').split('T')[0] + 'T170000Z';
+
+            const icsLines = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//ScotFund Pro//NONSGML v1.0//EN',
+                'BEGIN:VEVENT',
+                `UID:${opp.id}@scotfund.pro`,
+                `DTSTAMP:${new Date().toISOString().replace(/-|:|\.\d+/g, '').split('T')[0]}T000000Z`,
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
+                `SUMMARY:Deadline: ${opp.title}`,
+                `DESCRIPTION:Funder: ${opp.funder}\\nAmount: ${opp.amount}\\nURL: ${opp.url}`,
+                `LOCATION:${opp.url}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ];
+
+            const blob = new Blob([icsLines.join('\r\n')], { type: 'text/calendar' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `deadline-${opp.id}.ics`;
+            a.click();
+            URL.revokeObjectURL(url);
+            log(`📅 Calendar event exported for: ${opp.title}`, 'success');
         }
 
         function hideDetailsModal() {
@@ -1842,7 +2139,7 @@
                 schedule: state.schedule,
                 email: state.email,
                 exportDate: new Date().toISOString(),
-                version: '5.0-ultimate'
+                version: '6.0-ultimate'
             };
             
             downloadFile('scotfund-ultimate-backup.json', JSON.stringify(data, null, 2), 'application/json');
