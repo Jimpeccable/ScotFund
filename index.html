@@ -287,7 +287,7 @@
             <header class="flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-bold mb-2">Premium Funding Sources</h2>
-                    <p class="text-slate-500">15+ verified Scottish funding portals</p>
+                    <p class="text-slate-500">25+ verified Scottish funding portals</p>
                 </div>
                 <button onclick="showAddSourceModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
                     <i data-lucide="plus" class="w-4 h-4"></i> Add Source
@@ -521,11 +521,13 @@
         let currentProxyIndex = 0;
         let currentDetailURL = '';
 
-        // PREMIUM SCOTTISH SOURCES - 15+ verified funding portals
+        // PREMIUM SCOTTISH SOURCES - 25+ verified funding portals
         const DEFAULT_SOURCES = [
             // Major National Funders
             { id: 'tnl', name: 'TNL Community Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes?location=scotland', keywords: ['lottery', 'community', 'scotland', 'grant', 'funding'] },
             { id: 'foundation', name: 'Foundation Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/', keywords: ['foundation', 'grant', 'scotland', 'charity', 'funding'] },
+            { id: 'robertson', name: 'The Robertson Trust', url: 'https://www.therobertsontrust.org.uk/funding/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
+            { id: 'corra', name: 'Corra Foundation', url: 'https://www.corra.scot/grant-programmes/', keywords: ['community', 'grant', 'scotland', 'change', 'funding'] },
             { id: 'youthlink', name: 'YouthLink Scotland', url: 'https://www.youthlink.scot/funds/', keywords: ['youth', 'young people', 'community', 'play', 'outdoor'] },
             { id: 'inspiring', name: 'Inspiring Scotland', url: 'https://inspiringscotland.org.uk/funds/', keywords: ['community', 'scotland', 'grant', 'funding', 'social'] },
             
@@ -534,20 +536,32 @@
             { id: 'sportscotland', name: 'sportscotland', url: 'https://sportscotland.org.uk/funding/', keywords: ['sport', 'active', 'physical', 'community', 'facility'] },
             { id: 'creative', name: 'Creative Scotland', url: 'https://www.creativescotland.com/funding', keywords: ['arts', 'creative', 'culture', 'funding', 'scotland'] },
             { id: 'historic', name: 'Historic Environment Scotland', url: 'https://www.historicenvironment.scot/grants-and-funding/', keywords: ['heritage', 'historic', 'building', 'conservation', 'grant'] },
+            { id: 'heritage-fund', name: 'National Lottery Heritage Fund', url: 'https://www.heritagefund.org.uk/in-your-area/scotland', keywords: ['heritage', 'culture', 'nature', 'community', 'scotland'] },
+
+            // Banking & Corporate Foundations
+            { id: 'bos-foundation', name: 'Bank of Scotland Foundation', url: 'https://bankofscotlandfoundation.org/funding-programmes', keywords: ['charity', 'community', 'scotland', 'grant', 'funding'] },
+            { id: 'william-grant', name: 'William Grant Foundation', url: 'https://www.williamgrantfoundation.org.uk/', keywords: ['community', 'scotland', 'culture', 'environment', 'grant'] },
+            { id: 'garfield-weston', name: 'Garfield Weston Foundation', url: 'https://garfieldweston.org/', keywords: ['charity', 'grant', 'community', 'arts', 'environment'] },
+            { id: 'esmee-fairbairn', name: 'Esmée Fairbairn Foundation', url: 'https://esmeefairbairn.org.uk/', keywords: ['environment', 'social', 'creative', 'community', 'grant'] },
             
-            // Third Sector Support
+            // Third Sector & Support
             { id: 'scvo', name: 'SCVO', url: 'https://scvo.scot/support/funding', keywords: ['voluntary', 'third sector', 'scotland', 'funding', 'charity'] },
+            { id: 'firstport', name: 'Firstport', url: 'https://www.firstport.org.uk/funding/', keywords: ['social enterprise', 'entrepreneur', 'scotland', 'startup', 'grant'] },
             { id: 'coss', name: 'Coalition of Care Scotland', url: 'https://www.ccpscotland.org/funding/', keywords: ['care', 'social', 'support', 'community', 'funding'] },
             
-            // Regional & Lottery Distributors
+            // Health & Wellbeing
             { id: 'nhs-endowments', name: 'NHS Scotland Endowments', url: 'https://www.nhsscotlandendowments.org/', keywords: ['health', 'wellbeing', 'community', 'scotland', 'grant'] },
-            { id: 'corra', name: 'Corra Foundation', url: 'https://www.corra.scot/grant-programmes/', keywords: ['community', 'grant', 'scotland', 'change', 'funding'] },
+            { id: 'henry-smith', name: 'Henry Smith Charity', url: 'https://www.henrysmithcharity.org.uk/', keywords: ['poverty', 'disadvantage', 'community', 'grant', 'funding'] },
             
-            // Environment & Rural
+            // Youth & Children
+            { id: 'children-in-need', name: 'BBC Children in Need', url: 'https://www.bbcchildreninneed.co.uk/grants/apply/', keywords: ['children', 'youth', 'young people', 'scotland', 'grant'] },
+            { id: 'stv-appeal', name: 'STV Children\'s Appeal', url: 'https://www.stv.tv/appeal/grants/', keywords: ['poverty', 'children', 'youth', 'scotland', 'grant'] },
+            
+            // Specialized & Local
+            { id: 'gannochy', name: 'The Gannochy Trust', url: 'https://www.gannochytrust.org.uk/grant-making/', keywords: ['perth', 'youth', 'community', 'scotland', 'grant'] },
+            { id: 'paths-for-all', name: 'Paths for All', url: 'https://www.pathsforall.org.uk/community-paths/community-paths-grants', keywords: ['walking', 'active', 'community', 'environment', 'paths'] },
             { id: 'nature-scot', name: 'NatureScot', url: 'https://www.nature.scot/professional-advice/funding', keywords: ['nature', 'environment', 'biodiversity', 'conservation', 'scotland'] },
-            { id: 'snh', name: 'Scottish Land Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/scottish-land-fund', keywords: ['land', 'community', 'rural', 'scotland', 'ownership'] },
-            
-            // Community & Local
+            { id: 'land-fund', name: 'Scottish Land Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/scottish-land-fund', keywords: ['land', 'community', 'rural', 'scotland', 'ownership'] },
             { id: 'communityshares', name: 'Community Shares Scotland', url: 'https://communityshares.scot/grants-and-funding/', keywords: ['community', 'shares', 'enterprise', 'scotland', 'funding'] }
         ];
 
@@ -595,6 +609,24 @@
             { pattern: '/category/', description: 'Category archives', active: true },
             { pattern: '/author/', description: 'Author pages', active: true },
             
+            // Irrelevant System Pages
+            { pattern: '/login', description: 'Login pages', active: true },
+            { pattern: '/register', description: 'Registration pages', active: true },
+            { pattern: '/cart', description: 'Shopping cart', active: true },
+            { pattern: '/checkout', description: 'Checkout pages', active: true },
+            { pattern: '/my-account', description: 'User accounts', active: true },
+            { pattern: '/careers', description: 'Job openings', active: true },
+            { pattern: '/jobs', description: 'Job openings', active: true },
+            { pattern: '/vacancy', description: 'Vacancies', active: true },
+            { pattern: '/donate', description: 'Donation pages', active: true },
+
+            // File Extensions
+            { pattern: '.jpg', description: 'Images', active: true },
+            { pattern: '.png', description: 'Images', active: true },
+            { pattern: '.jpeg', description: 'Images', active: true },
+            { pattern: '.gif', description: 'Images', active: true },
+            { pattern: '.svg', description: 'Images', active: true },
+
             // User-Added Patterns (examples)
             { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
             { pattern: 'fairer-life-chances', description: 'Past programme names', active: true },
@@ -767,7 +799,6 @@
             const results = [];
             const seen = new Set();
             
-            const bodyText = doc.body?.textContent?.toLowerCase() || '';
             const links = Array.from(doc.querySelectorAll('a[href]'));
             
             log(`  Analysing ${links.length} links with whitelist patterns...`, 'info');
@@ -785,14 +816,27 @@
             
             for (const link of links) {
                 const href = link.getAttribute('href');
-                const text = link.textContent.trim();
+                let text = link.textContent.trim();
                 const fullUrl = resolveUrl(source.url, href);
                 
+                // Smarter title extraction for generic link text
+                const parent = link.closest('article, section, div, li, tr, td');
+                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application)$/i.test(text) || text.length < 5) {
+                    const heading = parent ? parent.querySelector('h1, h2, h3, h4, h5, h6, strong, b') : null;
+                    if (heading && heading.textContent.trim().length > 5) {
+                        text = heading.textContent.trim();
+                    }
+                }
+
                 // Basic validation
                 if (!href || seen.has(fullUrl)) continue;
                 if (href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href === '#') continue;
                 if (href.length < 5 || text.length < 5) continue;
                 
+                // Exclude images and other irrelevant file types
+                const irrelevantExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.mp4', '.mp3', '.zip', '.gz', '.exe', '.dmg', '.bmp'];
+                if (irrelevantExtensions.some(ext => fullUrl.toLowerCase().endsWith(ext))) continue;
+
                 // BLACKLIST CHECK FIRST
                 if (isBlacklisted(fullUrl, text)) {
                     blacklistBlocked++;
@@ -821,15 +865,19 @@
                 whitelistPassed++;
                 
                 // Get context
-                const parent = link.closest('article, section, div, li, tr, td');
                 const context = parent ? parent.textContent : '';
                 const fullCombined = (text + ' ' + href + ' ' + context).toLowerCase();
                 
+                // Skip closed or suspended funds
+                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed/i.test(fullCombined)) {
+                    continue;
+                }
+
                 // Relevance analysis
                 const match = analyseRelevance(fullCombined, source.keywords);
                 
                 if (match.score >= 40) { // Higher threshold for ultimate quality
-                    const details = await extractDetails(parent, link, fullCombined, bodyText);
+                    const details = await extractDetails(parent, link, fullCombined);
                     
                     // QUALITY GATE - Only include if we have substantial info
                     const quality = calculateQuality(details);
@@ -899,7 +947,7 @@
             return { score, keywords: [...new Set(foundKeywords)] };
         }
 
-        async function extractDetails(element, link, text, fullText) {
+        async function extractDetails(element, link, text) {
             const details = {
                 amount: 'Amount varies - see website',
                 deadline: 'Rolling deadline',
@@ -910,11 +958,11 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /£([\d,]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£([\d,]+(?:\.\d{2})?)/i,
-                /(?:between|from)\s*£([\d,]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£([\d,]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of)\s*£([\d,]+(?:\.\d{2})?)/i,
-                /£([\d,]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award)/i,
-                /grants?\s+(?:of|up to)\s*£([\d,]+)/i
+                /£([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:between|from)\s*£([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of)\s*£([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /£([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award)/i,
+                /grants?\s+(?:of|up to)\s*£([\d,kKmM.]+)/i
             ];
             
             for (const pattern of amountPatterns) {
@@ -951,17 +999,19 @@
                 details.deadline = 'Rolling deadline';
             }
             
-            // ENHANCED CATEGORISATION (9 categories)
+            // ENHANCED CATEGORISATION (11 categories)
             const categories = [];
-            if (text.includes('play') || text.includes('outdoor') || text.includes('recreation')) categories.push('play');
-            if (text.includes('community') || text.includes('local') || text.includes('neighbourhood')) categories.push('community');
-            if (text.includes('youth') || text.includes('children') || text.includes('young people')) categories.push('youth');
-            if (text.includes('charity') || text.includes('charitable') || text.includes('third sector')) categories.push('charity');
-            if (text.includes('arts') || text.includes('culture') || text.includes('creative')) categories.push('arts');
-            if (text.includes('sport') || text.includes('physical') || text.includes('fitness') || text.includes('active')) categories.push('sport');
-            if (text.includes('education') || text.includes('training') || text.includes('learning') || text.includes('skills')) categories.push('education');
-            if (text.includes('environment') || text.includes('conservation') || text.includes('green') || text.includes('nature')) categories.push('environment');
-            if (text.includes('health') || text.includes('wellbeing') || text.includes('mental') || text.includes('care')) categories.push('health');
+            if (text.includes('play') || text.includes('outdoor') || text.includes('recreation') || text.includes('park')) categories.push('play');
+            if (text.includes('community') || text.includes('local') || text.includes('neighbourhood') || text.includes('village') || text.includes('area')) categories.push('community');
+            if (text.includes('youth') || text.includes('children') || text.includes('young people') || text.includes('under 25')) categories.push('youth');
+            if (text.includes('charity') || text.includes('charitable') || text.includes('third sector') || text.includes('voluntary') || text.includes('non-profit')) categories.push('charity');
+            if (text.includes('arts') || text.includes('culture') || text.includes('creative') || text.includes('music') || text.includes('theatre')) categories.push('arts');
+            if (text.includes('sport') || text.includes('physical') || text.includes('fitness') || text.includes('active') || text.includes('leisure')) categories.push('sport');
+            if (text.includes('education') || text.includes('training') || text.includes('learning') || text.includes('skills') || text.includes('school')) categories.push('education');
+            if (text.includes('environment') || text.includes('conservation') || text.includes('green') || text.includes('nature') || text.includes('climate') || text.includes('biodiversity')) categories.push('environment');
+            if (text.includes('health') || text.includes('wellbeing') || text.includes('mental') || text.includes('care') || text.includes('medical') || text.includes('disability')) categories.push('health');
+            if (text.includes('heritage') || text.includes('historic') || text.includes('building') || text.includes('conservation') || text.includes('monument')) categories.push('heritage');
+            if (text.includes('social') || text.includes('poverty') || text.includes('trauma') || text.includes('inclusion') || text.includes('equity') || text.includes('diversity')) categories.push('social');
             
             details.category = categories.length > 0 ? categories : ['general'];
             
@@ -1253,8 +1303,18 @@
         }
 
         function extractNumericAmount(amountStr) {
-            const match = amountStr.match(/£([\d,]+)/);
-            return match ? parseInt(match[1].replace(/,/g, '')) : 0;
+            if (!amountStr) return 0;
+            // Match £ followed by digits/commas/dots and optional k/m suffix
+            const match = amountStr.match(/£([\d,.]+)\s*([kKmM])?/);
+            if (!match) return 0;
+
+            let val = parseFloat(match[1].replace(/,/g, ''));
+            const suffix = match[2] ? match[2].toLowerCase() : '';
+
+            if (suffix === 'k') val *= 1000;
+            else if (suffix === 'm') val *= 1000000;
+
+            return Math.round(val);
         }
 
         function updateStats() {
