@@ -209,10 +209,43 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Priority Area</label>
-                        <select id="filter-council" onchange="updatePrimaryCouncil()" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="">National / All Areas</option>
-                            <!-- Populated by JS -->
+                        <label class="text-xs font-bold text-indigo-600 uppercase mb-2 block">Priority Area</label>
+                        <select id="priority-area" onchange="updatePriorityArea()" class="w-full px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-indigo-900">
+                            <option value="National">National / All Areas</option>
+                            <optgroup label="Local Councils">
+                                <option value="Aberdeen">Aberdeen City</option>
+                                <option value="Aberdeenshire">Aberdeenshire</option>
+                                <option value="Angus">Angus</option>
+                                <option value="Argyll">Argyll & Bute</option>
+                                <option value="Clackmannanshire">Clackmannanshire</option>
+                                <option value="Dumfries">Dumfries & Galloway</option>
+                                <option value="Dundee">Dundee City</option>
+                                <option value="East Ayrshire">East Ayrshire</option>
+                                <option value="East Dunbartonshire">East Dunbartonshire</option>
+                                <option value="East Lothian">East Lothian</option>
+                                <option value="East Renfrewshire">East Renfrewshire</option>
+                                <option value="Edinburgh">Edinburgh City</option>
+                                <option value="Falkirk">Falkirk</option>
+                                <option value="Fife">Fife</option>
+                                <option value="Glasgow">Glasgow City</option>
+                                <option value="Highland">Highland</option>
+                                <option value="Inverclyde">Inverclyde</option>
+                                <option value="Midlothian">Midlothian</option>
+                                <option value="Moray">Moray</option>
+                                <option value="Na h-Eileanan Siar">Na h-Eileanan Siar (Western Isles)</option>
+                                <option value="North Ayrshire">North Ayrshire</option>
+                                <option value="North Lanarkshire">North Lanarkshire</option>
+                                <option value="Orkney">Orkney Islands</option>
+                                <option value="Perth">Perth & Kinross</option>
+                                <option value="Renfrewshire">Renfrewshire</option>
+                                <option value="Scottish Borders">Scottish Borders</option>
+                                <option value="Shetland">Shetland Islands</option>
+                                <option value="South Ayrshire">South Ayrshire</option>
+                                <option value="South Lanarkshire">South Lanarkshire</option>
+                                <option value="Stirling">Stirling</option>
+                                <option value="West Dunbartonshire">West Dunbartonshire</option>
+                                <option value="West Lothian">West Lothian</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div>
@@ -418,6 +451,26 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <i data-lucide="zap" class="w-5 h-5 text-amber-500"></i> Advanced Automation
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-bold text-slate-700 mb-2 block">Webhook URL</label>
+                            <input type="url" id="webhook-url" onchange="updateWebhookSettings()" placeholder="https://zapier.com/hooks/..." class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                            <p class="text-[10px] text-slate-500 mt-1">Sends new fund data as JSON via POST. Connect to Zapier or Slack.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="webhook-new-only" onchange="updateWebhookSettings()" class="h-4 w-4 rounded border-slate-300 text-indigo-600">
+                            <label for="webhook-new-only" class="text-xs font-bold text-slate-600">Only send new opportunities</label>
+                        </div>
+                        <button onclick="testWebhook()" class="w-full px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200 transition-all">
+                            Test Webhook
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -528,8 +581,8 @@
     <div id="details-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl">
             <!-- Modal Header -->
-            <div class="p-6 border-b border-slate-100 flex items-start justify-between shrink-0">
-                <div class="flex-1 pr-4">
+            <div class="px-6 pt-6 border-b border-slate-100 flex items-start justify-between shrink-0">
+                <div class="flex-1 pr-4 pb-4">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-wider">Opportunity Details</span>
                         <button onclick="toggleEditMode()" id="edit-mode-btn" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 uppercase tracking-wider underline">Edit Mode</button>
@@ -542,9 +595,19 @@
                 </button>
             </div>
 
+            <!-- Modal Tabs -->
+            <div class="flex border-b border-slate-100 px-6 shrink-0 bg-slate-50/50">
+                <button onclick="switchModalTab('overview')" id="tab-overview" class="px-4 py-3 text-[10px] font-bold border-b-2 border-indigo-600 text-indigo-600 transition-all uppercase tracking-widest">Overview</button>
+                <button onclick="switchModalTab('guidance')" id="tab-guidance" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Guidance</button>
+                <button onclick="switchModalTab('matching')" id="tab-matching" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Matching</button>
+                <button onclick="switchModalTab('notes')" id="tab-notes" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">My Notes</button>
+            </div>
+
             <!-- Modal Body -->
-            <div class="p-8 overflow-y-auto space-y-6 flex-1 custom-scrollbar">
-                <div class="grid md:grid-cols-3 gap-4 border-b border-slate-100 pb-6">
+            <div id="modal-body-container" class="overflow-y-auto flex-1 custom-scrollbar">
+                <!-- Overview Tab -->
+                <div id="modal-panel-overview" class="modal-panel p-8 space-y-6">
+                    <div class="grid md:grid-cols-3 gap-4 border-b border-slate-100 pb-6">
                     <div>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Funder</p>
                         <p id="detail-funder" class="text-sm font-bold text-slate-900"></p>
@@ -571,6 +634,14 @@
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Quality</p>
                         <p id="detail-quality" class="text-sm font-medium"></p>
                     </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Area</p>
+                        <p id="detail-geography" class="text-sm font-medium text-slate-700"></p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Contact</p>
+                        <p id="detail-email" class="text-sm font-medium text-indigo-600 truncate"></p>
+                    </div>
                 </div>
                 <div class="space-y-4">
                     <div>
@@ -580,25 +651,55 @@
                         </div>
                         <p id="detail-description" class="text-sm text-slate-600 leading-relaxed pl-3"></p>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-1 h-4 bg-purple-600 rounded-full"></div>
-                            <p class="text-xs font-bold text-slate-500 uppercase">Eligibility Guidelines</p>
-                        </div>
-                        <div id="detail-criteria" class="text-sm text-slate-600 leading-relaxed pl-3 italic border-l-2 border-slate-50 ml-0.5"></div>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-1 h-4 bg-green-600 rounded-full"></div>
-                            <p class="text-xs font-bold text-slate-500 uppercase">Application Checklist (Extracted)</p>
-                        </div>
-                        <div id="detail-checklist" class="grid grid-cols-1 gap-2 pl-3"></div>
-                    </div>
                 </div>
                 <div>
                     <p class="text-xs font-bold text-slate-500 uppercase mb-2">Keywords</p>
                     <div id="detail-keywords" class="flex flex-wrap gap-2"></div>
                 </div>
+            </div>
+
+            <!-- Guidance Tab -->
+            <div id="modal-panel-guidance" class="modal-panel p-8 hidden space-y-6">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-1 h-4 bg-purple-600 rounded-full"></div>
+                        <p class="text-xs font-bold text-slate-500 uppercase">Eligibility Guidelines</p>
+                    </div>
+                    <div id="detail-criteria" class="text-sm text-slate-600 leading-relaxed pl-3 italic border-l-2 border-slate-50 ml-0.5"></div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-1 h-4 bg-green-600 rounded-full"></div>
+                        <p class="text-xs font-bold text-slate-500 uppercase">Application Checklist (Extracted)</p>
+                    </div>
+                    <div id="detail-checklist" class="grid grid-cols-1 gap-2 pl-3"></div>
+                </div>
+            </div>
+
+            <!-- Matching Tab -->
+            <div id="modal-panel-matching" class="modal-panel p-8 hidden space-y-6">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-1 h-4 bg-amber-500 rounded-full"></div>
+                        <p class="text-xs font-bold text-slate-500 uppercase">Match Score Breakdown</p>
+                    </div>
+                    <div id="detail-match-breakdown" class="bg-slate-50 rounded-xl p-4 space-y-3">
+                        <p class="text-xs text-slate-500 italic text-center py-4">Direct discovery match based on funder keywords.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="modal-panel-notes" class="modal-panel p-8 hidden space-y-6">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-1 h-4 bg-blue-500 rounded-full"></div>
+                        <p class="text-xs font-bold text-slate-500 uppercase">Personal Application Notes</p>
+                    </div>
+                    <textarea id="detail-notes-input" class="w-full h-48 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="Add your own notes here (saved automatically)..."></textarea>
+                    <p class="text-[10px] text-slate-400 mt-2">These notes are stored locally on your device and are persistent.</p>
+                </div>
+            </div>
                 </div>
             </div>
 
@@ -708,7 +809,29 @@
             { id: 'miller-foundation', name: 'The Miller Foundation', url: 'https://www.millerfoundation.org.uk/', keywords: ['scotland', 'community', 'health', 'education', 'poverty'] },
             { id: 'macrobert-trust', name: 'The MacRobert Trust', url: 'https://www.themacroberttrust.org.uk/', keywords: ['scotland', 'military', 'rural', 'community', 'arts'] },
             { id: 'rank-foundation', name: 'The Rank Foundation', url: 'https://rankfoundation.com/', keywords: ['scotland', 'youth', 'community', 'leadership', 'social'] },
-            { id: 'faith-in-community', name: 'Faith in Community Scotland', url: 'https://www.faithincommunityscotland.org/', keywords: ['scotland', 'faith', 'poverty', 'community', 'social'] }
+            { id: 'faith-in-community', name: 'Faith in Community Scotland', url: 'https://www.faithincommunityscotland.org/', keywords: ['scotland', 'faith', 'poverty', 'community', 'social'] },
+            { id: 'stafford-trust', name: 'The Stafford Trust', url: 'https://www.staffordtrust.org.uk/apply-for-a-grant/', keywords: ['scotland', 'charity', 'animal', 'child', 'medical', 'community'] },
+            { id: 'agnes-hunter', name: 'Agnes Hunter Trust', url: 'https://www.agneshunter.org.uk/', keywords: ['scotland', 'disability', 'health', 'social', 'welfare'] },
+            { id: 'jth-trust', name: 'JTH Charitable Trust', url: 'http://www.jthcharitabletrust.org/', keywords: ['scotland', 'community', 'charity', 'arts', 'education'] },
+            { id: 'templeton', name: 'Templeton Goodwill Trust', url: 'https://www.templetongoodwill.org.uk/', keywords: ['scotland', 'poverty', 'social', 'community', 'christian'] },
+            { id: 'baird-trust', name: 'The Baird Trust', url: 'https://www.bairdtrust.org.uk/', keywords: ['scotland', 'church', 'community', 'social', 'welfare'] },
+            { id: 'moncur-trust', name: 'Alexander Moncur Trust', url: 'https://www.moncurtrust.org.uk/', keywords: ['dundee', 'scotland', 'charity', 'community', 'arts'] },
+            { id: 'leng-trust', name: 'Leng Charitable Trust', url: 'https://www.lengcharitabletrust.org.uk/', keywords: ['dundee', 'scotland', 'charity', 'community', 'social'] },
+            { id: 'tay-trust', name: 'Tay Charitable Trust', url: 'https://www.taycharitabletrust.org.uk/', keywords: ['dundee', 'scotland', 'environment', 'community', 'arts'] },
+            { id: 'misses-barrie', name: 'Misses Barrie Charitable Trust', url: 'https://www.missesbarrie.org.uk/', keywords: ['scotland', 'charity', 'community', 'education', 'health'] },
+            { id: 'russell-trust', name: 'The Russell Trust', url: 'https://www.russelltrust.org.uk/', keywords: ['fife', 'scotland', 'charity', 'community', 'arts', 'education'] },
+            { id: 'martin-connell', name: 'Martin Connell Charitable Trust', url: 'https://www.martinconnelltrust.org.uk/', keywords: ['scotland', 'poverty', 'youth', 'disability', 'community'] },
+            { id: 'northwood', name: 'The Northwood Charitable Trust', url: 'https://www.northwoodtrust.com/', keywords: ['dundee', 'scotland', 'poverty', 'social', 'community'] },
+            { id: 'ryvoan-trust', name: 'The Ryvoan Trust', url: 'https://www.ryvoantrust.org.uk/', keywords: ['scotland', 'disability', 'welfare', 'social', 'community'] },
+            { id: 'sis', name: 'Social Investment Scotland', url: 'https://www.socialinvestmentscotland.com/', keywords: ['scotland', 'social enterprise', 'investment', 'loan', 'finance'] },
+            { id: 'cash-for-kids', name: 'Cash for Kids (Scotland)', url: 'https://www.cashforkids.org.uk/grants', keywords: ['scotland', 'children', 'poverty', 'disability', 'community'] },
+            { id: 'guildry-stirling', name: 'The Guildry of Stirling', url: 'https://www.guildryofstirling.org.uk/grants/', keywords: ['stirling', 'scotland', 'community', 'charity', 'education'] },
+            { id: 'seven-trades', name: 'Seven Trades of Aberdeen', url: 'https://www.seventradesofaberdeen.co.uk/charity/', keywords: ['aberdeen', 'scotland', 'charity', 'community', 'craft'] },
+            { id: 'weavers-glasgow', name: 'Incorporation of Weavers', url: 'https://www.weavers-of-glasgow.com/grants/', keywords: ['glasgow', 'scotland', 'charity', 'community', 'education'] },
+            { id: 'gardeners-glasgow', name: 'Incorporation of Gardeners', url: 'https://www.gardenersofglasgow.org.uk/charity/', keywords: ['glasgow', 'scotland', 'charity', 'community', 'horticulture'] },
+            { id: 'shetland-trust', name: 'Shetland Charitable Trust', url: 'https://www.shetlandcharitytrust.co.uk/', keywords: ['shetland', 'scotland', 'community', 'social', 'arts'] },
+            { id: 'orkney-trust', name: 'Orkney Charitable Trust', url: 'https://www.orkneycharitabletrust.org.uk/', keywords: ['orkney', 'scotland', 'children', 'poverty', 'community'] },
+            { id: 'western-isles', name: 'Western Isles Community Trust', url: 'https://www.wict.org.uk/', keywords: ['western isles', 'scotland', 'community', 'rural', 'development'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -885,6 +1008,30 @@
             lucide.createIcons();
         }
 
+        function switchModalTab(panelId) {
+            // Update buttons
+            ['overview', 'guidance', 'matching', 'notes'].forEach(id => {
+                const btn = document.getElementById(`tab-${id}`);
+                if (!btn) return;
+                btn.classList.remove('border-indigo-600', 'text-indigo-600');
+                btn.classList.add('border-transparent', 'text-slate-500');
+            });
+            const activeBtn = document.getElementById(`tab-${panelId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-transparent', 'text-slate-500');
+                activeBtn.classList.add('border-indigo-600', 'text-indigo-600');
+            }
+
+            // Show panel
+            document.querySelectorAll('.modal-panel').forEach(panel => panel.classList.add('hidden'));
+            const targetPanel = document.getElementById(`modal-panel-${panelId}`);
+            if (targetPanel) targetPanel.classList.remove('hidden');
+
+            // Reset scroll
+            const container = document.getElementById('modal-body-container');
+            if (container) container.scrollTop = 0;
+        }
+
         function log(msg, type = 'info') {
             const container = document.getElementById('console-logs');
             const p = document.createElement('p');
@@ -986,6 +1133,38 @@
                     log('📧 Sending automated email report...', 'info');
                     sendEmailNotification();
                 }
+            }
+
+            // Trigger Webhook
+            triggerWebhook(state.opportunities);
+        }
+
+        async function triggerWebhook(data) {
+            try {
+                if (!state.settings?.webhookUrl) return;
+
+                let payload = [...data];
+                if (state.settings.webhookNewOnly) {
+                    const oneDayAgo = new Date();
+                    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+                    payload = payload.filter(o => new Date(o.dateDiscovered || o.dateAdded) > oneDayAgo);
+                }
+
+                if (payload.length === 0 && state.settings.webhookNewOnly) return;
+
+                await fetch(state.settings.webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        source: 'ScotFund Pro Ultimate v7.5',
+                        timestamp: new Date().toISOString(),
+                        count: payload.length,
+                        opportunities: payload
+                    })
+                });
+                log('✓ Webhook triggered successfully', 'success');
+            } catch (err) {
+                log(`✗ Webhook failed: ${err.message}`, 'error');
             }
         }
 
@@ -1157,9 +1336,17 @@
             });
         }
 
+        function updatePriorityArea() {
+            if (!state.settings) state.settings = {};
+            state.settings.priorityArea = document.getElementById('priority-area').value;
+            saveData();
+            applyFilters();
+        }
+
         function analyseRelevance(text, sourceKeywords) {
             let score = 0;
             const foundKeywords = [];
+            const matchDetails = [];
             
             // ENHANCED KEYWORD MATCHING
             const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money'];
@@ -1167,23 +1354,51 @@
             const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social'];
             const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details'];
             
-            fundingTerms.forEach(term => { if (text.includes(term)) { score += 15; foundKeywords.push('funding'); } });
-            scotlandTerms.forEach(term => { if (text.includes(term)) { score += 12; foundKeywords.push('scotland'); } });
-            targetTerms.forEach(term => { if (text.includes(term)) { score += 18; foundKeywords.push(term); } });
-            actionTerms.forEach(term => { if (text.includes(term)) { score += 8; foundKeywords.push('actionable'); } });
-            sourceKeywords.forEach(term => { if (text.includes(term.toLowerCase())) score += 10; });
-            
-            // Regional boost
-            if (state.primaryCouncil && text.includes(state.primaryCouncil.toLowerCase())) {
-                score += 25;
-                foundKeywords.push('local-priority');
-            }
+            let fundingMatch = false;
+            fundingTerms.forEach(term => { if (text.includes(term)) fundingMatch = true; });
+            if (fundingMatch) { score += 15; foundKeywords.push('funding'); matchDetails.push({ key: 'Funding Context', points: 15 }); }
 
-            // Bonus for specific amounts and dates
-            if (/£[\d,]+/.test(text)) score += 10;
-            if (/\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2}\s+\w+\s+\d{4}/.test(text)) score += 10;
+            let scotMatch = false;
+            scotlandTerms.forEach(term => { if (text.includes(term)) scotMatch = true; });
+            if (scotMatch) { score += 12; foundKeywords.push('scotland'); matchDetails.push({ key: 'Scottish Focus', points: 12 }); }
+
+            targetTerms.forEach(term => {
+                if (text.includes(term)) {
+                    score += 10;
+                    foundKeywords.push(term);
+                    matchDetails.push({ key: `Topic: ${term}`, points: 10 });
+                }
+            });
+
+            let actionMatch = false;
+            actionTerms.forEach(term => { if (text.includes(term)) actionMatch = true; });
+            if (actionMatch) { score += 8; foundKeywords.push('actionable'); matchDetails.push({ key: 'Apply Instructions', points: 8 }); }
+
+            sourceKeywords.forEach(term => {
+                if (text.includes(term.toLowerCase())) {
+                    score += 15;
+                    matchDetails.push({ key: `Funder Match: ${term}`, points: 15 });
+                }
+            });
             
-            return { score, keywords: [...new Set(foundKeywords)] };
+            // Bonus for specific amounts and dates
+            if (/£[\d,]+/.test(text)) { score += 10; matchDetails.push({ key: 'Amount Found', points: 10 }); }
+            if (/\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2}\s+\w+\s+\d{4}/.test(text)) { score += 10; matchDetails.push({ key: 'Deadline Found', points: 10 }); }
+
+            // Priority Area Boost (New Logic)
+            if (state.settings && state.settings.priorityArea && state.settings.priorityArea !== 'National') {
+                const area = state.settings.priorityArea;
+                if (text.includes(area)) {
+                    score += 40;
+                    matchDetails.push({ key: `Priority Area: ${area}`, points: 40 });
+                }
+            } else if (state.primaryCouncil && text.includes(state.primaryCouncil.toLowerCase())) {
+                // Backward compatibility
+                score += 25;
+                matchDetails.push({ key: `Legacy Area: ${state.primaryCouncil}`, points: 25 });
+            }
+            
+            return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
 
         async function extractDetails(element, link, text) {
@@ -1879,6 +2094,7 @@
             currentDetailID = id;
             currentDetailURL = opp.url;
             
+            switchModalTab('overview');
             updateModalShortlistButton();
             generateChecklist(opp.criteria + ' ' + opp.description);
 
@@ -1898,12 +2114,43 @@
             document.getElementById('detail-quality').textContent = qualityText;
             document.getElementById('detail-quality').className = `text-sm font-bold ${qualityColor}`;
 
+            document.getElementById('detail-geography').textContent = opp.geography || 'Scotland (Various)';
+            document.getElementById('detail-email').textContent = opp.email || 'Check Portal';
+            if (opp.email) {
+                document.getElementById('detail-email').innerHTML = `<a href="mailto:${opp.email}" class="hover:underline text-indigo-600">${opp.email}</a>`;
+            }
+
             document.getElementById('detail-criteria').textContent = opp.criteria;
             document.getElementById('detail-description').textContent = opp.description;
             document.getElementById('detail-keywords').innerHTML = opp.keywords.map(kw => 
                 `<span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[10px] font-bold uppercase tracking-tight">${kw}</span>`
             ).join('');
             document.getElementById('detail-link').href = opp.url;
+
+            // Load Notes
+            const notesInput = document.getElementById('detail-notes-input');
+            if (notesInput) {
+                notesInput.value = opp.notes || '';
+                notesInput.oninput = (e) => {
+                    opp.notes = e.target.value;
+                    saveData();
+                };
+            }
+
+            // Match Breakdown
+            const breakdown = document.getElementById('detail-match-breakdown');
+            if (breakdown) {
+                if (opp.matchDetails) {
+                    breakdown.innerHTML = opp.matchDetails.map(m => `
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium text-slate-600">${m.key}</span>
+                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-widest">+${m.points} pts</span>
+                        </div>
+                    `).join('');
+                } else {
+                    breakdown.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">Direct discovery match based on funder keywords.</p>';
+                }
+            }
             
             document.getElementById('details-modal').classList.remove('hidden');
             lucide.createIcons();
@@ -2214,6 +2461,33 @@
             log('✓ Email reporting settings updated', 'success');
         }
 
+        function updateWebhookSettings() {
+            if (!state.settings) state.settings = {};
+            state.settings.webhookUrl = document.getElementById('webhook-url').value;
+            state.settings.webhookNewOnly = document.getElementById('webhook-new-only').checked;
+            saveData();
+        }
+
+        async function testWebhook() {
+            const url = document.getElementById('webhook-url').value;
+            if (!url) return alert('Please enter a Webhook URL');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        test: true,
+                        message: "ScotFund Pro Webhook Test",
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                alert(`Webhook sent! Status: ${response.status}`);
+            } catch (err) {
+                alert(`Failed to send webhook: ${err.message}`);
+            }
+        }
+
         function scheduleNextScan() {
             if (state.scanInterval) clearInterval(state.scanInterval);
             
@@ -2303,7 +2577,7 @@
             }
 
             const top5 = list.slice(0, 10);
-            
+
             let content = `ScotFund Pro Ultimate - Funding Opportunities Report\n\n`;
             content += `Date: ${new Date().toLocaleDateString('en-GB')}\n`;
             content += `Total Included: ${list.length} | Verified: ${list.filter(o => o.verified).length}\n\n`;
@@ -2322,18 +2596,21 @@
         }
 
         function exportToCSV() {
-            if (state.opportunities.length === 0) {
-                alert('No data to export');
+            const list = applyFilters(true);
+            if (list.length === 0) {
+                alert('No filtered data to export');
                 return;
             }
             
-            const headers = ['Title', 'Funder', 'Amount', 'Deadline', 'Sectors', 'Quality', 'Verified', 'Criteria', 'Description', 'URL'];
-            const rows = state.opportunities.map(opp => [
+            const headers = ['Title', 'Funder', 'Amount', 'Deadline', 'Sectors', 'Area', 'Contact', 'Quality', 'Verified', 'Criteria', 'Description', 'URL'];
+            const rows = list.map(opp => [
                 opp.title,
                 opp.funder,
                 opp.amount,
                 opp.deadline,
-                opp.category.join('; '),
+                (opp.category || []).join('; '),
+                opp.geography || 'Scotland',
+                opp.email || '',
                 opp.quality,
                 opp.verified ? 'Yes' : 'No',
                 opp.criteria,
@@ -2358,8 +2635,9 @@
                 blacklist: state.blacklist,
                 schedule: state.schedule,
                 email: state.email,
+                settings: state.settings,
                 exportDate: new Date().toISOString(),
-                version: '6.0-ultimate'
+                version: '7.5-ultimate'
             };
             
             downloadFile('scotfund-ultimate-backup.json', JSON.stringify(data, null, 2), 'application/json');
@@ -2381,12 +2659,9 @@
                         state.blacklist = data.blacklist || state.blacklist;
                         state.schedule = data.schedule || state.schedule;
                         state.email = data.email || state.email;
+                        state.settings = data.settings || state.settings;
                         saveData();
-                        renderDashboard();
-                        renderSources();
-                        renderBlacklist();
-                        updateStats();
-                        log('✓ Data imported successfully', 'success');
+                        location.reload();
                     } catch (err) {
                         alert('Invalid backup file');
                         log('✗ Import failed', 'error');
@@ -2406,15 +2681,12 @@
             state.blacklist = [...DEFAULT_BLACKLIST];
             state.schedule = { frequency: 'manual', time: '09:00' };
             state.email = { recipients: '', frequency: 'none' };
+            state.settings = { webhookUrl: '', webhookNewOnly: false, priorityArea: 'National' };
             state.lastScan = null;
             
             localStorage.clear();
             saveData();
-            renderDashboard();
-            renderSources();
-            renderBlacklist();
-            updateStats();
-            log('✓ All data cleared', 'warn');
+            location.reload();
         }
 
         function downloadFile(filename, content, type) {
