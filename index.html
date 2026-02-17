@@ -515,7 +515,7 @@
 
                 <div class="border-t border-slate-200 pt-6">
                     <h3 class="font-bold mb-2">About ScotFund Pro Ultimate</h3>
-                    <p class="text-sm text-slate-600">Version 6.0 - Ultimate funding intelligence with Regional Intelligence and Workflow tools.</p>
+                    <p class="text-sm text-slate-600">Version 7.5 - Ultimate funding intelligence with Regional Intelligence and Workflow tools.</p>
                 </div>
             </div>
         </section>
@@ -831,7 +831,21 @@
             { id: 'gardeners-glasgow', name: 'Incorporation of Gardeners', url: 'https://www.gardenersofglasgow.org.uk/charity/', keywords: ['glasgow', 'scotland', 'charity', 'community', 'horticulture'] },
             { id: 'shetland-trust', name: 'Shetland Charitable Trust', url: 'https://www.shetlandcharitytrust.co.uk/', keywords: ['shetland', 'scotland', 'community', 'social', 'arts'] },
             { id: 'orkney-trust', name: 'Orkney Charitable Trust', url: 'https://www.orkneycharitabletrust.org.uk/', keywords: ['orkney', 'scotland', 'children', 'poverty', 'community'] },
-            { id: 'western-isles', name: 'Western Isles Community Trust', url: 'https://www.wict.org.uk/', keywords: ['western isles', 'scotland', 'community', 'rural', 'development'] }
+            { id: 'western-isles', name: 'Western Isles Community Trust', url: 'https://www.wict.org.uk/', keywords: ['western isles', 'scotland', 'community', 'rural', 'development'] },
+            { id: 'ahf', name: 'Architectural Heritage Fund', url: 'https://ahfund.org.uk/scotland/', keywords: ['heritage', 'historic', 'building', 'community', 'scotland'] },
+            { id: 'sose', name: 'South of Scotland Enterprise', url: 'https://www.southofscotlandenterprise.com/funding', keywords: ['business', 'community', 'south of scotland', 'grant', 'funding'] },
+            { id: 'hie', name: 'Highlands and Islands Enterprise', url: 'https://www.hie.co.uk/funding/', keywords: ['business', 'community', 'highlands', 'islands', 'grant'] },
+            { id: 'mgs', name: 'Museums Galleries Scotland', url: 'https://www.museumsgalleriesscotland.org.uk/funding/', keywords: ['museum', 'gallery', 'heritage', 'culture', 'grant'] },
+            { id: 'cycling-scot', name: 'Cycling Scotland', url: 'https://www.cycling.scot/funding', keywords: ['cycling', 'active travel', 'community', 'grant', 'scotland'] },
+            { id: 'sustrans', name: 'Sustrans Scotland', url: 'https://www.sustrans.org.uk/about-us/our-work-in-scotland/', keywords: ['walking', 'cycling', 'active travel', 'community', 'scotland'] },
+            { id: 'baillie-gifford', name: 'Baillie Gifford Philanthropy', url: 'https://www.bailliegifford.com/en/uk/about-us/philanthropy/', keywords: ['community', 'arts', 'education', 'scotland', 'grant'] },
+            { id: 'est-scot', name: 'Energy Saving Trust Scotland', url: 'https://energysavingtrust.org.uk/scotland/grants-and-loans/', keywords: ['energy', 'climate', 'sustainability', 'scotland', 'grant'] },
+            { id: 'glasgow-city', name: 'Glasgow City Council Grants', url: 'https://www.glasgow.gov.uk/index.aspx?articleid=15895', keywords: ['glasgow', 'community', 'grant', 'funding', 'local'] },
+            { id: 'edinburgh-council', name: 'City of Edinburgh Council Grants', url: 'https://www.edinburgh.gov.uk/grants', keywords: ['edinburgh', 'community', 'grant', 'funding', 'local'] },
+            { id: 'fife-council', name: 'Fife Council Funding', url: 'https://www.fife.gov.uk/kb/docs/articles/community-life2/funding', keywords: ['fife', 'community', 'grant', 'funding', 'local'] },
+            { id: 'aberdeen-city', name: 'Aberdeen City Council Funding', url: 'https://www.aberdeencity.gov.uk/services/strategy-performance-and-statistics/city-funding', keywords: ['aberdeen', 'community', 'grant', 'funding', 'local'] },
+            { id: 'film-hub-scot', name: 'Film Hub Scotland', url: 'https://www.filmhubscotland.com/funding/', keywords: ['film', 'cinema', 'culture', 'scotland', 'grant'] },
+            { id: 'youth-scotland', name: 'Youth Scotland', url: 'https://www.youthscotland.org.uk/funding/', keywords: ['youth', 'young people', 'community', 'scotland', 'grant'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -887,14 +901,35 @@
             { pattern: '/careers', description: 'Job openings', active: true },
             { pattern: '/jobs', description: 'Job openings', active: true },
             { pattern: '/vacancy', description: 'Vacancies', active: true },
+            { pattern: '/vacancies', description: 'Vacancies', active: true },
             { pattern: '/donate', description: 'Donation pages', active: true },
+            { pattern: '/accessibility', description: 'Accessibility', active: true },
+            { pattern: '/sitemap', description: 'Sitemap', active: true },
+            { pattern: '/help', description: 'Help pages', active: true },
+            { pattern: '/faq', description: 'FAQ', active: true },
+            { pattern: '/faqs', description: 'FAQ', active: true },
+            { pattern: '/legal', description: 'Legal pages', active: true },
+            { pattern: '/complaints', description: 'Complaints', active: true },
 
-            // File Extensions
+            // File Extensions & Media
             { pattern: '.jpg', description: 'Images', active: true },
             { pattern: '.png', description: 'Images', active: true },
             { pattern: '.jpeg', description: 'Images', active: true },
             { pattern: '.gif', description: 'Images', active: true },
             { pattern: '.svg', description: 'Images', active: true },
+            { pattern: '.webp', description: 'Images', active: true },
+            { pattern: '.mp4', description: 'Video', active: true },
+            { pattern: '.mp3', description: 'Audio', active: true },
+            { pattern: '.zip', description: 'Archives', active: true },
+            { pattern: '.gz', description: 'Archives', active: true },
+            { pattern: '.exe', description: 'Executables', active: true },
+            { pattern: '.dmg', description: 'Executables', active: true },
+            { pattern: '.bmp', description: 'Images', active: true },
+            { pattern: '.ico', description: 'Icons', active: true },
+            { pattern: '.woff', description: 'Fonts', active: true },
+            { pattern: '.ttf', description: 'Fonts', active: true },
+            { pattern: '.wav', description: 'Audio', active: true },
+            { pattern: '.mov', description: 'Video', active: true },
 
             // User-Added Patterns (examples)
             { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
@@ -910,9 +945,9 @@
             sources: JSON.parse(localStorage.getItem('scotfund_sources')) || [...DEFAULT_SOURCES],
             blacklist: JSON.parse(localStorage.getItem('scotfund_blacklist')) || [...DEFAULT_BLACKLIST],
             isScanning: false,
-            primaryCouncil: localStorage.getItem('scotfund_primaryCouncil') || '',
             schedule: JSON.parse(localStorage.getItem('scotfund_schedule')) || { frequency: 'manual', time: '09:00' },
             email: JSON.parse(localStorage.getItem('scotfund_email')) || { recipients: '', frequency: 'none' },
+            settings: JSON.parse(localStorage.getItem('scotfund_settings')) || { priorityArea: 'National', webhookUrl: '', webhookNewOnly: false },
             lastScan: localStorage.getItem('scotfund_lastScan') || null,
             scanInterval: null
         };
@@ -921,7 +956,6 @@
         function init() {
             lucide.createIcons();
             loadSavedData();
-            populateCouncilList();
             renderDashboard();
             renderShortlist();
             renderSources();
@@ -929,25 +963,6 @@
             loadScheduleSettings();
             showSection('dashboard');
             initScheduler();
-        }
-
-        function populateCouncilList() {
-            const select = document.getElementById('filter-council');
-            if (!select) return;
-            SCOTTISH_COUNCILS.forEach(council => {
-                const opt = document.createElement('option');
-                opt.value = council;
-                opt.textContent = council;
-                if (council === state.primaryCouncil) opt.selected = true;
-                select.appendChild(opt);
-            });
-        }
-
-        function updatePrimaryCouncil() {
-            state.primaryCouncil = document.getElementById('filter-council').value;
-            saveData();
-            log(`📍 Primary area set to: ${state.primaryCouncil || 'National'}`, 'info');
-            applyFilters();
         }
 
         function toggleSelection(id) {
@@ -973,7 +988,21 @@
                 updateStats();
             }
             state.shortlist = JSON.parse(localStorage.getItem('scotfund_shortlist')) || [];
-            state.primaryCouncil = localStorage.getItem('scotfund_primaryCouncil') || '';
+            state.settings = JSON.parse(localStorage.getItem('scotfund_settings')) || { priorityArea: 'National', webhookUrl: '', webhookNewOnly: false };
+
+            // Sync UI
+            if (state.settings.priorityArea) {
+                const select = document.getElementById('priority-area');
+                if (select) select.value = state.settings.priorityArea;
+            }
+            if (state.settings.webhookUrl) {
+                const input = document.getElementById('webhook-url');
+                if (input) input.value = state.settings.webhookUrl;
+            }
+            if (state.settings.webhookNewOnly) {
+                const checkbox = document.getElementById('webhook-new-only');
+                if (checkbox) checkbox.checked = state.settings.webhookNewOnly;
+            }
         }
 
         function saveData() {
@@ -984,7 +1013,7 @@
             localStorage.setItem('scotfund_schedule', JSON.stringify(state.schedule));
             localStorage.setItem('scotfund_email', JSON.stringify(state.email));
             localStorage.setItem('scotfund_lastScan', state.lastScan);
-            localStorage.setItem('scotfund_primaryCouncil', state.primaryCouncil);
+            localStorage.setItem('scotfund_settings', JSON.stringify(state.settings));
         }
 
         // ========== UI CONTROLS ==========
@@ -1227,9 +1256,16 @@
                 const fullUrl = resolveUrl(source.url, href);
                 
                 // Smarter title extraction for generic link text
-                const parent = link.closest('article, section, div, li, tr, td');
+                let parent = link.closest('article, section, div, li, tr, td');
                 if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application)$/i.test(text) || text.length < 5) {
-                    const heading = parent ? parent.querySelector('h1, h2, h3, h4, h5, h6, strong, b') : null;
+                    // Try to find a heading in current or parent containers
+                    let heading = null;
+                    let currentSearch = parent;
+                    for (let depth = 0; depth < 3 && currentSearch && !heading; depth++) {
+                        heading = currentSearch.querySelector('h1, h2, h3, h4, h5, h6, strong, b');
+                        if (!heading) currentSearch = currentSearch.parentElement;
+                    }
+
                     if (heading && heading.textContent.trim().length > 5) {
                         text = heading.textContent.trim();
                     }
@@ -1240,16 +1276,7 @@
                 if (href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:') || href === '#') continue;
                 if (href.length < 5 || text.length < 5) continue;
                 
-                // Exclude images and other irrelevant file types
-                const irrelevantExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.mp4', '.mp3', '.zip', '.gz', '.exe', '.dmg', '.bmp', '.ico', '.woff', '.ttf'];
-                if (irrelevantExtensions.some(ext => fullUrl.toLowerCase().endsWith(ext))) continue;
-
-                // Exclude logos, branding, media kits, and social tracking
-                if (/logo|branding|press kit|media kit|identity guidelines|download our logo|facebook|twitter|linkedin|instagram|youtube|pixel|tracking|analytics/i.test(text.toLowerCase() + ' ' + href.toLowerCase())) {
-                    continue;
-                }
-
-                // BLACKLIST CHECK FIRST
+                // BLACKLIST CHECK FIRST (including extensions now)
                 if (isBlacklisted(fullUrl, text)) {
                     blacklistBlocked++;
                     state.blockedResults.push({
@@ -1329,9 +1356,17 @@
             const textLower = text.toLowerCase();
             const combined = urlLower + ' ' + textLower;
             
+            // Core irrelevance patterns (always active)
+            const coreIrrelevant = [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i];
+            if (coreIrrelevant.some(p => p.test(combined))) return true;
+
             return state.blacklist.some(item => {
                 if (!item.active) return false;
                 const pattern = item.pattern.toLowerCase();
+                // Match as file extension or as part of string
+                if (pattern.startsWith('.')) {
+                    return urlLower.endsWith(pattern) || urlLower.includes(pattern + '?') || urlLower.includes(pattern + '#');
+                }
                 return combined.includes(pattern);
             });
         }
@@ -1349,10 +1384,10 @@
             const matchDetails = [];
             
             // ENHANCED KEYWORD MATCHING
-            const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money'];
-            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba'];
-            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social'];
-            const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details'];
+            const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue'];
+            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt'];
+            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability'];
+            const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework'];
             
             let fundingMatch = false;
             fundingTerms.forEach(term => { if (text.includes(term)) fundingMatch = true; });
@@ -1385,17 +1420,13 @@
             if (/£[\d,]+/.test(text)) { score += 10; matchDetails.push({ key: 'Amount Found', points: 10 }); }
             if (/\d{1,2}\/\d{1,2}\/\d{4}|\d{1,2}\s+\w+\s+\d{4}/.test(text)) { score += 10; matchDetails.push({ key: 'Deadline Found', points: 10 }); }
 
-            // Priority Area Boost (New Logic)
+            // Priority Area Boost
             if (state.settings && state.settings.priorityArea && state.settings.priorityArea !== 'National') {
                 const area = state.settings.priorityArea;
-                if (text.includes(area)) {
+                if (text.toLowerCase().includes(area.toLowerCase())) {
                     score += 40;
                     matchDetails.push({ key: `Priority Area: ${area}`, points: 40 });
                 }
-            } else if (state.primaryCouncil && text.includes(state.primaryCouncil.toLowerCase())) {
-                // Backward compatibility
-                score += 25;
-                matchDetails.push({ key: `Legacy Area: ${state.primaryCouncil}`, points: 25 });
             }
             
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
@@ -1721,7 +1752,7 @@
                 const top3 = filtered.slice(0, 3);
                 const container = document.getElementById('top-3-container');
 
-                if (top3.length > 0) {
+                if (container) {
                     const placeholders = [
                         { title: 'Ready to Scan', desc: 'Run a scan to discover top verified funding opportunities across Scotland.', color: 'indigo' },
                         { title: 'Advanced Ranking', desc: 'Our intelligence engine ranks funds by relevance, quality, and urgency.', color: 'purple' },
