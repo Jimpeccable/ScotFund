@@ -67,9 +67,6 @@
             <button onclick="showSection('sources')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="sources">
                 <i data-lucide="globe" class="w-5 h-5"></i> Sources
             </button>
-            <button onclick="showSection('directory')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="directory">
-                <i data-lucide="book-open" class="w-5 h-5"></i> Funder Directory
-            </button>
             <button onclick="showSection('analytics')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="analytics">
                 <i data-lucide="bar-chart-3" class="w-5 h-5"></i> Analytics
             </button>
@@ -78,6 +75,9 @@
             </button>
             <button onclick="showSection('pipeline')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="pipeline">
                 <i data-lucide="kanban-square" class="w-5 h-5"></i> Pipeline
+            </button>
+            <button onclick="showSection('hub')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="hub">
+                <i data-lucide="library" class="w-5 h-5"></i> Knowledge Hub
             </button>
             <button onclick="showSection('blacklist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="blacklist">
                 <i data-lucide="shield-ban" class="w-5 h-5"></i> Blacklist
@@ -438,16 +438,21 @@
             </div>
         </section>
 
-        <!-- DIRECTORY SECTION -->
-        <section id="directory" class="hidden space-y-6">
+        <!-- SOURCES SECTION -->
+        <section id="sources" class="hidden space-y-6">
             <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold mb-2">Funder Directory</h2>
-                    <p class="text-slate-500">Explore all verified funding sources in our database</p>
+                    <h2 class="text-2xl font-bold mb-2">Funding Sources</h2>
+                    <p class="text-slate-500">Manage and explore verified Scottish funding portals</p>
                 </div>
-                <div class="relative min-w-[300px]">
-                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                    <input type="text" id="directory-search" oninput="renderDirectory()" placeholder="Search funders or keywords..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                <div class="flex flex-wrap gap-2">
+                    <div class="relative min-w-[250px]">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="sources-search" oninput="renderSources()" placeholder="Search sources..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <button onclick="showAddSourceModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Add Source
+                    </button>
                 </div>
             </header>
 
@@ -456,33 +461,17 @@
                     <i data-lucide="database" class="w-8 h-8"></i>
                 </div>
                 <div class="flex-1">
-                    <h3 class="font-bold text-indigo-900 mb-1">Intelligence Reference</h3>
-                    <p class="text-sm text-indigo-800 leading-relaxed">This directory contains the primary sources our scanner monitors. You can browse them manually or add new custom sources in the "Sources" tab.</p>
+                    <h3 class="font-bold text-indigo-900 mb-1">Source Intelligence</h3>
+                    <p class="text-sm text-indigo-800 leading-relaxed">Our universal scanner monitors these portals for new opportunities. You can add your own local sources or remove ones that aren't relevant to your organization.</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Total Sources</p>
-                    <p id="directory-count" class="text-3xl font-bold text-indigo-600">0</p>
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Active Sources</p>
+                    <p id="sources-count" class="text-3xl font-bold text-indigo-600">0</p>
                 </div>
             </div>
 
-            <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div id="sources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Populated by JS -->
-            </div>
-        </section>
-
-        <!-- SOURCES SECTION -->
-        <section id="sources" class="hidden space-y-6">
-            <header class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-bold mb-2">Premium Funding Sources</h2>
-                    <p class="text-slate-500">25+ verified Scottish funding portals</p>
-                </div>
-                <button onclick="showAddSourceModal()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all flex items-center gap-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Add Source
-                </button>
-            </header>
-
-            <div id="sources-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             </div>
         </section>
 
@@ -607,6 +596,68 @@
                     </div>
                     <div id="pipeline-decisions" class="space-y-3 min-h-[200px] rounded-2xl bg-green-50/20 p-2 border-2 border-dashed border-green-100"></div>
                 </div>
+            </div>
+        </section>
+
+        <!-- KNOWLEDGE HUB SECTION -->
+        <section id="hub" class="hidden space-y-8">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">Knowledge Hub</h2>
+                <p class="text-slate-500">Essential resources and guides for Scottish charities</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Governance & Compliance -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900">Governance & OSCR</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Key guidance for maintaining your charity status in Scotland.</p>
+                    <ul class="space-y-2">
+                        <li><a href="https://www.oscr.org.uk/managing-a-charity/charity-trustee-duties/" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> Trustee Duties Guide</a></li>
+                        <li><a href="https://www.oscr.org.uk/managing-a-charity/trustee-training-and-events/trustee-introductory-pack/" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> OSCR Introductory Pack</a></li>
+                        <li><a href="https://www.oscr.org.uk/managing-a-charity/financial-governance/" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> Financial Governance</a></li>
+                    </ul>
+                </div>
+
+                <!-- Funding Strategy -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900">Funding Strategy</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Tools and advice for building a sustainable funding mix.</p>
+                    <ul class="space-y-2">
+                        <li><a href="https://scvo.scot/support/funding/guides" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> SCVO Funding Guides</a></li>
+                        <li><a href="https://funding.scot/help-and-advice" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> Funding Scotland Advice</a></li>
+                        <li><a href="https://www.foundationscotland.org.uk/apply-for-funding/top-tips-for-applicants" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> Top Application Tips</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support & Networking -->
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+                    <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-900">Local Support (TSIs)</h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">Connect with your local Third Sector Interface for tailored support.</p>
+                    <ul class="space-y-2">
+                        <li><a href="https://tsi.scot/find-your-tsi/" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> Find Your Local TSI</a></li>
+                        <li><a href="https://scvo.scot/membership" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> SCVO Membership</a></li>
+                        <li><a href="https://www.dtascot.org.uk/" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> DTAS Resources</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold mb-2">Need 1-to-1 Support?</h3>
+                    <p class="text-indigo-100 text-sm leading-relaxed">The Scottish Council for Voluntary Organisations (SCVO) offers a range of support services including digital advice, funding help, and HR support.</p>
+                </div>
+                <a href="https://scvo.scot/support" target="_blank" class="px-6 py-3 bg-white text-indigo-600 rounded-xl font-bold hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-xl">
+                    Explore SCVO Support <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
             </div>
         </section>
 
@@ -789,6 +840,7 @@
                 <button onclick="switchModalTab('overview')" id="tab-overview" class="px-4 py-3 text-[10px] font-bold border-b-2 border-indigo-600 text-indigo-600 transition-all uppercase tracking-widest">Overview</button>
                 <button onclick="switchModalTab('guidance')" id="tab-guidance" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Guidance</button>
                 <button onclick="switchModalTab('matching')" id="tab-matching" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Matching</button>
+                <button onclick="switchModalTab('tasks')" id="tab-tasks" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Tasks</button>
                 <button onclick="switchModalTab('notes')" id="tab-notes" class="px-4 py-3 text-[10px] font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">My Notes</button>
             </div>
 
@@ -884,6 +936,28 @@
                     </div>
                     <div id="detail-match-breakdown" class="bg-slate-50 rounded-xl p-4 space-y-3">
                         <p class="text-xs text-slate-500 italic text-center py-4">Direct discovery match based on funder keywords.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Tab -->
+            <div id="modal-panel-tasks" class="modal-panel p-8 hidden space-y-6">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-1 h-4 bg-orange-500 rounded-full"></div>
+                            <p class="text-xs font-bold text-slate-500 uppercase">Application Tasks</p>
+                        </div>
+                        <span id="task-progress-text" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">0/0 Complete</span>
+                    </div>
+
+                    <div class="flex gap-2 mb-6">
+                        <input type="text" id="new-task-input" placeholder="Add a new task (e.g. Prepare accounts)..." class="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <button onclick="addTask()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 transition-all">Add</button>
+                    </div>
+
+                    <div id="task-list" class="space-y-2">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </div>
@@ -1395,7 +1469,8 @@
 
             if (id === 'shortlist') renderShortlist();
             if (id === 'pipeline') renderPipeline();
-            if (id === 'directory') renderDirectory();
+            if (id === 'sources') renderSources();
+            if (id === 'hub') lucide.createIcons();
             if (id === 'dashboard') renderDashboard();
             if (id === 'analytics') renderAnalytics();
 
@@ -1405,7 +1480,7 @@
 
         function switchModalTab(panelId) {
             // Update buttons
-            ['overview', 'guidance', 'matching', 'notes'].forEach(id => {
+            ['overview', 'guidance', 'matching', 'tasks', 'notes'].forEach(id => {
                 const btn = document.getElementById(`tab-${id}`);
                 if (!btn) return;
                 btn.classList.remove('border-indigo-600', 'text-indigo-600');
@@ -1854,8 +1929,12 @@
                 criteria: 'Visit the website for full eligibility criteria and application details',
                 description: 'Funding opportunity for Scottish organisations',
                 email: 'Check Portal',
-                geography: 'Scotland (Various)'
+                geography: 'Scotland (Various)',
+                turnoverLimit: null,
+                exclusions: []
             };
+
+            const lowerText = text.toLowerCase();
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
@@ -1922,11 +2001,33 @@
             const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
             if (emailMatch) details.email = emailMatch[0];
 
-            // GEOGRAPHY DETECTION
+            // GEOGRAPHY DETECTION & EXCLUSIONS
             const regions = ['Highlands', 'Islands', 'Argyll', 'Bute', 'Ayrshire', 'Lothian', 'Borders', 'Fife', 'Grampian', 'Tayside', 'Central', 'Lanarkshire', 'Glasgow', 'Edinburgh', 'Aberdeen', 'Dundee', 'Inverness', 'Perth', 'Stirling', 'Western Isles', 'Shetland', 'Orkney', 'Moray', 'Angus', 'Dumfries', 'Galloway', 'Falkirk', 'Renfrewshire', 'Inverclyde', 'Clackmannanshire'];
             for (const region of regions) {
-                if (text.includes(region.toLowerCase())) {
-                    details.geography = region;
+                const regLower = region.toLowerCase();
+                if (lowerText.includes(regLower)) {
+                    // Check for exclusion pattern: "outside X", "not in X", "excluding X"
+                    const exclusionPattern = new RegExp(`(?:outside|not in|excluding|except)\\s+${regLower}`, 'i');
+                    if (exclusionPattern.test(text)) {
+                        details.exclusions.push(region);
+                    } else {
+                        details.geography = region;
+                    }
+                }
+            }
+
+            // TURNOVER LIMIT EXTRACTION
+            const turnoverPatterns = [
+                /(?:turnover|income)\s+(?:of\s+)?(?:less\s+than|under|up\s+to|not\s+exceeding|maximum)\s+£?([\d,kKmM.]+)/i,
+                /£?([\d,kKmM.]+)\s+maximum\s+(?:annual\s+)?(?:turnover|income)/i,
+                /(?:small\s+charities\s+with\s+income\s+under)\s+£?([\d,kKmM.]+)/i
+            ];
+
+            for (const pattern of turnoverPatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    details.turnoverLimit = extractNumericAmount(match[1]);
+                    details.criteria = `Turnover limit: £${details.turnoverLimit.toLocaleString()} - ` + details.criteria;
                     break;
                 }
             }
@@ -2346,44 +2447,6 @@
             });
         }
 
-        function renderDirectory() {
-            const grid = document.getElementById('directory-grid');
-            const search = document.getElementById('directory-search')?.value.toLowerCase() || '';
-            const countDisplay = document.getElementById('directory-count');
-
-            if (!grid) return;
-
-            const filtered = state.sources.filter(s =>
-                s.name.toLowerCase().includes(search) ||
-                s.keywords.some(k => k.toLowerCase().includes(search)) ||
-                s.url.toLowerCase().includes(search)
-            );
-
-            countDisplay.textContent = filtered.length;
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400">No sources found matching "${search}"</div>`;
-            } else {
-                grid.innerHTML = filtered.map(s => `
-                    <div class="bg-white rounded-xl border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-md transition-all group">
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="bg-slate-50 p-2 rounded-lg text-slate-400 group-hover:text-indigo-600 transition-colors">
-                                <i data-lucide="globe" class="w-5 h-5"></i>
-                            </div>
-                            <a href="${s.url}" target="_blank" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-                        <h4 class="font-bold text-slate-900 mb-1">${escapeHTML(s.name)}</h4>
-                        <p class="text-xs text-slate-400 truncate mb-4">${s.url}</p>
-                        <div class="flex flex-wrap gap-1.5 mt-auto">
-                            ${s.keywords.map(kw => `<span class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase tracking-wider">${escapeHTML(kw)}</span>`).join('')}
-                        </div>
-                    </div>
-                `).join('');
-            }
-            lucide.createIcons();
-        }
 
         function renderPipeline() {
             const statuses = {
@@ -2825,7 +2888,11 @@
             document.getElementById('detail-quality').textContent = qualityText;
             document.getElementById('detail-quality').className = `text-sm font-bold ${qualityColor}`;
 
-            document.getElementById('detail-geography').textContent = opp.geography || 'Scotland (Various)';
+            let geographyText = opp.geography || 'Scotland (Various)';
+            if (opp.exclusions && opp.exclusions.length > 0) {
+                geographyText += ` (Excluding: ${opp.exclusions.join(', ')})`;
+            }
+            document.getElementById('detail-geography').textContent = geographyText;
             document.getElementById('detail-email').textContent = opp.email || 'Check Portal';
             if (opp.email) {
                 document.getElementById('detail-email').innerHTML = `<a href="mailto:${opp.email}" class="hover:underline text-indigo-600">${opp.email}</a>`;
@@ -2833,6 +2900,8 @@
 
             document.getElementById('detail-criteria').textContent = opp.criteria;
             document.getElementById('detail-description').textContent = opp.description;
+
+            renderTasks(opp);
             document.getElementById('detail-keywords').innerHTML = opp.keywords.map(kw => 
                 `<span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[10px] font-bold uppercase tracking-tight">${kw}</span>`
             ).join('');
@@ -2983,22 +3052,119 @@
         }
 
         // ========== SOURCE MANAGEMENT ==========
-        function renderSources() {
-            const grid = document.getElementById('sources-grid');
-            grid.innerHTML = state.sources.map(s => `
-                <div class="bg-white rounded-xl border border-slate-200 p-4">
-                    <div class="flex items-start justify-between mb-3">
-                        <h4 class="font-bold text-slate-900">${s.name}</h4>
-                        <button onclick="removeSource('${s.id}')" class="p-1.5 hover:bg-red-50 rounded text-red-600">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
+        function addTask() {
+            const input = document.getElementById('new-task-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const opp = state.opportunities.find(o => o.id === currentDetailID) || state.shortlist.find(o => o.id === currentDetailID);
+            if (!opp) return;
+
+            if (!opp.tasks) opp.tasks = [];
+            opp.tasks.push({
+                id: crypto.randomUUID(),
+                text,
+                completed: false,
+                dateAdded: new Date().toISOString()
+            });
+
+            input.value = '';
+            saveData();
+            renderTasks(opp);
+            log(`✓ Task added: ${text}`, 'success');
+        }
+
+        function toggleTask(taskId) {
+            const opp = state.opportunities.find(o => o.id === currentDetailID) || state.shortlist.find(o => o.id === currentDetailID);
+            if (!opp || !opp.tasks) return;
+
+            const task = opp.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                saveData();
+                renderTasks(opp);
+            }
+        }
+
+        function deleteTask(taskId) {
+            const opp = state.opportunities.find(o => o.id === currentDetailID) || state.shortlist.find(o => o.id === currentDetailID);
+            if (!opp || !opp.tasks) return;
+
+            opp.tasks = opp.tasks.filter(t => t.id !== taskId);
+            saveData();
+            renderTasks(opp);
+        }
+
+        function renderTasks(opp) {
+            const container = document.getElementById('task-list');
+            const progressText = document.getElementById('task-progress-text');
+            if (!container) return;
+
+            if (!opp.tasks || opp.tasks.length === 0) {
+                container.innerHTML = `<div class="py-10 text-center text-slate-400 italic text-xs">No tasks yet. Add one above.</div>`;
+                if (progressText) progressText.textContent = '0/0 Complete';
+                return;
+            }
+
+            const completedCount = opp.tasks.filter(t => t.completed).length;
+            if (progressText) progressText.textContent = `${completedCount}/${opp.tasks.length} Complete`;
+
+            container.innerHTML = opp.tasks.map(t => `
+                <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-indigo-100 transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" onchange="toggleTask('${t.id}')" ${t.completed ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-sm ${t.completed ? 'text-slate-400 line-through' : 'text-slate-700'}">${escapeHTML(t.text)}</span>
                     </div>
-                    <p class="text-xs text-slate-400 truncate mb-3">${s.url}</p>
-                    <div class="flex flex-wrap gap-1">
-                        ${s.keywords.map(kw => `<span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded">${kw}</span>`).join('')}
-                    </div>
+                    <button onclick="deleteTask('${t.id}')" class="p-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-600">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
                 </div>
             `).join('');
+            lucide.createIcons();
+        }
+
+        function renderSources() {
+            const grid = document.getElementById('sources-grid');
+            const searchInput = document.getElementById('sources-search');
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            const countDisplay = document.getElementById('sources-count');
+
+            if (!grid) return;
+
+            const filtered = state.sources.filter(s =>
+                s.name.toLowerCase().includes(search) ||
+                s.keywords.some(k => k.toLowerCase().includes(search)) ||
+                s.url.toLowerCase().includes(search)
+            );
+
+            if (countDisplay) countDisplay.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400">No sources found matching "${search}"</div>`;
+            } else {
+                grid.innerHTML = filtered.map(s => `
+                    <div class="bg-white rounded-xl border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-md transition-all group">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="bg-slate-50 p-2 rounded-lg text-slate-400 group-hover:text-indigo-600 transition-colors">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="removeSource('${s.id}')" class="p-2 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-600 transition-all" title="Remove Source">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                                <a href="${s.url}" target="_blank" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all">
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-slate-900 mb-1">${escapeHTML(s.name)}</h4>
+                        <p class="text-xs text-slate-400 truncate mb-4">${s.url}</p>
+                        <div class="flex flex-wrap gap-1.5 mt-auto">
+                            ${s.keywords.map(kw => `<span class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase tracking-wider">${escapeHTML(kw)}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
             lucide.createIcons();
         }
 
