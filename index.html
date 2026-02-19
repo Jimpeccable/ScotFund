@@ -70,6 +70,9 @@
             <button onclick="showSection('shortlist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="shortlist">
                 <i data-lucide="star" class="w-5 h-5"></i> Shortlist
             </button>
+            <button onclick="showSection('pipeline')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="pipeline">
+                <i data-lucide="kanban-square" class="w-5 h-5"></i> Pipeline
+            </button>
             <button onclick="showSection('blacklist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="blacklist">
                 <i data-lucide="shield-ban" class="w-5 h-5"></i> Blacklist
             </button>
@@ -505,6 +508,52 @@
             <button onclick="clearLogs()" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200 transition-all">
                 Clear Logs
             </button>
+        </section>
+
+        <!-- PIPELINE SECTION -->
+        <section id="pipeline" class="hidden space-y-6">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">Application Pipeline</h2>
+                <p class="text-slate-500">Track the status of your active funding bids</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Not Started -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between px-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Not Started</h3>
+                        <span id="count-not-started" class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="pipeline-not-started" class="space-y-3 min-h-[200px] rounded-2xl bg-slate-50/50 p-2 border-2 border-dashed border-slate-100"></div>
+                </div>
+
+                <!-- In Progress -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between px-2">
+                        <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest">In Progress</h3>
+                        <span id="count-in-progress" class="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="pipeline-in-progress" class="space-y-3 min-h-[200px] rounded-2xl bg-blue-50/20 p-2 border-2 border-dashed border-blue-100"></div>
+                </div>
+
+                <!-- Submitted -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between px-2">
+                        <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest">Submitted</h3>
+                        <span id="count-submitted" class="bg-purple-50 text-purple-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="pipeline-submitted" class="space-y-3 min-h-[200px] rounded-2xl bg-purple-50/20 p-2 border-2 border-dashed border-purple-100"></div>
+                </div>
+
+                <!-- Final (Awarded/Declined) -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between px-2">
+                        <h3 class="text-xs font-bold text-green-500 uppercase tracking-widest">Decisions</h3>
+                        <span id="count-decisions" class="bg-green-50 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="pipeline-decisions" class="space-y-3 min-h-[200px] rounded-2xl bg-green-50/20 p-2 border-2 border-dashed border-green-100"></div>
+                </div>
+            </div>
         </section>
 
         <!-- PROFILE SECTION -->
@@ -1291,7 +1340,9 @@
             });
 
             if (id === 'shortlist') renderShortlist();
+            if (id === 'pipeline') renderPipeline();
             if (id === 'dashboard') renderDashboard();
+            if (id === 'analytics') renderAnalytics();
 
             if (window.innerWidth < 1024) toggleSidebar();
             lucide.createIcons();
@@ -2074,6 +2125,8 @@
         function renderDashboard() {
             const tbody = document.getElementById('opp-tbody');
             const empty = document.getElementById('empty-state');
+            const searchInput = document.getElementById('search-input');
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
             
             const filtered = applyFilters(true);
             
@@ -2110,8 +2163,8 @@
                             html += `
                                 <div class="bg-gradient-to-br ${gradients[i]} rounded-2xl p-6 text-white border shadow-xl flex flex-col cursor-pointer hover:scale-[1.02] transition-transform" onclick="showDetails('${opp.id}')">
                                     <p class="${textColors[i]} text-[10px] font-bold uppercase tracking-widest mb-2">⭐ Top Pick ${i + 1}</p>
-                                    <h3 class="text-lg font-bold mb-2 line-clamp-2">${opp.title}</h3>
-                                    <p class="text-white/70 text-xs mb-4 leading-relaxed line-clamp-3">${opp.description}</p>
+                                    <h3 class="text-lg font-bold mb-2 line-clamp-2">${escapeHTML(opp.title)}</h3>
+                                    <p class="text-white/70 text-xs mb-4 leading-relaxed line-clamp-3">${escapeHTML(opp.description)}</p>
                                     <div class="mt-auto space-y-2">
                                         <div class="flex items-center justify-between text-[10px] font-bold opacity-80 mb-1">
                                             <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Found: ${new Date(opp.dateDiscovered).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
@@ -2166,14 +2219,28 @@
                     
                     const isSelected = state.selectedIds.has(opp.id);
 
+                    // Search Highlighting
+                    let displayTitle = escapeHTML(opp.title);
+                    let displayFunder = escapeHTML(opp.funder);
+                    if (search && search.length > 2) {
+                        try {
+                            const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const regex = new RegExp(`(${escapedSearch})`, 'gi');
+                            displayTitle = displayTitle.replace(regex, '<span class="highlight">$1</span>');
+                            displayFunder = displayFunder.replace(regex, '<span class="highlight">$1</span>');
+                        } catch (e) {
+                            // Ignore regex errors
+                        }
+                    }
+
                     return `
-                        <tr class="hover:bg-slate-50 cursor-pointer" onclick="showDetails('${opp.id}')">
+                        <tr class="hover:bg-slate-50 cursor-pointer group" onclick="showDetails('${opp.id}')">
                             <td class="px-6 py-4" onclick="event.stopPropagation()">
                                 <input type="checkbox" onchange="toggleSelection('${opp.id}')" ${isSelected ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 mb-1">${opp.title}</div>
-                                <div class="text-xs text-slate-500">${opp.funder}</div>
+                                <div class="font-bold text-slate-900 mb-1">${displayTitle}</div>
+                                <div class="text-xs text-slate-500">${displayFunder}</div>
                             </td>
                             <td class="px-6 py-4 font-bold ${opp.amount.includes('varies') ? 'text-slate-500' : 'text-green-600'}">${opp.amount}</td>
                             <td class="px-6 py-4 text-sm ${opp.deadline.includes('Rolling') ? 'text-slate-500' : 'text-orange-600'}">${opp.deadline}</td>
@@ -2185,11 +2252,17 @@
                             </td>
                             <td class="px-6 py-4">${qualityBadge}</td>
                             <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end gap-2">
+                                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="event.stopPropagation(); shareOpportunity('${opp.url}')" class="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-400 hover:text-indigo-600" title="Copy Link">
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); emailOpportunity('${opp.id}')" class="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-400 hover:text-indigo-600" title="Share by Email">
+                                        <i data-lucide="mail" class="w-4 h-4"></i>
+                                    </button>
                                     <button onclick="event.stopPropagation(); toggleShortlist('${opp.id}')" class="p-2 hover:bg-amber-50 rounded-lg transition-all ${state.shortlist.some(s => s.id === opp.id) ? 'text-amber-500' : 'text-slate-400'}" title="Shortlist">
                                         <i data-lucide="star" class="w-4 h-4 ${state.shortlist.some(s => s.id === opp.id) ? 'fill-amber-500' : ''}"></i>
                                     </button>
-                                    <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-slate-100 rounded-lg inline-block hover:bg-indigo-600 hover:text-white transition-all">
+                                    <a href="${opp.url}" target="_blank" onclick="event.stopPropagation()" class="p-2 bg-slate-100 rounded-lg inline-block hover:bg-indigo-600 hover:text-white transition-all text-slate-600">
                                         <i data-lucide="external-link" class="w-4 h-4"></i>
                                     </a>
                                 </div>
@@ -2200,6 +2273,170 @@
             }
             
             lucide.createIcons();
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[m];
+            });
+        }
+
+        function renderPipeline() {
+            const statuses = {
+                'Not Started': { id: 'pipeline-not-started', count: 'count-not-started', items: [] },
+                'In Progress': { id: 'pipeline-in-progress', count: 'count-in-progress', items: [] },
+                'Submitted': { id: 'pipeline-submitted', count: 'count-submitted', items: [] },
+                'Decisions': { id: 'pipeline-decisions', count: 'count-decisions', items: [] }
+            };
+
+            const allItems = [...state.opportunities, ...state.shortlist];
+            const seen = new Set();
+            const tracked = [];
+
+            allItems.forEach(item => {
+                const status = item.applicationStatus || 'Not Started';
+                const isShortlisted = state.shortlist.some(s => s.id === item.id);
+
+                if (!seen.has(item.id) && (status !== 'Not Started' || isShortlisted)) {
+                    tracked.push(item);
+                    seen.add(item.id);
+                }
+            });
+
+            tracked.forEach(item => {
+                const status = item.applicationStatus || 'Not Started';
+                if (status === 'Awarded' || status === 'Declined') {
+                    statuses['Decisions'].items.push(item);
+                } else if (statuses[status]) {
+                    statuses[status].items.push(item);
+                } else {
+                    statuses['Not Started'].items.push(item);
+                }
+            });
+
+            Object.entries(statuses).forEach(([name, config]) => {
+                const container = document.getElementById(config.id);
+                const countBadge = document.getElementById(config.count);
+                if (!container) return;
+
+                countBadge.textContent = config.items.length;
+
+                if (config.items.length === 0) {
+                    container.innerHTML = `<p class="text-[10px] text-slate-400 italic text-center py-10">No items</p>`;
+                } else {
+                    container.innerHTML = config.items.map(item => `
+                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group" onclick="showDetails('${item.id}')">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${escapeHTML(item.funder)}</span>
+                                <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="more-vertical" class="w-3 h-3 text-slate-400"></i>
+                                </div>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-900 mb-2 line-clamp-2">${escapeHTML(item.title)}</h4>
+                            <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-50">
+                                <span class="text-[10px] font-bold text-green-600">${item.amount}</span>
+                                <span class="text-[10px] font-bold text-slate-400">${item.deadline === 'Rolling deadline' ? 'Rolling' : item.deadline}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            });
+            lucide.createIcons();
+        }
+
+        function renderAnalytics() {
+            const sectorsContainer = document.getElementById('analytics-sectors');
+            const regionsContainer = document.getElementById('analytics-regions');
+            const trendsContainer = document.getElementById('analytics-trends');
+
+            if (!state.opportunities.length) {
+                if (sectorsContainer) sectorsContainer.innerHTML = '<p class="text-slate-400 italic text-center py-10">Run a scan to see analytics</p>';
+                if (regionsContainer) regionsContainer.innerHTML = '<p class="text-slate-400 italic text-center py-10">Run a scan to see analytics</p>';
+                if (trendsContainer) trendsContainer.innerHTML = '';
+                return;
+            }
+
+            // 1. Sector Stats
+            const sectorCounts = {};
+            state.opportunities.forEach(o => {
+                if (o.category) {
+                    o.category.forEach(cat => {
+                        sectorCounts[cat] = (sectorCounts[cat] || 0) + 1;
+                    });
+                }
+            });
+            const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            if (sortedSectors.length > 0) {
+                const maxSector = sortedSectors[0][1];
+                if (sectorsContainer) {
+                    sectorsContainer.innerHTML = sortedSectors.map(([cat, count]) => `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold uppercase text-slate-500">
+                                <span>${cat}</span>
+                                <span>${count}</span>
+                            </div>
+                            <div class="w-full bg-slate-50 h-3 rounded-full overflow-hidden">
+                                <div class="bg-indigo-500 h-full transition-all" style="width: ${(count/maxSector)*100}%"></div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 2. Region Stats
+            const regionCounts = {};
+            state.opportunities.forEach(o => {
+                const reg = o.geography || 'Scotland (Various)';
+                regionCounts[reg] = (regionCounts[reg] || 0) + 1;
+            });
+            const sortedRegions = Object.entries(regionCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            if (sortedRegions.length > 0) {
+                const maxRegion = sortedRegions[0][1];
+                if (regionsContainer) {
+                    regionsContainer.innerHTML = sortedRegions.map(([reg, count]) => `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold uppercase text-slate-500">
+                                <span class="truncate pr-4">${reg}</span>
+                                <span>${count}</span>
+                            </div>
+                            <div class="w-full bg-slate-50 h-3 rounded-full overflow-hidden">
+                                <div class="bg-purple-500 h-full transition-all" style="width: ${(count/maxRegion)*100}%"></div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 3. Discovery Trends (30 days)
+            const days = 30;
+            const trendData = new Array(days).fill(0);
+            const now = new Date();
+
+            state.opportunities.forEach(o => {
+                const d = new Date(o.dateDiscovered);
+                const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+                if (diffDays < days && diffDays >= 0) {
+                    trendData[(days - 1) - diffDays]++;
+                }
+            });
+
+            if (trendsContainer) {
+                const maxTrend = Math.max(...trendData, 1);
+                trendsContainer.innerHTML = trendData.map((val, i) => `
+                    <div class="flex-1 bg-green-100 hover:bg-green-200 transition-colors rounded-t-sm relative group min-w-[12px]" style="height: ${Math.max(4, (val/maxTrend)*100)}%">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                            ${val} funds
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
 
         function applyFilters(returnData = false) {
@@ -2545,14 +2782,27 @@
             lucide.createIcons();
         }
 
-        async function shareOpportunity() {
-            if (!currentDetailURL) return;
+        async function shareOpportunity(specificUrl = null) {
+            const url = specificUrl || currentDetailURL;
+            if (!url) return;
             try {
-                await navigator.clipboard.writeText(currentDetailURL);
-                alert('Application link copied to clipboard!');
+                await navigator.clipboard.writeText(url);
+                if (!specificUrl) alert('Application link copied to clipboard!');
+                log('✓ Link copied to clipboard', 'success');
             } catch (err) {
                 log('Failed to copy link', 'error');
             }
+        }
+
+        function emailOpportunity(id) {
+            const opp = state.opportunities.find(o => o.id === id) || state.shortlist.find(o => o.id === id);
+            if (!opp) return;
+
+            const subject = encodeURIComponent(`Funding Opportunity: ${opp.title}`);
+            const body = encodeURIComponent(`Hi,\n\nI thought you might be interested in this funding opportunity I found on ScotFund Pro:\n\nTitle: ${opp.title}\nFunder: ${opp.funder}\nAmount: ${opp.amount}\nDeadline: ${opp.deadline}\n\nView details here: ${opp.url}\n\nSent via ScotFund Pro v8.0`);
+
+            window.open(`mailto:?subject=${subject}&body=${body}`);
+            log(`📧 Sharing via email: ${opp.title}`, 'info');
         }
 
         function exportToICSFromModal() {
