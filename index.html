@@ -737,17 +737,6 @@
             'https://api.codetabs.com/v1/proxy?quest='
         ];
 
-        const SCOTTISH_COUNCILS = [
-            "Aberdeen City", "Aberdeenshire", "Angus", "Argyll and Bute",
-            "City of Edinburgh", "Clackmannanshire", "Dumfries and Galloway", "Dundee City",
-            "East Ayrshire", "East Dunbartonshire", "East Lothian", "East Renfrewshire",
-            "Falkirk", "Fife", "Glasgow City", "Highland", "Inverclyde", "Midlothian",
-            "Moray", "Na h-Eileanan Siar", "North Ayrshire", "North Lanarkshire",
-            "Orkney Islands", "Perth and Kinross", "Renfrewshire", "Scottish Borders",
-            "Shetland Islands", "South Ayrshire", "South Lanarkshire", "Stirling",
-            "West Dunbartonshire", "West Lothian"
-        ];
-        
         let currentProxyIndex = 0;
         let currentDetailURL = '';
 
@@ -755,9 +744,9 @@
         const DEFAULT_SOURCES = [
             // Major National Funders
             { id: 'tnl', name: 'TNL Community Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes?location=scotland', keywords: ['lottery', 'community', 'scotland', 'grant', 'funding'] },
-            { id: 'foundation', name: 'Foundation Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/', keywords: ['foundation', 'grant', 'scotland', 'charity', 'funding'] },
+            { id: 'foundation', name: 'Foundation Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available', keywords: ['foundation', 'grant', 'scotland', 'charity', 'funding'] },
             { id: 'robertson', name: 'The Robertson Trust', url: 'https://www.therobertsontrust.org.uk/funding/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
-            { id: 'corra', name: 'Corra Foundation', url: 'https://www.corra.scot/grant-programmes/', keywords: ['community', 'grant', 'scotland', 'change', 'funding'] },
+            { id: 'corra', name: 'Corra Foundation', url: 'https://www.corra.scot/grants/', keywords: ['community', 'grant', 'scotland', 'change', 'funding'] },
             { id: 'youthlink', name: 'YouthLink Scotland', url: 'https://www.youthlink.scot/funds/', keywords: ['youth', 'young people', 'community', 'play', 'outdoor'] },
             { id: 'inspiring', name: 'Inspiring Scotland', url: 'https://inspiringscotland.org.uk/funds/', keywords: ['community', 'scotland', 'grant', 'funding', 'social'] },
             
@@ -845,7 +834,15 @@
             { id: 'fife-council', name: 'Fife Council Funding', url: 'https://www.fife.gov.uk/kb/docs/articles/community-life2/funding', keywords: ['fife', 'community', 'grant', 'funding', 'local'] },
             { id: 'aberdeen-city', name: 'Aberdeen City Council Funding', url: 'https://www.aberdeencity.gov.uk/services/strategy-performance-and-statistics/city-funding', keywords: ['aberdeen', 'community', 'grant', 'funding', 'local'] },
             { id: 'film-hub-scot', name: 'Film Hub Scotland', url: 'https://www.filmhubscotland.com/funding/', keywords: ['film', 'cinema', 'culture', 'scotland', 'grant'] },
-            { id: 'youth-scotland', name: 'Youth Scotland', url: 'https://www.youthscotland.org.uk/funding/', keywords: ['youth', 'young people', 'community', 'scotland', 'grant'] }
+            { id: 'youth-scotland', name: 'Youth Scotland', url: 'https://www.youthscotland.org.uk/funding/', keywords: ['youth', 'young people', 'community', 'scotland', 'grant'] },
+            { id: 'arnold-clark', name: 'Arnold Clark Community Fund', url: 'https://www.arnoldclark.com/community-fund', keywords: ['community', 'scotland', 'grant', 'funding'] },
+            { id: 'postcode-trust', name: 'People\'s Postcode Trust', url: 'https://www.postcodetrust.org.uk/apply-for-funding/', keywords: ['community', 'scotland', 'grant', 'funding'] },
+            { id: 'sse-renewables', name: 'SSE Renewables Community Fund', url: 'https://www.sserenewables.com/communities/community-funds/', keywords: ['community', 'scotland', 'environment', 'grant'] },
+            { id: 'morrisons-foundation', name: 'Morrisons Foundation', url: 'https://www.morrisonsfoundation.com/grant-funding-application-form/', keywords: ['charity', 'community', 'scotland', 'grant'] },
+            { id: 'bq-foundation', name: 'B&Q Foundation', url: 'https://bqfoundation.org.uk/apply-for-funding/', keywords: ['community', 'home', 'housing', 'scotland', 'grant'] },
+            { id: 'tesco-starts', name: 'Tesco Stronger Starts', url: 'https://tescostrongerstarts.org.uk/', keywords: ['community', 'youth', 'children', 'scotland', 'grant'] },
+            { id: 'scotmid', name: 'Scotmid Community Grants', url: 'https://scotmid.coop/community-and-charity/supporting-local-communities/community-grants/', keywords: ['community', 'local', 'scotland', 'grant'] },
+            { id: 'coop-foundation', name: 'Co-op Foundation', url: 'https://www.coopfoundation.org.uk/apply/', keywords: ['community', 'youth', 'scotland', 'grant'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -895,6 +892,9 @@
             // Irrelevant System Pages
             { pattern: '/login', description: 'Login pages', active: true },
             { pattern: '/register', description: 'Registration pages', active: true },
+            { pattern: '/cgi-bin/', description: 'System scripts', active: true },
+            { pattern: '/wp-includes/', description: 'WordPress system', active: true },
+            { pattern: '/node_modules/', description: 'Code libraries', active: true },
             { pattern: '/cart', description: 'Shopping cart', active: true },
             { pattern: '/checkout', description: 'Checkout pages', active: true },
             { pattern: '/my-account', description: 'User accounts', active: true },
@@ -930,6 +930,9 @@
             { pattern: '.ttf', description: 'Fonts', active: true },
             { pattern: '.wav', description: 'Audio', active: true },
             { pattern: '.mov', description: 'Video', active: true },
+            { pattern: '.ogg', description: 'Audio', active: true },
+            { pattern: '.m4v', description: 'Video', active: true },
+            { pattern: '.webm', description: 'Video', active: true },
 
             // User-Added Patterns (examples)
             { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
@@ -1116,8 +1119,8 @@
                         newOpps.forEach(opp => {
                             if (existingMap.has(opp.url)) {
                                 const existing = existingMap.get(opp.url);
-                                opp.dateDiscovered = existing.dateDiscovered || existing.dateAdded || new Date().toISOString();
                                 // Merge - new scan data takes precedence but keep discovery date
+                                opp.dateDiscovered = existing.dateDiscovered || existing.dateAdded || new Date().toISOString();
                                 existingMap.set(opp.url, opp);
                             } else {
                                 opp.dateDiscovered = new Date().toISOString();
@@ -1263,6 +1266,11 @@
                     let currentSearch = parent;
                     for (let depth = 0; depth < 3 && currentSearch && !heading; depth++) {
                         heading = currentSearch.querySelector('h1, h2, h3, h4, h5, h6, strong, b');
+                        if (!heading) {
+                            // Try previous sibling if we're in a container that might be just the link
+                            let prev = currentSearch.previousElementSibling;
+                            if (prev) heading = prev.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(prev.tagName) ? prev : null);
+                        }
                         if (!heading) currentSearch = currentSearch.parentElement;
                     }
 
@@ -1308,7 +1316,7 @@
                 const fullCombined = (text + ' ' + href + ' ' + context).toLowerCase();
                 
                 // Skip closed or suspended funds
-                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed/i.test(fullCombined)) {
+                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed|reached capacity|all funds allocated|not currently accepting/i.test(fullCombined)) {
                     continue;
                 }
 
@@ -1337,7 +1345,7 @@
                             quality: quality.level,
                             qualityScore: quality.score,
                             type: href.endsWith('.pdf') ? 'PDF Application' : 'Web Portal',
-                            dateAdded: new Date().toISOString(),
+                            dateDiscovered: new Date().toISOString(),
                             verified: quality.score >= 70
                         });
                         
@@ -1357,7 +1365,7 @@
             const combined = urlLower + ' ' + textLower;
             
             // Core irrelevance patterns (always active)
-            const coreIrrelevant = [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i];
+            const coreIrrelevant = [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i];
             if (coreIrrelevant.some(p => p.test(combined))) return true;
 
             return state.blacklist.some(item => {
@@ -1385,8 +1393,8 @@
             
             // ENHANCED KEYWORD MATCHING
             const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue'];
-            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt'];
-            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability'];
+            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht'];
+            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability'];
             const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework'];
             
             let fundingMatch = false;
@@ -1443,11 +1451,11 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /£([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:between|from)\s*£([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of)\s*£([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /£([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award)/i,
-                /grants?\s+(?:of|up to)\s*£([\d,kKmM.]+)/i
+                /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:between|from)\s*£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award)/i,
+                /grants?\s+(?:of|up to)\s*£?([\d,kKmM.]+)/i
             ];
             
             for (const pattern of amountPatterns) {
@@ -1508,7 +1516,7 @@
                 
                 paragraphs.forEach(p => {
                     const pText = p.textContent.trim();
-                    if (pText.length > 50 && pText.length < 700) {
+                    if (pText.length > 20 && pText.length < 800) {
                         const pLower = pText.toLowerCase();
                         if (pLower.includes('eligib') || pLower.includes('criteria') || pLower.includes('who can apply') || pLower.includes('can apply')) {
                             criteriaText += pText + ' ';
