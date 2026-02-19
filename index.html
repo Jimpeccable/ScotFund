@@ -67,6 +67,12 @@
             <button onclick="showSection('sources')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="sources">
                 <i data-lucide="globe" class="w-5 h-5"></i> Sources
             </button>
+            <button onclick="showSection('directory')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="directory">
+                <i data-lucide="book-open" class="w-5 h-5"></i> Funder Directory
+            </button>
+            <button onclick="showSection('analytics')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="analytics">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i> Analytics
+            </button>
             <button onclick="showSection('shortlist')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="shortlist">
                 <i data-lucide="star" class="w-5 h-5"></i> Shortlist
             </button>
@@ -78,9 +84,6 @@
             </button>
             <button onclick="showSection('scheduler')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="scheduler">
                 <i data-lucide="clock" class="w-5 h-5"></i> Scheduler
-            </button>
-            <button onclick="showSection('reports')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="reports">
-                <i data-lucide="file-text" class="w-5 h-5"></i> Console
             </button>
             <button onclick="showSection('profile')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="profile">
                 <i data-lucide="user" class="w-5 h-5"></i> My Profile
@@ -400,6 +403,73 @@
             </div>
         </section>
 
+        <!-- ANALYTICS SECTION -->
+        <section id="analytics" class="hidden space-y-8">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">Funding Intelligence Analytics</h2>
+                <p class="text-slate-500">Insights and trends from the verified funding database</p>
+            </header>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i> Sector Distribution
+                    </h3>
+                    <div id="analytics-sectors" class="space-y-4"></div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-6">
+                    <h3 class="font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="map" class="w-5 h-5 text-purple-600"></i> Regional Scope
+                    </h3>
+                    <div id="analytics-regions" class="space-y-4"></div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 md:col-span-2">
+                    <h3 class="font-bold mb-6 flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i> Discovery Trends (Last 30 Days)
+                    </h3>
+                    <div id="analytics-trends" class="flex items-end gap-1 h-48 border-b border-slate-100 pb-2 overflow-x-auto custom-scrollbar"></div>
+                    <div id="trends-labels" class="flex justify-between mt-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest px-2">
+                        <span>30 Days Ago</span>
+                        <span>Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIRECTORY SECTION -->
+        <section id="directory" class="hidden space-y-6">
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold mb-2">Funder Directory</h2>
+                    <p class="text-slate-500">Explore all verified funding sources in our database</p>
+                </div>
+                <div class="relative min-w-[300px]">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <input type="text" id="directory-search" oninput="renderDirectory()" placeholder="Search funders or keywords..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+            </header>
+
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
+                <div class="bg-white p-4 rounded-2xl text-indigo-600 shadow-sm">
+                    <i data-lucide="database" class="w-8 h-8"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-indigo-900 mb-1">Intelligence Reference</h3>
+                    <p class="text-sm text-indigo-800 leading-relaxed">This directory contains the primary sources our scanner monitors. You can browse them manually or add new custom sources in the "Sources" tab.</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Total Sources</p>
+                    <p id="directory-count" class="text-3xl font-bold text-indigo-600">0</p>
+                </div>
+            </div>
+
+            <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
         <!-- SOURCES SECTION -->
         <section id="sources" class="hidden space-y-6">
             <header class="flex items-center justify-between">
@@ -493,22 +563,6 @@
             </div>
         </section>
 
-        <section id="reports" class="hidden space-y-6">
-            <header>
-                <h2 class="text-2xl font-bold mb-2">System Console</h2>
-                <p class="text-slate-500">Real-time scanning logs and activity</p>
-            </header>
-
-            <div class="bg-slate-900 rounded-2xl p-6 text-white font-mono text-xs">
-                <div id="console-logs" class="space-y-1 h-96 overflow-y-auto log-container">
-                    <p class="text-slate-500">> System initialised and ready</p>
-                </div>
-            </div>
-
-            <button onclick="clearLogs()" class="px-4 py-2 bg-slate-100 rounded-lg font-bold hover:bg-slate-200 transition-all">
-                Clear Logs
-            </button>
-        </section>
 
         <!-- PIPELINE SECTION -->
         <section id="pipeline" class="hidden space-y-6">
@@ -1341,6 +1395,7 @@
 
             if (id === 'shortlist') renderShortlist();
             if (id === 'pipeline') renderPipeline();
+            if (id === 'directory') renderDirectory();
             if (id === 'dashboard') renderDashboard();
             if (id === 'analytics') renderAnalytics();
 
@@ -1374,6 +1429,7 @@
 
         function log(msg, type = 'info') {
             const container = document.getElementById('console-logs');
+            if (!container) return;
             const p = document.createElement('p');
             const colours = { info: 'text-slate-400', success: 'text-green-400', error: 'text-red-400', warn: 'text-yellow-400' };
             p.className = colours[type];
@@ -1383,7 +1439,8 @@
         }
 
         function clearLogs() {
-            document.getElementById('console-logs').innerHTML = '<p class="text-slate-500">> Logs cleared</p>';
+            const container = document.getElementById('console-logs');
+            if (container) container.innerHTML = '<p class="text-slate-500">> Logs cleared</p>';
         }
 
         // ========== ULTIMATE SCANNING ENGINE ==========
@@ -1661,6 +1718,7 @@
                             geography: details.geography,
                             keywords: match.keywords,
                             score: match.score,
+                            matchDetails: match.matchDetails,
                             quality: quality.level,
                             qualityScore: quality.score,
                             type: href.endsWith('.pdf') ? 'PDF Application' : 'Web Portal',
@@ -2288,6 +2346,45 @@
             });
         }
 
+        function renderDirectory() {
+            const grid = document.getElementById('directory-grid');
+            const search = document.getElementById('directory-search')?.value.toLowerCase() || '';
+            const countDisplay = document.getElementById('directory-count');
+
+            if (!grid) return;
+
+            const filtered = state.sources.filter(s =>
+                s.name.toLowerCase().includes(search) ||
+                s.keywords.some(k => k.toLowerCase().includes(search)) ||
+                s.url.toLowerCase().includes(search)
+            );
+
+            countDisplay.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400">No sources found matching "${search}"</div>`;
+            } else {
+                grid.innerHTML = filtered.map(s => `
+                    <div class="bg-white rounded-xl border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-md transition-all group">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="bg-slate-50 p-2 rounded-lg text-slate-400 group-hover:text-indigo-600 transition-colors">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                            </div>
+                            <a href="${s.url}" target="_blank" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-indigo-600 transition-all">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                        <h4 class="font-bold text-slate-900 mb-1">${escapeHTML(s.name)}</h4>
+                        <p class="text-xs text-slate-400 truncate mb-4">${s.url}</p>
+                        <div class="flex flex-wrap gap-1.5 mt-auto">
+                            ${s.keywords.map(kw => `<span class="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase tracking-wider">${escapeHTML(kw)}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
         function renderPipeline() {
             const statuses = {
                 'Not Started': { id: 'pipeline-not-started', count: 'count-not-started', items: [] },
@@ -2759,6 +2856,7 @@
                     opp.applicationStatus = e.target.value;
                     saveData();
                     if (document.getElementById('shortlist').classList.contains('hidden') === false) renderShortlist();
+                    if (document.getElementById('pipeline').classList.contains('hidden') === false) renderPipeline();
                     log(`✓ Status updated: ${opp.applicationStatus}`, 'success');
                 };
             }
@@ -2766,15 +2864,34 @@
             // Match Breakdown
             const breakdown = document.getElementById('detail-match-breakdown');
             if (breakdown) {
-                if (opp.matchDetails) {
-                    breakdown.innerHTML = opp.matchDetails.map(m => `
+                if (opp.matchDetails && opp.matchDetails.length > 0) {
+                    let html = `<div class="space-y-3 mb-4">`;
+                    html += opp.matchDetails.map(m => `
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-medium text-slate-600">${m.key}</span>
-                            <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-widest">+${m.points} pts</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-1.5 h-1.5 rounded-full ${m.points > 0 ? 'bg-green-400' : 'bg-red-400'}"></div>
+                                <span class="text-xs font-medium text-slate-600">${m.key}</span>
+                            </div>
+                            <span class="text-[10px] font-bold ${m.points > 0 ? 'text-indigo-600 bg-indigo-50' : 'text-red-600 bg-red-50'} px-2 py-0.5 rounded uppercase tracking-widest">${m.points > 0 ? '+' : ''}${m.points} pts</span>
                         </div>
                     `).join('');
+                    html += `</div>`;
+                    html += `
+                        <div class="mt-4 pt-4 border-t border-slate-200 flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-900">Total Intelligence Score</span>
+                            <span class="text-lg font-bold text-indigo-600">${opp.score}</span>
+                        </div>
+                    `;
+                    breakdown.innerHTML = html;
                 } else {
-                    breakdown.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">Direct discovery match based on funder keywords.</p>';
+                    breakdown.innerHTML = `
+                        <div class="py-8 text-center">
+                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-300">
+                                <i data-lucide="target" class="w-6 h-6"></i>
+                            </div>
+                            <p class="text-xs text-slate-500 italic">This opportunity was matched via global funder keywords. Run a fresh scan to see granular matching details.</p>
+                        </div>
+                    `;
                 }
             }
             
