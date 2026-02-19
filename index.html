@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScotFund Pro Ultimate | Scottish Funding Intelligence</title>
+    <title>ScotFund Pro | Universal Scottish Funding Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -44,7 +44,7 @@
             <div class="bg-indigo-600 p-1.5 rounded-lg text-white">
                 <i data-lucide="shield-check" class="w-5 h-5"></i>
             </div>
-            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span></h1>
+            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span> <span class="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded ml-1">v8.0</span></h1>
         </button>
         <button onclick="toggleSidebar()" class="p-2 bg-slate-100 rounded-lg">
             <i data-lucide="menu" class="w-6 h-6"></i>
@@ -79,12 +79,21 @@
             <button onclick="showSection('reports')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="reports">
                 <i data-lucide="file-text" class="w-5 h-5"></i> Console
             </button>
+            <button onclick="showSection('profile')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="profile">
+                <i data-lucide="user" class="w-5 h-5"></i> My Profile
+            </button>
             <button onclick="showSection('settings')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="settings">
                 <i data-lucide="settings" class="w-5 h-5"></i> Settings
             </button>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-slate-100 space-y-3">
+            <div id="user-display" class="p-3 bg-slate-50 rounded-xl hidden mb-2">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Account</p>
+                <p id="user-name-display" class="text-sm font-bold text-slate-900 truncate"></p>
+                <p id="user-org-display" class="text-[10px] text-slate-500 truncate"></p>
+                <button onclick="logout()" class="text-[9px] font-bold text-red-600 uppercase mt-2 hover:underline">Logout</button>
+            </div>
             <div id="scan-status-indicator" class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 <span class="w-2 h-2 rounded-full bg-slate-300"></span> System Idle
             </div>
@@ -103,8 +112,8 @@
         <section id="dashboard" class="space-y-8">
             <header class="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                    <h2 class="text-3xl font-bold mb-2">Smart Play Network: Live Funding</h2>
-                    <p class="text-slate-500">Advanced tracker with intelligent filtering for Scottish organisations</p>
+                    <h2 class="text-3xl font-bold mb-2">ScotFund Pro: Universal Intelligence</h2>
+                    <p class="text-slate-500">Advanced funding discovery for all Scottish charities, groups, and organisations</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <div class="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg">
@@ -258,6 +267,12 @@
                             <option value="rolling">Rolling/Open</option>
                         </select>
                     </div>
+                    <div class="flex items-end">
+                        <label class="flex items-center gap-2 p-2 bg-indigo-50 border border-indigo-100 rounded-lg cursor-pointer w-full hover:bg-indigo-100 transition-colors h-[38px]">
+                            <input type="checkbox" id="filter-recommended" onchange="applyFilters()" class="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-[10px] font-bold text-indigo-700 uppercase">For You ⭐</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -319,6 +334,7 @@
                             <tr>
                                 <th class="px-6 py-4">Opportunity</th>
                                 <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Status</th>
                                 <th class="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
@@ -491,6 +507,76 @@
             </button>
         </section>
 
+        <!-- PROFILE SECTION -->
+        <section id="profile" class="hidden space-y-6">
+            <header>
+                <h2 class="text-2xl font-bold mb-2">My Profile</h2>
+                <p class="text-slate-500">Manage your organisation details and preferences</p>
+            </header>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+                    <h3 class="font-bold flex items-center gap-2">
+                        <i data-lucide="building-2" class="w-5 h-5 text-indigo-600"></i> Organisation Details
+                    </h3>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Organisation Name</label>
+                        <input type="text" id="profile-org-name" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Organisation Type</label>
+                        <select id="profile-org-type" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="Charity">Charity / SCIO</option>
+                            <option value="Community Group">Unincorporated Community Group</option>
+                            <option value="Social Enterprise">Social Enterprise / CIC</option>
+                            <option value="Trust">Trust / Foundation</option>
+                            <option value="Other">Other Non-Profit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Your Name</label>
+                        <input type="text" id="profile-user-name" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button onclick="updateProfile()" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">
+                        Save Profile
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+                    <h3 class="font-bold flex items-center gap-2">
+                        <i data-lucide="target" class="w-5 h-5 text-purple-600"></i> Funding Interests
+                    </h3>
+                    <p class="text-xs text-slate-500 italic">Select your primary areas of interest to boost relevant funding in your feed.</p>
+                    <div id="profile-interests" class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="play" class="rounded border-slate-300"> <span class="text-xs font-medium">Play & Outdoor</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="youth" class="rounded border-slate-300"> <span class="text-xs font-medium">Youth & Children</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="community" class="rounded border-slate-300"> <span class="text-xs font-medium">Community</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="environment" class="rounded border-slate-300"> <span class="text-xs font-medium">Environment</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="arts" class="rounded border-slate-300"> <span class="text-xs font-medium">Arts & Culture</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="health" class="rounded border-slate-300"> <span class="text-xs font-medium">Health</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="education" class="rounded border-slate-300"> <span class="text-xs font-medium">Education</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="sport" class="rounded border-slate-300"> <span class="text-xs font-medium">Sport</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="settings" class="hidden space-y-6">
             <header>
                 <h2 class="text-2xl font-bold mb-2">Settings</h2>
@@ -514,8 +600,8 @@
                 </div>
 
                 <div class="border-t border-slate-200 pt-6">
-                    <h3 class="font-bold mb-2">About ScotFund Pro Ultimate</h3>
-                    <p class="text-sm text-slate-600">Version 7.5 - Ultimate funding intelligence with Regional Intelligence and Workflow tools.</p>
+                    <h3 class="font-bold mb-2">About ScotFund Pro</h3>
+                    <p class="text-sm text-slate-600">Version 8.0 - Universal Scottish funding intelligence for charities and community groups.</p>
                 </div>
             </div>
         </section>
@@ -642,6 +728,16 @@
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Contact</p>
                         <p id="detail-email" class="text-sm font-medium text-indigo-600 truncate"></p>
                     </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</p>
+                        <select id="detail-app-status" class="text-xs font-bold bg-slate-100 rounded px-2 py-1 outline-none focus:ring-1 focus:ring-indigo-500">
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Submitted">Submitted</option>
+                            <option value="Awarded">Awarded 🥳</option>
+                            <option value="Declined">Declined</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="space-y-4">
                     <div>
@@ -724,6 +820,36 @@
                     <button onclick="blacklistThisURL()" class="px-4 py-3 bg-white border border-slate-200 text-red-600 rounded-lg font-bold hover:bg-red-50 transition-all flex items-center justify-center gap-2 ml-auto" title="Blacklist">
                         <i data-lucide="shield-ban" class="w-4 h-4"></i>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Login / Register -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl">
+            <div class="text-center mb-8">
+                <div class="bg-indigo-600 w-16 h-16 rounded-2xl text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold">Welcome to ScotFund Pro</h3>
+                <p class="text-slate-500 text-sm mt-2">Universal Scottish Funding Intelligence</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Full Name</label>
+                    <input type="text" id="login-name" placeholder="e.g. Jane Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Organisation</label>
+                    <input type="text" id="login-org" placeholder="e.g. Glasgow Community Trust" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="pt-4">
+                    <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
+                        Start Using ScotFund Pro
+                    </button>
+                    <p class="text-[10px] text-center text-slate-400 mt-4">By continuing, you agree to store your data locally on this device.</p>
                 </div>
             </div>
         </div>
@@ -857,7 +983,18 @@
             { id: 'robertson-small', name: 'The Robertson Trust - Small Grants', url: 'https://www.therobertsontrust.org.uk/funding/small-grants/', keywords: ['poverty', 'trauma', 'scotland', 'community', 'grant'] },
             { id: 'robertson-large', name: 'The Robertson Trust - Large Grants', url: 'https://www.therobertsontrust.org.uk/funding/large-grants/', keywords: ['poverty', 'trauma', 'scotland', 'community', 'grant'] },
             { id: 'coalfields-scotland', name: 'The Coalfields Regeneration Trust Scotland', url: 'https://www.coalfields-regen.org.uk/scotland', keywords: ['coalfields', 'community', 'scotland', 'regeneration', 'grant'] },
-            { id: 'funding-scotland', name: 'Funding Scotland (SCVO)', url: 'https://funding.scot/', keywords: ['scotland', 'charity', 'community', 'funding', 'search'] }
+            { id: 'funding-scotland', name: 'Funding Scotland (SCVO)', url: 'https://funding.scot/', keywords: ['scotland', 'charity', 'community', 'funding', 'search'] },
+            { id: 'zero-waste', name: 'Zero Waste Scotland', url: 'https://www.zerowastescotland.org.uk/funding', keywords: ['environment', 'circular economy', 'waste', 'recycling', 'grant'] },
+            { id: 'local-energy', name: 'Local Energy Scotland', url: 'https://localenergy.scot/funding/', keywords: ['energy', 'renewables', 'community', 'cares', 'climate'] },
+            { id: 'dtas', name: 'DTAS', url: 'https://dtascot.org.uk/funding', keywords: ['development trust', 'community', 'land', 'assets', 'scotland'] },
+            { id: 'gcvs', name: 'GCVS (Glasgow TSI)', url: 'https://www.gcvs.org.uk/funding/', keywords: ['glasgow', 'voluntary', 'charity', 'funding', 'support'] },
+            { id: 'evoc', name: 'EVOC (Edinburgh TSI)', url: 'https://www.evoc.org.uk/funding/', keywords: ['edinburgh', 'voluntary', 'charity', 'funding', 'support'] },
+            { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'fife-voluntary', name: 'Fife Voluntary Action', url: 'https://www.fva.org/funding.asp', keywords: ['fife', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'aberdeen-tsi', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'voluntary', 'charity', 'funding', 'support'] },
+            { id: 'scot-ent', name: 'Scottish Enterprise', url: 'https://www.scottish-enterprise.com/support-for-businesses/funding-and-grants', keywords: ['business', 'innovation', 'growth', 'scotland', 'grant'] },
+            { id: 'bus-gateway', name: 'Business Gateway', url: 'https://www.bgateway.com/resources/funding', keywords: ['business', 'startup', 'funding', 'scotland', 'advice'] },
+            { id: 'social-ent-scot', name: 'Social Enterprise Scotland', url: 'https://socialenterprise.scot/funding/', keywords: ['social enterprise', 'cic', 'scio', 'impact', 'funding'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -952,6 +1089,15 @@
             { pattern: '.tiff', description: 'Images', active: true },
             { pattern: '.heic', description: 'Images', active: true },
             { pattern: '.raw', description: 'Images', active: true },
+            { pattern: '.eps', description: 'Vector images', active: true },
+            { pattern: '.ai', description: 'Adobe Illustrator', active: true },
+            { pattern: '.psd', description: 'Photoshop files', active: true },
+            { pattern: 'press-release', description: 'News/Press', active: true },
+            { pattern: 'job-opportunities', description: 'Job listings', active: true },
+            { pattern: 'working-for-us', description: 'Job listings', active: true },
+            { pattern: 'annual-report', description: 'Corporate reports', active: true },
+            { pattern: 'governance', description: 'Governance pages', active: true },
+            { pattern: 'transparency', description: 'Corporate pages', active: true },
 
             // User-Added Patterns (examples)
             { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
@@ -969,6 +1115,7 @@
             isScanning: false,
             schedule: JSON.parse(localStorage.getItem('scotfund_schedule')) || { frequency: 'manual', time: '09:00' },
             email: JSON.parse(localStorage.getItem('scotfund_email')) || { recipients: '', frequency: 'none' },
+            user: JSON.parse(localStorage.getItem('scotfund_user')) || null,
             settings: JSON.parse(localStorage.getItem('scotfund_settings')) || { priorityArea: 'National', webhookUrl: '', webhookNewOnly: false },
             lastScan: localStorage.getItem('scotfund_lastScan') || null,
             scanInterval: null
@@ -979,6 +1126,7 @@
             lucide.createIcons();
             migrateData();
             syncUIWithState();
+            syncUserDisplay();
             updateStats();
             renderDashboard();
             renderShortlist();
@@ -987,6 +1135,88 @@
             loadScheduleSettings();
             showSection('dashboard');
             initScheduler();
+        }
+
+        function login() {
+            const name = document.getElementById('login-name').value.trim();
+            const org = document.getElementById('login-org').value.trim();
+
+            if (!name || !org) {
+                alert('Please fill in your name and organisation');
+                return;
+            }
+
+            state.user = {
+                name,
+                org,
+                orgType: 'Charity',
+                interests: []
+            };
+
+            saveData();
+            document.getElementById('login-modal').classList.add('hidden');
+            syncUserDisplay();
+            log(`✓ Logged in as ${name} (${org})`, 'success');
+        }
+
+        function logout() {
+            if (!confirm('Are you sure you want to logout? Your saved data will remain on this device.')) return;
+            state.user = null;
+            saveData();
+            location.reload();
+        }
+
+        function syncUserDisplay() {
+            const display = document.getElementById('user-display');
+            const loginModal = document.getElementById('login-modal');
+
+            if (state.user) {
+                display.classList.remove('hidden');
+                document.getElementById('user-name-display').textContent = state.user.name;
+                document.getElementById('user-org-display').textContent = state.user.org;
+
+                // Sync Profile inputs
+                document.getElementById('profile-org-name').value = state.user.org;
+                document.getElementById('profile-org-type').value = state.user.orgType || 'Charity';
+                document.getElementById('profile-user-name').value = state.user.name;
+
+                // Sync interests
+                if (state.user.interests) {
+                    document.querySelectorAll('#profile-interests input').forEach(cb => {
+                        cb.checked = state.user.interests.includes(cb.value);
+                    });
+                }
+            } else {
+                display.classList.add('hidden');
+                loginModal.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        function updateProfile() {
+            const org = document.getElementById('profile-org-name').value.trim();
+            const type = document.getElementById('profile-org-type').value;
+            const name = document.getElementById('profile-user-name').value.trim();
+
+            const interests = [];
+            document.querySelectorAll('#profile-interests input:checked').forEach(cb => interests.push(cb.value));
+
+            if (!org || !name) {
+                alert('Name and Organisation are required');
+                return;
+            }
+
+            state.user = {
+                name,
+                org,
+                orgType: type,
+                interests
+            };
+
+            saveData();
+            syncUserDisplay();
+            log('✓ Profile updated successfully', 'success');
+            applyFilters(); // Re-rank based on new interests
         }
 
         function toggleSelection(id) {
@@ -1041,6 +1271,7 @@
             localStorage.setItem('scotfund_blacklist', JSON.stringify(state.blacklist));
             localStorage.setItem('scotfund_schedule', JSON.stringify(state.schedule));
             localStorage.setItem('scotfund_email', JSON.stringify(state.email));
+            localStorage.setItem('scotfund_user', JSON.stringify(state.user));
             localStorage.setItem('scotfund_lastScan', state.lastScan);
             localStorage.setItem('scotfund_settings', JSON.stringify(state.settings));
         }
@@ -1214,7 +1445,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        source: 'ScotFund Pro Ultimate v7.5',
+                        source: 'ScotFund Pro v8.0',
                         timestamp: new Date().toISOString(),
                         count: payload.length,
                         opportunities: payload
@@ -1284,24 +1515,33 @@
                 let text = link.textContent.trim();
                 const fullUrl = resolveUrl(source.url, href);
                 
-                // Smarter title extraction for generic link text
-                let parent = link.closest('article, section, div, li, tr, td');
-                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application)$/i.test(text) || text.length < 5) {
-                    // Try to find a heading in current or parent containers
-                    let heading = null;
-                    let currentSearch = parent;
-                    for (let depth = 0; depth < 3 && currentSearch && !heading; depth++) {
-                        heading = currentSearch.querySelector('h1, h2, h3, h4, h5, h6, strong, b');
-                        if (!heading) {
-                            // Try previous sibling if we're in a container that might be just the link
-                            let prev = currentSearch.previousElementSibling;
-                            if (prev) heading = prev.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(prev.tagName) ? prev : null);
-                        }
-                        if (!heading) currentSearch = currentSearch.parentElement;
-                    }
+                // Smarter title extraction
+                const ariaLabel = link.getAttribute('aria-label');
+                const linkTitle = link.getAttribute('title');
 
-                    if (heading && heading.textContent.trim().length > 5) {
-                        text = heading.textContent.trim();
+                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application)$/i.test(text) || text.length < 5) {
+                    if (ariaLabel && ariaLabel.trim().length > 5) {
+                        text = ariaLabel.trim();
+                    } else if (linkTitle && linkTitle.trim().length > 5) {
+                        text = linkTitle.trim();
+                    } else {
+                        // Try to find a heading in current or parent containers
+                        let parent = link.closest('article, section, div, li, tr, td');
+                        let heading = null;
+                        let currentSearch = parent;
+                        for (let depth = 0; depth < 3 && currentSearch && !heading; depth++) {
+                            heading = currentSearch.querySelector('h1, h2, h3, h4, h5, h6, strong, b');
+                            if (!heading) {
+                                // Try previous sibling if we're in a container that might be just the link
+                                let prev = currentSearch.previousElementSibling;
+                                if (prev) heading = prev.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(prev.tagName) ? prev : null);
+                            }
+                            if (!heading) currentSearch = currentSearch.parentElement;
+                        }
+
+                        if (heading && heading.textContent.trim().length > 5) {
+                            text = heading.textContent.trim();
+                        }
                     }
                 }
 
@@ -1420,10 +1660,11 @@
             const matchDetails = [];
             
             // ENHANCED KEYWORD MATCHING
-            const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue'];
-            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht'];
-            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability'];
-            const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework'];
+            const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue', 'subsidy', 'pot'];
+            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht', 'grampian', 'tayside', 'lothian', 'borders', 'strathclyde', 'forth valley'];
+            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health'];
+            const orgTerms = ['cic', 'scio', 'charity', 'voluntary group', 'trust', 'foundation', 'social enterprise', 'community interest company', 'scottish charitable incorporated organisation', 'third sector', 'ngo'];
+            const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal'];
             
             let fundingMatch = false;
             fundingTerms.forEach(term => { if (text.includes(term)) fundingMatch = true; });
@@ -1438,6 +1679,14 @@
                     score += 10;
                     foundKeywords.push(term);
                     matchDetails.push({ key: `Topic: ${term}`, points: 10 });
+                }
+            });
+
+            orgTerms.forEach(term => {
+                if (text.includes(term)) {
+                    score += 15;
+                    foundKeywords.push(term);
+                    matchDetails.push({ key: `Org Type: ${term}`, points: 15 });
                 }
             });
 
@@ -1464,6 +1713,26 @@
                     matchDetails.push({ key: `Priority Area: ${area}`, points: 40 });
                 }
             }
+
+            // User Interest Boost
+            if (state.user && state.user.interests) {
+                state.user.interests.forEach(interest => {
+                    if (text.toLowerCase().includes(interest.toLowerCase())) {
+                        score += 25;
+                        foundKeywords.push(interest);
+                        matchDetails.push({ key: `User Interest: ${interest}`, points: 25 });
+                    }
+                });
+            }
+
+            // Org Type Boost
+            if (state.user && state.user.orgType) {
+                const orgType = state.user.orgType.toLowerCase();
+                if (text.toLowerCase().includes(orgType)) {
+                    score += 20;
+                    matchDetails.push({ key: `Matching Org Type: ${state.user.orgType}`, points: 20 });
+                }
+            }
             
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
@@ -1483,9 +1752,10 @@
             const amountPatterns = [
                 /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:between|from)\s*£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award)/i,
-                /grants?\s+(?:of|up to)\s*£?([\d,kKmM.]+)/i
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
+                /grants?\s+(?:of|up to|around)\s*£?([\d,kKmM.]+)/i,
+                /(?:£|gbp)\s*([\d,kKmM.]+)/i
             ];
             
             for (const pattern of amountPatterns) {
@@ -1504,10 +1774,11 @@
             const deadlinePatterns = [
                 /deadline[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /closes?[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
-                /(?:by|before)[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
+                /(?:by|before|until)[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /apply by[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
-                /(\d{1,2}\/\d{1,2}\/\d{4})/,
-                /(\d{1,2}\s+\w+\s+\d{4})/
+                /(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/,
+                /(\d{1,2}\s+\w+\s+\d{2,4})/,
+                /(\w+\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})/
             ];
             
             for (const pattern of deadlinePatterns) {
@@ -1756,6 +2027,11 @@
                             <div class="text-xs text-slate-500">${opp.funder}</div>
                         </td>
                         <td class="px-6 py-4 font-bold text-green-600">${opp.amount}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${getStatusColor(opp.applicationStatus)}">
+                                ${opp.applicationStatus || 'Not Started'}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
                                 <button onclick="event.stopPropagation(); toggleShortlist('${opp.id}')" class="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-all" title="Remove from Shortlist">
@@ -1770,6 +2046,16 @@
                 `).join('');
             }
             lucide.createIcons();
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'In Progress': return 'bg-blue-100 text-blue-700';
+                case 'Submitted': return 'bg-purple-100 text-purple-700';
+                case 'Awarded': return 'bg-green-100 text-green-700';
+                case 'Declined': return 'bg-red-100 text-red-700';
+                default: return 'bg-slate-100 text-slate-700';
+            }
         }
 
         function exportShortlistCSV() {
@@ -1922,8 +2208,13 @@
             const amount = document.getElementById('filter-amount')?.value || '';
             const deadline = document.getElementById('filter-deadline')?.value || '';
             const quality = document.getElementById('filter-quality')?.value || '';
+            const recommended = document.getElementById('filter-recommended')?.checked || false;
             
             let filtered = [...state.opportunities];
+
+            if (recommended) {
+                filtered = filtered.filter(opp => opp.score >= 80);
+            }
             
             if (search) {
                 filtered = filtered.filter(opp => 
@@ -2220,6 +2511,18 @@
                 notesInput.oninput = (e) => {
                     opp.notes = e.target.value;
                     saveData();
+                };
+            }
+
+            // Load Application Status
+            const statusSelect = document.getElementById('detail-app-status');
+            if (statusSelect) {
+                statusSelect.value = opp.applicationStatus || 'Not Started';
+                statusSelect.onchange = (e) => {
+                    opp.applicationStatus = e.target.value;
+                    saveData();
+                    if (document.getElementById('shortlist').classList.contains('hidden') === false) renderShortlist();
+                    log(`✓ Status updated: ${opp.applicationStatus}`, 'success');
                 };
             }
 
@@ -2723,7 +3026,7 @@
                 email: state.email,
                 settings: state.settings,
                 exportDate: new Date().toISOString(),
-                version: '7.5-ultimate'
+                version: '8.0'
             };
             
             downloadFile('scotfund-ultimate-backup.json', JSON.stringify(data, null, 2), 'application/json');
