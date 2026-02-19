@@ -842,7 +842,22 @@
             { id: 'bq-foundation', name: 'B&Q Foundation', url: 'https://bqfoundation.org.uk/apply-for-funding/', keywords: ['community', 'home', 'housing', 'scotland', 'grant'] },
             { id: 'tesco-starts', name: 'Tesco Stronger Starts', url: 'https://tescostrongerstarts.org.uk/', keywords: ['community', 'youth', 'children', 'scotland', 'grant'] },
             { id: 'scotmid', name: 'Scotmid Community Grants', url: 'https://scotmid.coop/community-and-charity/supporting-local-communities/community-grants/', keywords: ['community', 'local', 'scotland', 'grant'] },
-            { id: 'coop-foundation', name: 'Co-op Foundation', url: 'https://www.coopfoundation.org.uk/apply/', keywords: ['community', 'youth', 'scotland', 'grant'] }
+            { id: 'coop-foundation', name: 'Co-op Foundation', url: 'https://www.coopfoundation.org.uk/apply/', keywords: ['community', 'youth', 'scotland', 'grant'] },
+            { id: 'impact-funding', name: 'Impact Funding Partners', url: 'https://impactfundingpartners.com/funds', keywords: ['scotland', 'community', 'equality', 'wellbeing', 'grant'] },
+            { id: 'young-start', name: 'Young Start (TNL)', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/young-start', keywords: ['youth', 'scotland', 'young people', 'community', 'grant'] },
+            { id: 'awards-for-all', name: 'National Lottery Awards for All Scotland', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/national-lottery-awards-for-all-scotland', keywords: ['community', 'scotland', 'grant', 'small', 'funding'] },
+            { id: 'community-led', name: 'Community-Led (TNL)', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/community-led', keywords: ['community', 'scotland', 'grant', 'disadvantage', 'funding'] },
+            { id: 'cost-of-living', name: 'Cost of Living Support Scotland (TNL)', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/cost-of-living-support-scotland', keywords: ['poverty', 'scotland', 'crisis', 'community', 'grant'] },
+            { id: 'clothworkers', name: 'The Clothworkers\' Foundation', url: 'https://www.clothworkersfoundation.org.uk/', keywords: ['charity', 'capital', 'scotland', 'disadvantage', 'grant'] },
+            { id: 'bernard-sunley', name: 'The Bernard Sunley Foundation', url: 'https://bernardsunley.org/', keywords: ['charity', 'capital', 'scotland', 'community', 'grant'] },
+            { id: 'rayne-foundation', name: 'The Rayne Foundation', url: 'https://www.raynefoundation.org.uk/', keywords: ['charity', 'social', 'scotland', 'arts', 'grant'] },
+            { id: 'schroder-charity', name: 'The Schroder Charity Trust', url: 'https://schrodercharitytrust.org/', keywords: ['charity', 'scotland', 'culture', 'environment', 'grant'] },
+            { id: 'trusthouse', name: 'The Trusthouse Charitable Foundation', url: 'https://www.trusthousecharitablefoundation.org.uk/', keywords: ['community', 'scotland', 'deprived', 'grant', 'funding'] },
+            { id: 'screen-scotland', name: 'Screen Scotland', url: 'https://www.screen.scot/funding-and-support', keywords: ['film', 'screen', 'culture', 'scotland', 'grant'] },
+            { id: 'robertson-small', name: 'The Robertson Trust - Small Grants', url: 'https://www.therobertsontrust.org.uk/funding/small-grants/', keywords: ['poverty', 'trauma', 'scotland', 'community', 'grant'] },
+            { id: 'robertson-large', name: 'The Robertson Trust - Large Grants', url: 'https://www.therobertsontrust.org.uk/funding/large-grants/', keywords: ['poverty', 'trauma', 'scotland', 'community', 'grant'] },
+            { id: 'coalfields-scotland', name: 'The Coalfields Regeneration Trust Scotland', url: 'https://www.coalfields-regen.org.uk/scotland', keywords: ['coalfields', 'community', 'scotland', 'regeneration', 'grant'] },
+            { id: 'funding-scotland', name: 'Funding Scotland (SCVO)', url: 'https://funding.scot/', keywords: ['scotland', 'charity', 'community', 'funding', 'search'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -933,6 +948,10 @@
             { pattern: '.ogg', description: 'Audio', active: true },
             { pattern: '.m4v', description: 'Video', active: true },
             { pattern: '.webm', description: 'Video', active: true },
+            { pattern: '.tif', description: 'Images', active: true },
+            { pattern: '.tiff', description: 'Images', active: true },
+            { pattern: '.heic', description: 'Images', active: true },
+            { pattern: '.raw', description: 'Images', active: true },
 
             // User-Added Patterns (examples)
             { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
@@ -941,7 +960,7 @@
         ];
 
         let state = {
-            opportunities: [],
+            opportunities: JSON.parse(localStorage.getItem('scotfund_opportunities')) || [],
             selectedIds: new Set(),
             shortlist: JSON.parse(localStorage.getItem('scotfund_shortlist')) || [],
             blockedResults: [],
@@ -958,7 +977,9 @@
         // ========== INITIALISATION ==========
         function init() {
             lucide.createIcons();
-            loadSavedData();
+            migrateData();
+            syncUIWithState();
+            updateStats();
             renderDashboard();
             renderShortlist();
             renderSources();
@@ -984,16 +1005,21 @@
             renderDashboard();
         }
 
-        function loadSavedData() {
-            const saved = localStorage.getItem('scotfund_opportunities');
-            if (saved) {
-                state.opportunities = JSON.parse(saved);
-                updateStats();
-            }
-            state.shortlist = JSON.parse(localStorage.getItem('scotfund_shortlist')) || [];
-            state.settings = JSON.parse(localStorage.getItem('scotfund_settings')) || { priorityArea: 'National', webhookUrl: '', webhookNewOnly: false };
+        function migrateData() {
+            let migrated = false;
+            state.opportunities = state.opportunities.map(o => {
+                if (o.dateAdded && !o.dateDiscovered) {
+                    o.dateDiscovered = o.dateAdded;
+                    delete o.dateAdded;
+                    migrated = true;
+                }
+                return o;
+            });
+            if (migrated) saveData();
+        }
 
-            // Sync UI
+        function syncUIWithState() {
+            // Sync UI with settings
             if (state.settings.priorityArea) {
                 const select = document.getElementById('priority-area');
                 if (select) select.value = state.settings.priorityArea;
@@ -1120,7 +1146,7 @@
                             if (existingMap.has(opp.url)) {
                                 const existing = existingMap.get(opp.url);
                                 // Merge - new scan data takes precedence but keep discovery date
-                                opp.dateDiscovered = existing.dateDiscovered || existing.dateAdded || new Date().toISOString();
+                                opp.dateDiscovered = existing.dateDiscovered || new Date().toISOString();
                                 existingMap.set(opp.url, opp);
                             } else {
                                 opp.dateDiscovered = new Date().toISOString();
@@ -1157,7 +1183,7 @@
             // Handle Email Reporting
             if (state.email.frequency !== 'none') {
                 const hasNew = state.opportunities.some(o => {
-                    const diff = new Date() - new Date(o.dateDiscovered || o.dateAdded);
+                    const diff = new Date() - new Date(o.dateDiscovered);
                     return diff < 3600000; // Found in last hour
                 });
 
@@ -1179,7 +1205,7 @@
                 if (state.settings.webhookNewOnly) {
                     const oneDayAgo = new Date();
                     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-                    payload = payload.filter(o => new Date(o.dateDiscovered || o.dateAdded) > oneDayAgo);
+                    payload = payload.filter(o => new Date(o.dateDiscovered) > oneDayAgo);
                 }
 
                 if (payload.length === 0 && state.settings.webhookNewOnly) return;
@@ -1245,9 +1271,9 @@
             // WHITELIST PATTERNS - Only allow these types of links
             const whitelistPatterns = [
                 /apply/i, /application/i, /guidance/i, /criteria/i, /eligibility/i,
-                /fund/i, /grant/i, /programme/i, /scheme/i, /award/i,
-                /how-to/i, /information/i, /details/i, /guidelines/i,
-                /\.pdf$/i, /download/i
+                /fund/i, /grant/i, /programme/i, /scheme/i, /award/i, /bursary/i,
+                /how-to/i, /information/i, /details/i, /guidelines/i, /prospectus/i,
+                /\.pdf$/i, /download/i, /form/i
             ];
             
             let whitelistPassed = 0;
@@ -1340,6 +1366,8 @@
                             category: details.category,
                             criteria: details.criteria,
                             description: details.description,
+                            email: details.email,
+                            geography: details.geography,
                             keywords: match.keywords,
                             score: match.score,
                             quality: quality.level,
@@ -1446,7 +1474,9 @@
                 deadline: 'Rolling deadline',
                 category: [],
                 criteria: 'Visit the website for full eligibility criteria and application details',
-                description: 'Funding opportunity for Scottish organisations'
+                description: 'Funding opportunity for Scottish organisations',
+                email: 'Check Portal',
+                geography: 'Scotland (Various)'
             };
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
@@ -1507,6 +1537,19 @@
             if (text.includes('social') || text.includes('poverty') || text.includes('trauma') || text.includes('inclusion') || text.includes('equity') || text.includes('diversity')) categories.push('social');
             
             details.category = categories.length > 0 ? categories : ['general'];
+
+            // EMAIL EXTRACTION
+            const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+            if (emailMatch) details.email = emailMatch[0];
+
+            // GEOGRAPHY DETECTION
+            const regions = ['Highlands', 'Islands', 'Argyll', 'Bute', 'Ayrshire', 'Lothian', 'Borders', 'Fife', 'Grampian', 'Tayside', 'Central', 'Lanarkshire', 'Glasgow', 'Edinburgh', 'Aberdeen', 'Dundee', 'Inverness', 'Perth', 'Stirling', 'Western Isles', 'Shetland', 'Orkney', 'Moray', 'Angus', 'Dumfries', 'Galloway', 'Falkirk', 'Renfrewshire', 'Inverclyde', 'Clackmannanshire'];
+            for (const region of regions) {
+                if (text.includes(region.toLowerCase())) {
+                    details.geography = region;
+                    break;
+                }
+            }
             
             // IMPROVED CRITERIA & DESCRIPTION EXTRACTION
             if (element) {
@@ -1785,7 +1828,7 @@
                                     <p class="text-white/70 text-xs mb-4 leading-relaxed line-clamp-3">${opp.description}</p>
                                     <div class="mt-auto space-y-2">
                                         <div class="flex items-center justify-between text-[10px] font-bold opacity-80 mb-1">
-                                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Found: ${new Date(opp.dateDiscovered || opp.dateAdded).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Found: ${new Date(opp.dateDiscovered).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                             <span class="px-1.5 py-0.5 bg-white/20 rounded-md">⭐ Top Quality</span>
                                         </div>
                                         <div class="flex items-center justify-between text-[11px] font-bold">
@@ -1930,17 +1973,21 @@
 
         function extractNumericAmount(amountStr) {
             if (!amountStr) return 0;
-            // Match £ followed by digits/commas/dots and optional k/m suffix
-            const match = amountStr.match(/£([\d,.]+)\s*([kKmM])?/);
-            if (!match) return 0;
+            // Find all £ amounts and capture optional k/m suffix
+            const matches = amountStr.matchAll(/£([\d,.]+)\s*([kKmM])?/gi);
+            let maxVal = 0;
 
-            let val = parseFloat(match[1].replace(/,/g, ''));
-            const suffix = match[2] ? match[2].toLowerCase() : '';
+            for (const match of matches) {
+                let val = parseFloat(match[1].replace(/,/g, ''));
+                const suffix = match[2] ? match[2].toLowerCase() : '';
 
-            if (suffix === 'k') val *= 1000;
-            else if (suffix === 'm') val *= 1000000;
+                if (suffix === 'k') val *= 1000;
+                else if (suffix === 'm') val *= 1000000;
 
-            return Math.round(val);
+                if (val > maxVal) maxVal = val;
+            }
+
+            return Math.round(maxVal);
         }
 
         function updateStats() {
@@ -2145,7 +2192,7 @@
                 `<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold uppercase tracking-wider">${cat}</span>`
             ).join(' ');
 
-            const discoveredDate = new Date(opp.dateDiscovered || opp.dateAdded || new Date()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+            const discoveredDate = new Date(opp.dateDiscovered || new Date()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
             document.getElementById('detail-date').textContent = discoveredDate;
 
             const qualityText = opp.verified ? '⭐ Verified High' : (opp.quality === 'medium' ? '📋 Partial Info' : '⚠️ Basic Info');
@@ -2341,7 +2388,7 @@
                 const oneWeekAgo = new Date();
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
                 list = list.filter(o => {
-                    const d = new Date(o.dateDiscovered || o.dateAdded);
+                    const d = new Date(o.dateDiscovered);
                     return !isNaN(d) && d > oneWeekAgo;
                 });
             }
@@ -2610,7 +2657,7 @@
                 const oneWeekAgo = new Date();
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
                 list = list.filter(o => {
-                    const d = new Date(o.dateDiscovered || o.dateAdded);
+                    const d = new Date(o.dateDiscovered);
                     return !isNaN(d) && d > oneWeekAgo;
                 });
             }
