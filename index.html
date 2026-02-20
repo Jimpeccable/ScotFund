@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScotFund Pro | Universal Scottish Funding Intelligence</title>
+    <title>ScotFund Pro v8.2 | Universal Scottish Funding Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -13,8 +13,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .scanning-active { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .log-container::-webkit-scrollbar { width: 4px; }
-        .log-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         @media (max-width: 1023px) {
             #sidebar { transform: translateX(-100%); transition: transform 0.3s; }
             #sidebar.open { transform: translateX(0); }
@@ -44,7 +42,7 @@
             <div class="bg-indigo-600 p-1.5 rounded-lg text-white">
                 <i data-lucide="shield-check" class="w-5 h-5"></i>
             </div>
-            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span> <span class="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded ml-1">v8.0</span></h1>
+            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span> <span class="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded ml-1">v8.1</span></h1>
         </button>
         <button onclick="toggleSidebar()" class="p-2 bg-slate-100 rounded-lg">
             <i data-lucide="menu" class="w-6 h-6"></i>
@@ -54,10 +52,13 @@
     <!-- Sidebar -->
     <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 flex flex-col p-6 z-50 lg:translate-x-0 overflow-y-auto">
         <button onclick="showSection('dashboard')" class="hidden lg:flex items-center gap-3 mb-10 hover:opacity-80 transition-opacity">
-            <div class="bg-indigo-600 p-2 rounded-xl text-white">
+            <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-200">
                 <i data-lucide="shield-check"></i>
             </div>
-            <h1 class="text-xl font-bold">ScotFund<span class="text-indigo-600">Pro</span></h1>
+            <div>
+                <h1 class="text-xl font-bold leading-none">ScotFund<span class="text-indigo-600">Pro</span></h1>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">v8.2 Intelligence</p>
+            </div>
         </button>
         
         <nav class="space-y-1 flex-1">
@@ -160,6 +161,46 @@
                 <div class="bg-white p-5 rounded-2xl border border-slate-200">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Last Scan</p>
                     <p id="stat-last-scan" class="text-xs font-bold text-slate-900">Never</p>
+                </div>
+            </div>
+
+            <!-- Dashboard Onboarding Checklist -->
+            <div id="onboarding-checklist" class="mb-8 hidden">
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Personalise Your Intelligence</h3>
+                                <p class="text-[11px] text-slate-500">Complete these steps to unlock higher matching accuracy.</p>
+                            </div>
+                        </div>
+                        <button onclick="document.getElementById('onboarding-checklist').classList.add('hidden')" class="text-slate-400 hover:text-slate-600">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div id="check-profile" class="bg-white p-4 rounded-xl border border-indigo-100 flex items-center gap-3 opacity-50 transition-all cursor-pointer hover:border-indigo-200" onclick="showSection('profile')">
+                            <div class="check-icon bg-slate-100 p-1 rounded-full text-slate-400">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Set Org Type</span>
+                        </div>
+                        <div id="check-interests" class="bg-white p-4 rounded-xl border border-indigo-100 flex items-center gap-3 opacity-50 transition-all cursor-pointer hover:border-indigo-200" onclick="showSection('profile')">
+                            <div class="check-icon bg-slate-100 p-1 rounded-full text-slate-400">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Select Interests</span>
+                        </div>
+                        <div id="check-scan" class="bg-white p-4 rounded-xl border border-indigo-100 flex items-center gap-3 opacity-50 transition-all cursor-pointer hover:border-indigo-200" onclick="runUltimateScan()">
+                            <div class="check-icon bg-slate-100 p-1 rounded-full text-slate-400">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Run First Scan</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1171,7 +1212,53 @@
             { id: 'aberdeen-tsi', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'voluntary', 'charity', 'funding', 'support'] },
             { id: 'scot-ent', name: 'Scottish Enterprise', url: 'https://www.scottish-enterprise.com/support-for-businesses/funding-and-grants', keywords: ['business', 'innovation', 'growth', 'scotland', 'grant'] },
             { id: 'bus-gateway', name: 'Business Gateway', url: 'https://www.bgateway.com/resources/funding', keywords: ['business', 'startup', 'funding', 'scotland', 'advice'] },
-            { id: 'social-ent-scot', name: 'Social Enterprise Scotland', url: 'https://socialenterprise.scot/funding/', keywords: ['social enterprise', 'cic', 'scio', 'impact', 'funding'] }
+            { id: 'social-ent-scot', name: 'Social Enterprise Scotland', url: 'https://socialenterprise.scot/funding/', keywords: ['social enterprise', 'cic', 'scio', 'impact', 'funding'] },
+
+            // Additional Local Authority & Regional Portals
+            { id: 'aberdeenshire-council', name: 'Aberdeenshire Council Grants', url: 'https://www.aberdeenshire.gov.uk/communities-and-events/grants/', keywords: ['aberdeenshire', 'community', 'grant', 'local'] },
+            { id: 'angus-council', name: 'Angus Council Community Grants', url: 'https://www.angus.gov.uk/community_and_leisure/community_grants', keywords: ['angus', 'community', 'grant', 'local'] },
+            { id: 'argyll-council', name: 'Argyll and Bute Council Grants', url: 'https://www.argyll-bute.gov.uk/community-life-and-leisure/grants-and-funding', keywords: ['argyll', 'bute', 'community', 'grant', 'local'] },
+            { id: 'highland-council', name: 'Highland Council Funding', url: 'https://www.highland.gov.uk/info/335/community_advice/437/community_funding', keywords: ['highland', 'community', 'grant', 'local'] },
+            { id: 'perth-kinross-council', name: 'Perth & Kinross Council Grants', url: 'https://www.pkc.gov.uk/communitygrants', keywords: ['perth', 'kinross', 'community', 'grant', 'local'] },
+            { id: 'borders-council', name: 'Scottish Borders Council Funding', url: 'https://www.scotborders.gov.uk/info/20042/community_grants_and_funding', keywords: ['borders', 'community', 'grant', 'local'] },
+            { id: 'south-lanark-council', name: 'South Lanarkshire Community Grants', url: 'https://www.southlanarkshire.gov.uk/info/200168/community_grants', keywords: ['south lanarkshire', 'community', 'grant', 'local'] },
+            { id: 'north-lanark-council', name: 'North Lanarkshire Community Grants', url: 'https://www.northlanarkshire.gov.uk/community-and-leisure/community-grants', keywords: ['north lanarkshire', 'community', 'grant', 'local'] },
+            { id: 'west-lothian-council', name: 'West Lothian Community Grants', url: 'https://www.westlothian.gov.uk/community-grants', keywords: ['west lothian', 'community', 'grant', 'local'] },
+            { id: 'east-lothian-council', name: 'East Lothian Grants & Funding', url: 'https://www.eastlothian.gov.uk/info/210597/grants_and_funding', keywords: ['east lothian', 'community', 'grant', 'local'] },
+            { id: 'midlothian-council', name: 'Midlothian Community Grants', url: 'https://www.midlothian.gov.uk/info/200284/community_grants', keywords: ['midlothian', 'community', 'grant', 'local'] },
+            { id: 'renfrewshire-council', name: 'Renfrewshire Community Grants', url: 'https://www.renfrewshire.gov.uk/article/2301/Community-grants', keywords: ['renfrewshire', 'community', 'grant', 'local'] },
+            { id: 'east-renfrew-council', name: 'East Renfrewshire Community Grants', url: 'https://www.eastrenfrewshire.gov.uk/community-grants', keywords: ['east renfrewshire', 'community', 'grant', 'local'] },
+            { id: 'inverclyde-council', name: 'Inverclyde Grants & Funding', url: 'https://www.inverclyde.gov.uk/community-life-and-leisure/grants-and-funding', keywords: ['inverclyde', 'community', 'grant', 'local'] },
+            { id: 'west-dunbarton-council', name: 'West Dunbartonshire Community Funding', url: 'https://www.westdunbartonshire.gov.uk/community/community-planning/community-funding/', keywords: ['west dunbartonshire', 'community', 'grant', 'local'] },
+            { id: 'east-dunbarton-council', name: 'East Dunbartonshire Community Grants', url: 'https://www.eastdunbarton.gov.uk/residents/community-planning-and-empowerment/community-grants', keywords: ['east dunbartonshire', 'community', 'grant', 'local'] },
+            { id: 'stirling-council', name: 'Stirling Council Community Grants', url: 'https://www.stirling.gov.uk/community-life-and-leisure/community-grants/', keywords: ['stirling', 'community', 'grant', 'local'] },
+            { id: 'clacks-council', name: 'Clackmannanshire Community Grants', url: 'https://www.clacks.gov.uk/community/grants/', keywords: ['clackmannanshire', 'community', 'grant', 'local'] },
+            { id: 'moray-council', name: 'Moray Council Funding', url: 'http://www.moray.gov.uk/moray_standard/page_100155.html', keywords: ['moray', 'community', 'grant', 'local'] },
+            { id: 'dumfries-galloway-council', name: 'Dumfries and Galloway Council Grants', url: 'https://www.dumgal.gov.uk/grants', keywords: ['dumfries', 'galloway', 'community', 'grant', 'local'] },
+            { id: 'south-ayrshire-council', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
+            { id: 'north-ayrshire-council', name: 'North Ayrshire Community Funding', url: 'https://www.north-ayrshire.gov.uk/community-life/community-funding.aspx', keywords: ['north ayrshire', 'community', 'grant', 'local'] },
+            { id: 'orkney-council', name: 'Orkney Islands Council Funding', url: 'https://www.orkney.gov.uk/Service-Directory/C/community-council-grant-schemes.htm', keywords: ['orkney', 'community', 'grant', 'local'] },
+            { id: 'shetland-council', name: 'Shetland Islands Council Grants', url: 'https://www.shetland.gov.uk/community/grants-funding', keywords: ['shetland', 'community', 'grant', 'local'] },
+            { id: 'western-isles-council', name: 'Na h-Eileanan Siar Council Funding', url: 'https://www.cne-siar.gov.uk/social-care-and-health/community-grants/', keywords: ['western isles', 'lewis', 'harris', 'community', 'grant', 'local'] },
+
+            // Regional TSIs & Specialized Portals
+            { id: 'htsi', name: 'Highland TSI Funding', url: 'https://www.highlandtsi.org.uk/funding', keywords: ['highland', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'vaa', name: 'Voluntary Action Angus', url: 'https://www.vaangus.org.uk/funding/', keywords: ['angus', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'ava', name: 'Aberdeenshire Voluntary Action', url: 'https://www.avashire.org.uk/funding/', keywords: ['aberdeenshire', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'sve', name: 'Stirling Voluntary Enterprise', url: 'https://www.sventerprise.org.uk/funding/', keywords: ['stirling', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'vas', name: 'Voluntary Action Shetland', url: 'https://www.shetland-tsi.org.uk/funding', keywords: ['shetland', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
+
+            // Additional National Funds
+            { id: 'forteviot', name: 'The Forteviot Charitable Trust', url: 'https://www.forteviottrust.org.uk/', keywords: ['scotland', 'charity', 'grant', 'community', 'education'] },
+            { id: 'kilpatrick-fraser', name: 'The Kilpatrick Fraser Charitable Trust', url: 'https://kfct.org.uk/', keywords: ['scotland', 'disability', 'elderly', 'youth', 'grant'] },
+            { id: 'crerar', name: 'The Crerar Trust', url: 'https://www.crerarhotels.com/crerar-trust/', keywords: ['scotland', 'community', 'charity', 'health', 'social'] },
+            { id: 'meikle', name: 'The Meikle Foundation', url: 'https://www.meiklefoundation.org.uk/', keywords: ['scotland', 'youth', 'education', 'charity', 'grant'] },
+            { id: 'plum-trust', name: 'The Plum Trust', url: 'https://www.plumtrust.org/', keywords: ['scotland', 'arts', 'culture', 'community', 'grant'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1503,19 +1590,8 @@
         }
 
         function log(msg, type = 'info') {
-            const container = document.getElementById('console-logs');
-            if (!container) return;
-            const p = document.createElement('p');
-            const colours = { info: 'text-slate-400', success: 'text-green-400', error: 'text-red-400', warn: 'text-yellow-400' };
-            p.className = colours[type];
-            p.innerText = `> [${new Date().toLocaleTimeString('en-GB')}] ${msg}`;
-            container.appendChild(p);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function clearLogs() {
-            const container = document.getElementById('console-logs');
-            if (container) container.innerHTML = '<p class="text-slate-500">> Logs cleared</p>';
+            const colours = { info: 'ℹ️', success: '✅', error: '❌', warn: '⚠️' };
+            console.log(`${colours[type] || 'ℹ️'} [${new Date().toLocaleTimeString('en-GB')}] ${msg}`);
         }
 
         // ========== ULTIMATE SCANNING ENGINE ==========
@@ -1697,19 +1773,19 @@
                 const href = link.getAttribute('href');
                 let text = link.textContent.trim();
                 const fullUrl = resolveUrl(source.url, href);
+                const parent = link.closest('article, section, div, li, tr, td');
                 
                 // Smarter title extraction
                 const ariaLabel = link.getAttribute('aria-label');
                 const linkTitle = link.getAttribute('title');
 
-                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application)$/i.test(text) || text.length < 5) {
+                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit)$/i.test(text) || text.length < 5) {
                     if (ariaLabel && ariaLabel.trim().length > 5) {
                         text = ariaLabel.trim();
                     } else if (linkTitle && linkTitle.trim().length > 5) {
                         text = linkTitle.trim();
                     } else {
                         // Try to find a heading in current or parent containers
-                        let parent = link.closest('article, section, div, li, tr, td');
                         let heading = null;
                         let currentSearch = parent;
                         for (let depth = 0; depth < 3 && currentSearch && !heading; depth++) {
@@ -1765,7 +1841,7 @@
                 const fullCombined = (text + ' ' + href + ' ' + context).toLowerCase();
                 
                 // Skip closed or suspended funds
-                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed|reached capacity|all funds allocated|not currently accepting/i.test(fullCombined)) {
+                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed|reached capacity|all funds allocated|not currently accepting|scheme has ended|closed for now/i.test(fullCombined)) {
                     continue;
                 }
 
@@ -1831,6 +1907,50 @@
             });
         }
 
+        function updateOnboardingChecklist() {
+            const container = document.getElementById('onboarding-checklist');
+            const checkProfile = document.getElementById('check-profile');
+            const checkInterests = document.getElementById('check-interests');
+            const checkScan = document.getElementById('check-scan');
+
+            if (!container) return;
+
+            let allDone = true;
+
+            // Profile Org Type
+            if (state.user && state.user.orgType) {
+                checkProfile.classList.remove('opacity-50');
+                checkProfile.querySelector('.check-icon').classList.replace('bg-slate-100', 'bg-green-100');
+                checkProfile.querySelector('.check-icon').classList.replace('text-slate-400', 'text-green-600');
+            } else {
+                allDone = false;
+            }
+
+            // Interests
+            if (state.user && state.user.interests && state.user.interests.length > 0) {
+                checkInterests.classList.remove('opacity-50');
+                checkInterests.querySelector('.check-icon').classList.replace('bg-slate-100', 'bg-green-100');
+                checkInterests.querySelector('.check-icon').classList.replace('text-slate-400', 'text-green-600');
+            } else {
+                allDone = false;
+            }
+
+            // First Scan
+            if (state.opportunities.length > 0) {
+                checkScan.classList.remove('opacity-50');
+                checkScan.querySelector('.check-icon').classList.replace('bg-slate-100', 'bg-green-100');
+                checkScan.querySelector('.check-icon').classList.replace('text-slate-400', 'text-green-600');
+            } else {
+                allDone = false;
+            }
+
+            if (allDone) {
+                container.classList.add('hidden');
+            } else {
+                container.classList.remove('hidden');
+            }
+        }
+
         function updatePriorityArea() {
             if (!state.settings) state.settings = {};
             state.settings.priorityArea = document.getElementById('priority-area').value;
@@ -1846,7 +1966,7 @@
             // ENHANCED KEYWORD MATCHING
             const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue', 'subsidy', 'pot'];
             const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht', 'grampian', 'tayside', 'lothian', 'borders', 'strathclyde', 'forth valley'];
-            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health'];
+            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health', 'climate', 'biodiversity', 'active travel', 'digital', 'skills', 'employment', 'isolation', 'loneliness', 'care', 'carers', 'refugees', 'addiction', 'recovery', 'animal welfare', 'religious', 'faith', 'human rights', 'justice', 'housing', 'homelessness', 'families', 'early years', 'learning', 'stem', 'digital inclusion', 'food poverty', 'energy crisis'];
             const orgTerms = ['cic', 'scio', 'charity', 'voluntary group', 'trust', 'foundation', 'social enterprise', 'community interest company', 'scottish charitable incorporated organisation', 'third sector', 'ngo'];
             const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal'];
             
@@ -1938,12 +2058,12 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:between|from)\s*£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at)\s*£?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /£?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
-                /grants?\s+(?:of|up to|around)\s*£?([\d,kKmM.]+)/i,
-                /(?:£|gbp)\s*([\d,kKmM.]+)/i
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
+                /grants?\s+(?:of|up to|around)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
+                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)/i
             ];
             
             for (const pattern of amountPatterns) {
@@ -2291,6 +2411,8 @@
             
             document.getElementById('filtered-count').textContent = filtered.length > 0 ? `(${filtered.length} showing)` : '';
             
+            updateOnboardingChecklist();
+
             if (filtered.length === 0) {
                 tbody.innerHTML = '';
                 empty.classList.remove('hidden');
@@ -2346,19 +2468,15 @@
                             `;
                         } else {
                             const p = placeholders[i];
-                            const gradients = {
-                                indigo: 'from-indigo-900 to-indigo-800 border-indigo-700',
-                                purple: 'from-purple-900 to-purple-800 border-purple-700',
-                                slate: 'from-slate-900 to-slate-800 border-slate-700'
-                            };
-                            const textColors = {
-                                indigo: 'text-indigo-300',
-                                purple: 'text-purple-300',
-                                slate: 'text-slate-300'
-                            };
+                            const variants = [
+                                { grad: 'from-indigo-900 to-indigo-800 border-indigo-700', text: 'text-indigo-300' },
+                                { grad: 'from-purple-900 to-purple-800 border-purple-700', text: 'text-purple-300' },
+                                { grad: 'from-slate-900 to-slate-800 border-slate-700', text: 'text-slate-300' }
+                            ];
+                            const v = variants[i];
                             html += `
-                                <div class="bg-gradient-to-br ${gradients[i === 0 ? 'indigo' : i === 1 ? 'purple' : 'slate']} rounded-2xl p-6 text-white border opacity-50 flex flex-col">
-                                    <p class="${textColors[i === 0 ? 'indigo' : i === 1 ? 'purple' : 'slate']} text-[10px] font-bold uppercase tracking-widest mb-2">⭐ Top Pick ${i + 1}</p>
+                                <div class="bg-gradient-to-br ${v.grad} rounded-2xl p-6 text-white border opacity-50 flex flex-col">
+                                    <p class="${v.text} text-[10px] font-bold uppercase tracking-widest mb-2">⭐ Top Pick ${i + 1}</p>
                                     <h3 class="text-lg font-bold mb-2">${p.title}</h3>
                                     <p class="text-white/60 text-xs mb-4 leading-relaxed">${p.desc}</p>
                                 </div>
@@ -2661,8 +2779,8 @@
 
         function extractNumericAmount(amountStr) {
             if (!amountStr) return 0;
-            // Find all £ amounts and capture optional k/m suffix
-            const matches = amountStr.matchAll(/£([\d,.]+)\s*([kKmM])?/gi);
+            // Find all £ or 'pounds' amounts and capture optional k/m suffix
+            const matches = amountStr.matchAll(/(?:£|pounds?)\s?([\d,.]+)\s*([kKmM])?/gi);
             let maxVal = 0;
 
             for (const match of matches) {
