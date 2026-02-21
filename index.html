@@ -22,7 +22,7 @@
         .quality-medium { background: #fef3c7; color: #854d0e; }
         .quality-low { background: #fee2e2; color: #991b1b; }
         .blacklisted-item { opacity: 0.5; text-decoration: line-through; }
-        .whitelist-badge { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+        .highlight { background-color: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -42,7 +42,7 @@
             <div class="bg-indigo-600 p-1.5 rounded-lg text-white">
                 <i data-lucide="shield-check" class="w-5 h-5"></i>
             </div>
-            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span> <span class="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded ml-1">v8.1</span></h1>
+            <h1 class="text-lg font-bold">ScotFund<span class="text-indigo-600">Pro</span> <span class="text-[10px] bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded ml-1">v8.2</span></h1>
         </button>
         <button onclick="toggleSidebar()" class="p-2 bg-slate-100 rounded-lg">
             <i data-lucide="menu" class="w-6 h-6"></i>
@@ -243,6 +243,13 @@
                             <option value="education">Education & Training</option>
                             <option value="environment">Environment</option>
                             <option value="health">Health & Wellbeing</option>
+                            <option value="disability">Disability</option>
+                            <option value="climate">Climate & Energy</option>
+                            <option value="digital">Digital & Tech</option>
+                            <option value="food">Food & Poverty</option>
+                            <option value="animal">Animal Welfare</option>
+                            <option value="housing">Housing & Homeless</option>
+                            <option value="employment">Employment & Training</option>
                         </select>
                     </div>
                     <div>
@@ -767,6 +774,27 @@
                         <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
                             <input type="checkbox" value="sport" class="rounded border-slate-300"> <span class="text-xs font-medium">Sport</span>
                         </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="disability" class="rounded border-slate-300"> <span class="text-xs font-medium">Disability</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="climate" class="rounded border-slate-300"> <span class="text-xs font-medium">Climate & Eco</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="digital" class="rounded border-slate-300"> <span class="text-xs font-medium">Digital Skills</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="food" class="rounded border-slate-300"> <span class="text-xs font-medium">Food Poverty</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="animal" class="rounded border-slate-300"> <span class="text-xs font-medium">Animal Welfare</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="housing" class="rounded border-slate-300"> <span class="text-xs font-medium">Housing</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="employment" class="rounded border-slate-300"> <span class="text-xs font-medium">Employment</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -796,7 +824,7 @@
 
                 <div class="border-t border-slate-200 pt-6">
                     <h3 class="font-bold mb-2">About ScotFund Pro</h3>
-                    <p class="text-sm text-slate-600">Version 8.0 - Universal Scottish funding intelligence for charities and community groups.</p>
+                    <p class="text-sm text-slate-600">Version 8.2 - Universal Scottish funding intelligence for charities and community groups.</p>
                 </div>
             </div>
         </section>
@@ -1258,7 +1286,27 @@
             { id: 'kilpatrick-fraser', name: 'The Kilpatrick Fraser Charitable Trust', url: 'https://kfct.org.uk/', keywords: ['scotland', 'disability', 'elderly', 'youth', 'grant'] },
             { id: 'crerar', name: 'The Crerar Trust', url: 'https://www.crerarhotels.com/crerar-trust/', keywords: ['scotland', 'community', 'charity', 'health', 'social'] },
             { id: 'meikle', name: 'The Meikle Foundation', url: 'https://www.meiklefoundation.org.uk/', keywords: ['scotland', 'youth', 'education', 'charity', 'grant'] },
-            { id: 'plum-trust', name: 'The Plum Trust', url: 'https://www.plumtrust.org/', keywords: ['scotland', 'arts', 'culture', 'community', 'grant'] }
+            { id: 'plum-trust', name: 'The Plum Trust', url: 'https://www.plumtrust.org/', keywords: ['scotland', 'arts', 'culture', 'community', 'grant'] },
+            { id: 'pebble', name: 'The Pebble Trust (Scotland)', url: 'https://www.thepebbletrust.org/grant-applications/', keywords: ['sustainability', 'low carbon', 'highlands', 'islands', 'community'] },
+            { id: 'cruden', name: 'The Cruden Foundation', url: 'https://crudenfoundation.org/how-to-apply/', keywords: ['scotland', 'community', 'health', 'education', 'relief'] },
+            { id: 'archer', name: 'The Archer Trust', url: 'http://www.archertrust.org.uk/', keywords: ['uk', 'disadvantaged', 'marginalised', 'grant', 'funding'] },
+            { id: 'jeremy-willson', name: 'The Jeremy Willson Charitable Trust', url: 'https://www.jwct.org.uk/', keywords: ['environment', 'protected areas', 'access', 'nature', 'conservation'] },
+            { id: 'scot-power', name: 'Scottish Power Foundation', url: 'https://www.scottishpowerfoundation.com/', keywords: ['scotland', 'environment', 'education', 'social', 'arts'] },
+            { id: 'vattenfall', name: 'Vattenfall Community Funds', url: 'https://group.vattenfall.com/uk/what-we-do/our-projects/community-funds', keywords: ['south west scotland', 'community', 'benefit', 'wind farm'] },
+            { id: 'fred-olsen', name: 'Fred. Olsen Renewables Community Benefit', url: 'https://fredolsenrenewables.com/community-benefit/', keywords: ['scotland', 'renewable', 'community', 'benefit', 'local'] },
+            { id: 'statkraft', name: 'Statkraft Community Benefit', url: 'https://www.statkraft.co.uk/community/', keywords: ['scotland', 'renewable', 'community', 'benefit', 'local'] },
+            { id: 'baywa', name: 'BayWa r.e. Community Benefits', url: 'https://www.baywa-re.co.uk/en/communities', keywords: ['scotland', 'renewable', 'community', 'benefit', 'local'] },
+            { id: 'sfp', name: 'The Scottish Football Partnership', url: 'https://thesfp.org.uk/', keywords: ['football', 'sport', 'facility', 'community', 'scotland'] },
+            { id: 'children-lottery', name: 'The Scottish Children\'s Lottery', url: 'https://www.scottishchildrenslottery.com/funding-application/', keywords: ['children', 'scotland', 'wellbeing', 'poverty', 'grant'] },
+            { id: 'sepa-lcf', name: 'SEPA - Scottish Landfill Communities Fund', url: 'https://www.sepa.org.uk/environment/land/scottish-landfill-communities-fund/', keywords: ['environment', 'landfill', 'community', 'scotland', 'benefit'] },
+            { id: 'holywood', name: 'The Holywood Trust', url: 'https://www.holywoodtrust.org.uk/', keywords: ['dumfries', 'galloway', 'youth', 'young people', 'grant'] },
+            { id: 'garioch', name: 'The Garioch Partnership', url: 'https://gariochpartnership.org.uk/', keywords: ['aberdeenshire', 'garioch', 'community', 'development', 'grant'] },
+            { id: 'buchan', name: 'The Buchan Development Partnership', url: 'https://bdp.scot/', keywords: ['aberdeenshire', 'buchan', 'community', 'development', 'grant'] },
+            { id: 'marr', name: 'The Marr Area Partnership', url: 'https://marrareapartnership.org.uk/', keywords: ['aberdeenshire', 'marr', 'community', 'development', 'grant'] },
+            { id: 'peter-vardy', name: 'The Peter Vardy Foundation', url: 'https://www.petervardyfoundation.com/', keywords: ['children', 'poverty', 'scotland', 'homeless', 'grant'] },
+            { id: 'asda', name: 'ASDA Foundation', url: 'https://www.asdafoundation.org/', keywords: ['community', 'uk', 'scotland', 'local', 'grant'] },
+            { id: 'aviva', name: 'Aviva Community Fund', url: 'https://www.aviva.co.uk/about-us/aviva-community-fund/', keywords: ['community', 'uk', 'scotland', 'climate', 'wellbeing'] },
+            { id: 'murdoch-forrest', name: 'The Murdoch Forrest Charitable Trust', url: 'https://murdochforrest.org/', keywords: ['scotland', 'culture', 'medical', 'community', 'animals'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1326,6 +1374,8 @@
             { pattern: '/faqs', description: 'FAQ', active: true },
             { pattern: '/legal', description: 'Legal pages', active: true },
             { pattern: '/complaints', description: 'Complaints', active: true },
+            { pattern: '/wp-admin', description: 'Admin area', active: true },
+            { pattern: '/wp-login', description: 'Login area', active: true },
 
             // File Extensions & Media
             { pattern: '.jpg', description: 'Images', active: true },
@@ -1340,6 +1390,10 @@
             { pattern: '.gz', description: 'Archives', active: true },
             { pattern: '.exe', description: 'Executables', active: true },
             { pattern: '.dmg', description: 'Executables', active: true },
+            { pattern: '.msi', description: 'Executables', active: true },
+            { pattern: '.apk', description: 'Executables', active: true },
+            { pattern: '.app', description: 'Executables', active: true },
+            { pattern: '.bin', description: 'Executables', active: true },
             { pattern: '.bmp', description: 'Images', active: true },
             { pattern: '.ico', description: 'Icons', active: true },
             { pattern: '.woff', description: 'Fonts', active: true },
@@ -1704,7 +1758,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        source: 'ScotFund Pro v8.0',
+                        source: 'ScotFund Pro v8.2',
                         timestamp: new Date().toISOString(),
                         count: payload.length,
                         opportunities: payload
@@ -2101,7 +2155,7 @@
                 details.deadline = 'Rolling deadline';
             }
             
-            // ENHANCED CATEGORISATION (11 categories)
+            // ENHANCED CATEGORISATION (18 categories)
             const categories = [];
             if (text.includes('play') || text.includes('outdoor') || text.includes('recreation') || text.includes('park')) categories.push('play');
             if (text.includes('community') || text.includes('local') || text.includes('neighbourhood') || text.includes('village') || text.includes('area')) categories.push('community');
@@ -2111,9 +2165,16 @@
             if (text.includes('sport') || text.includes('physical') || text.includes('fitness') || text.includes('active') || text.includes('leisure')) categories.push('sport');
             if (text.includes('education') || text.includes('training') || text.includes('learning') || text.includes('skills') || text.includes('school')) categories.push('education');
             if (text.includes('environment') || text.includes('conservation') || text.includes('green') || text.includes('nature') || text.includes('climate') || text.includes('biodiversity')) categories.push('environment');
-            if (text.includes('health') || text.includes('wellbeing') || text.includes('mental') || text.includes('care') || text.includes('medical') || text.includes('disability')) categories.push('health');
+            if (text.includes('health') || text.includes('wellbeing') || text.includes('mental') || text.includes('care') || text.includes('medical')) categories.push('health');
             if (text.includes('heritage') || text.includes('historic') || text.includes('building') || text.includes('conservation') || text.includes('monument')) categories.push('heritage');
             if (text.includes('social') || text.includes('poverty') || text.includes('trauma') || text.includes('inclusion') || text.includes('equity') || text.includes('diversity')) categories.push('social');
+            if (text.includes('disability') || text.includes('disabled') || text.includes('inclusion') || text.includes('accessible')) categories.push('disability');
+            if (text.includes('climate') || text.includes('carbon') || text.includes('energy') || text.includes('sustainability') || text.includes('net zero')) categories.push('climate');
+            if (text.includes('digital') || text.includes('online') || text.includes('technology') || text.includes('it skills') || text.includes('web')) categories.push('digital');
+            if (text.includes('food') || text.includes('hunger') || text.includes('poverty') || text.includes('nutrition') || text.includes('pantry')) categories.push('food');
+            if (text.includes('animal') || text.includes('wildlife') || text.includes('veterinary') || text.includes('pet')) categories.push('animal');
+            if (text.includes('housing') || text.includes('homeless') || text.includes('shelter') || text.includes('tenancy')) categories.push('housing');
+            if (text.includes('employment') || text.includes('jobs') || text.includes('work') || text.includes('vocational') || text.includes('training')) categories.push('employment');
             
             details.category = categories.length > 0 ? categories : ['general'];
 
@@ -2516,7 +2577,10 @@
                                 <input type="checkbox" onchange="toggleSelection('${opp.id}')" ${isSelected ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900 mb-1">${displayTitle}</div>
+                                <div class="font-bold text-slate-900 mb-1">
+                                    ${opp.score >= 80 ? '<span class="mr-2 px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold rounded uppercase">Recommended ⭐</span>' : ''}
+                                    ${displayTitle}
+                                </div>
                                 <div class="text-xs text-slate-500">${displayFunder}</div>
                             </td>
                             <td class="px-6 py-4 font-bold ${opp.amount.includes('varies') ? 'text-slate-500' : 'text-green-600'}">${opp.amount}</td>
@@ -2780,7 +2844,13 @@
         function extractNumericAmount(amountStr) {
             if (!amountStr) return 0;
             // Find all £ or 'pounds' amounts and capture optional k/m suffix
-            const matches = amountStr.matchAll(/(?:£|pounds?)\s?([\d,.]+)\s*([kKmM])?/gi);
+            let matches = Array.from(amountStr.matchAll(/(?:£|pounds?)\s?([\d,.]+)\s*([kKmM])?/gi));
+
+            // Fallback: match plain numbers with optional k/m if no currency symbol found
+            if (matches.length === 0) {
+                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{2,})\s*([kKmM])?(?![0-9])/g));
+            }
+
             let maxVal = 0;
 
             for (const match of matches) {
@@ -3103,7 +3173,7 @@
             if (!opp) return;
 
             const subject = encodeURIComponent(`Funding Opportunity: ${opp.title}`);
-            const body = encodeURIComponent(`Hi,\n\nI thought you might be interested in this funding opportunity I found on ScotFund Pro:\n\nTitle: ${opp.title}\nFunder: ${opp.funder}\nAmount: ${opp.amount}\nDeadline: ${opp.deadline}\n\nView details here: ${opp.url}\n\nSent via ScotFund Pro v8.0`);
+            const body = encodeURIComponent(`Hi,\n\nI thought you might be interested in this funding opportunity I found on ScotFund Pro:\n\nTitle: ${opp.title}\nFunder: ${opp.funder}\nAmount: ${opp.amount}\nDeadline: ${opp.deadline}\n\nView details here: ${opp.url}\n\nSent via ScotFund Pro v8.2`);
 
             window.open(`mailto:?subject=${subject}&body=${body}`);
             log(`📧 Sharing via email: ${opp.title}`, 'info');
