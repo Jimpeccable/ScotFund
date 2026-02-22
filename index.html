@@ -1306,7 +1306,11 @@
             { id: 'peter-vardy', name: 'The Peter Vardy Foundation', url: 'https://www.petervardyfoundation.com/', keywords: ['children', 'poverty', 'scotland', 'homeless', 'grant'] },
             { id: 'asda', name: 'ASDA Foundation', url: 'https://www.asdafoundation.org/', keywords: ['community', 'uk', 'scotland', 'local', 'grant'] },
             { id: 'aviva', name: 'Aviva Community Fund', url: 'https://www.aviva.co.uk/about-us/aviva-community-fund/', keywords: ['community', 'uk', 'scotland', 'climate', 'wellbeing'] },
-            { id: 'murdoch-forrest', name: 'The Murdoch Forrest Charitable Trust', url: 'https://murdochforrest.org/', keywords: ['scotland', 'culture', 'medical', 'community', 'animals'] }
+            { id: 'murdoch-forrest', name: 'The Murdoch Forrest Charitable Trust', url: 'https://murdochforrest.org/', keywords: ['scotland', 'culture', 'medical', 'community', 'animals'] },
+            { id: 'scot-welfare', name: 'Scottish Welfare Fund', url: 'https://www.gov.scot/policies/social-security/scottish-welfare-fund/', keywords: ['welfare', 'crisis', 'community', 'grant', 'scotland'] },
+            { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
+            { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
+            { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1423,18 +1427,24 @@
             { pattern: 'people-and-places', description: 'Closed programmes', active: true }
         ];
 
+        function getFromStorage(key, defaultValue) {
+            const stored = localStorage.getItem(key);
+            if (stored === null) return defaultValue;
+            try { return JSON.parse(stored); } catch(e) { return stored || defaultValue; }
+        }
+
         let state = {
-            opportunities: JSON.parse(localStorage.getItem('scotfund_opportunities')) || [],
+            opportunities: getFromStorage('scotfund_opportunities', []),
             selectedIds: new Set(),
-            shortlist: JSON.parse(localStorage.getItem('scotfund_shortlist')) || [],
+            shortlist: getFromStorage('scotfund_shortlist', []),
             blockedResults: [],
-            sources: JSON.parse(localStorage.getItem('scotfund_sources')) || [...DEFAULT_SOURCES],
-            blacklist: JSON.parse(localStorage.getItem('scotfund_blacklist')) || [...DEFAULT_BLACKLIST],
+            sources: getFromStorage('scotfund_sources', [...DEFAULT_SOURCES]),
+            blacklist: getFromStorage('scotfund_blacklist', [...DEFAULT_BLACKLIST]),
             isScanning: false,
-            schedule: JSON.parse(localStorage.getItem('scotfund_schedule')) || { frequency: 'manual', time: '09:00' },
-            email: JSON.parse(localStorage.getItem('scotfund_email')) || { recipients: '', frequency: 'none' },
-            user: JSON.parse(localStorage.getItem('scotfund_user')) || null,
-            settings: JSON.parse(localStorage.getItem('scotfund_settings')) || { priorityArea: 'National', webhookUrl: '', webhookNewOnly: false },
+            schedule: getFromStorage('scotfund_schedule', { frequency: 'manual', time: '09:00' }),
+            email: getFromStorage('scotfund_email', { recipients: '', frequency: 'none' }),
+            user: getFromStorage('scotfund_user', null),
+            settings: getFromStorage('scotfund_settings', { priorityArea: 'National', webhookUrl: '', webhookNewOnly: false }),
             lastScan: localStorage.getItem('scotfund_lastScan') || null,
             scanInterval: null
         };
@@ -1947,13 +1957,16 @@
             const combined = urlLower + ' ' + textLower;
             
             // Core irrelevance patterns (always active)
-            const coreIrrelevant = [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i];
+            const coreIrrelevant = [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i];
             if (coreIrrelevant.some(p => p.test(combined))) return true;
+
+            // Strict file extension check for non-funding documents
+            const forbiddenExtensions = /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|ttf)$/i;
+            if (forbiddenExtensions.test(urlLower)) return true;
 
             return state.blacklist.some(item => {
                 if (!item.active) return false;
                 const pattern = item.pattern.toLowerCase();
-                // Match as file extension or as part of string
                 if (pattern.startsWith('.')) {
                     return urlLower.endsWith(pattern) || urlLower.includes(pattern + '?') || urlLower.includes(pattern + '#');
                 }
@@ -1967,24 +1980,30 @@
             const checkInterests = document.getElementById('check-interests');
             const checkScan = document.getElementById('check-scan');
 
-            if (!container) return;
+            if (!container || !state.user) return;
 
             let allDone = true;
 
             // Profile Org Type
-            if (state.user && state.user.orgType) {
+            if (state.user.orgType) {
                 checkProfile.classList.remove('opacity-50');
-                checkProfile.querySelector('.check-icon').classList.replace('bg-slate-100', 'bg-green-100');
-                checkProfile.querySelector('.check-icon').classList.replace('text-slate-400', 'text-green-600');
+                const icon = checkProfile.querySelector('.check-icon');
+                if (icon) {
+                    icon.classList.remove('bg-slate-100', 'text-slate-400');
+                    icon.classList.add('bg-green-100', 'text-green-600');
+                }
             } else {
                 allDone = false;
             }
 
             // Interests
-            if (state.user && state.user.interests && state.user.interests.length > 0) {
+            if (state.user.interests && state.user.interests.length > 0) {
                 checkInterests.classList.remove('opacity-50');
-                checkInterests.querySelector('.check-icon').classList.replace('bg-slate-100', 'bg-green-100');
-                checkInterests.querySelector('.check-icon').classList.replace('text-slate-400', 'text-green-600');
+                const icon = checkInterests.querySelector('.check-icon');
+                if (icon) {
+                    icon.classList.remove('bg-slate-100', 'text-slate-400');
+                    icon.classList.add('bg-green-100', 'text-green-600');
+                }
             } else {
                 allDone = false;
             }
@@ -1992,8 +2011,11 @@
             // First Scan
             if (state.opportunities.length > 0) {
                 checkScan.classList.remove('opacity-50');
-                checkScan.querySelector('.check-icon').classList.replace('bg-slate-100', 'bg-green-100');
-                checkScan.querySelector('.check-icon').classList.replace('text-slate-400', 'text-green-600');
+                const icon = checkScan.querySelector('.check-icon');
+                if (icon) {
+                    icon.classList.remove('bg-slate-100', 'text-slate-400');
+                    icon.classList.add('bg-green-100', 'text-green-600');
+                }
             } else {
                 allDone = false;
             }
@@ -2067,8 +2089,8 @@
             if (state.settings && state.settings.priorityArea && state.settings.priorityArea !== 'National') {
                 const area = state.settings.priorityArea;
                 if (text.toLowerCase().includes(area.toLowerCase())) {
-                    score += 40;
-                    matchDetails.push({ key: `Priority Area: ${area}`, points: 40 });
+                    score += 50;
+                    matchDetails.push({ key: `Priority Area: ${area}`, points: 50 });
                 }
             }
 
@@ -2076,9 +2098,9 @@
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
                     if (text.toLowerCase().includes(interest.toLowerCase())) {
-                        score += 25;
+                        score += 35;
                         foundKeywords.push(interest);
-                        matchDetails.push({ key: `User Interest: ${interest}`, points: 25 });
+                        matchDetails.push({ key: `User Interest: ${interest}`, points: 35 });
                     }
                 });
             }
@@ -2116,7 +2138,8 @@
                 /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
-                /grants?\s+(?:of|up to|around)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
+                /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
+                /([\d,kKmM.]+)\s*(?:grant|funding|award)/i,
                 /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)/i
             ];
             
@@ -2578,7 +2601,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-bold text-slate-900 mb-1">
-                                    ${opp.score >= 80 ? '<span class="mr-2 px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold rounded uppercase">Recommended ⭐</span>' : ''}
+                                    ${opp.score >= 75 ? '<span class="mr-2 px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold rounded uppercase">Recommended ⭐</span>' : ''}
                                     ${displayTitle}
                                 </div>
                                 <div class="text-xs text-slate-500">${displayFunder}</div>
@@ -2792,7 +2815,7 @@
             let filtered = [...state.opportunities];
 
             if (recommended) {
-                filtered = filtered.filter(opp => opp.score >= 80);
+                filtered = filtered.filter(opp => opp.score >= 75);
             }
             
             if (search) {
@@ -2830,10 +2853,10 @@
             }
             
             filtered.sort((a, b) => {
-                // Prioritise verified, then quality score, then relevance
+                // Prioritise score (relevance), then quality
+                if (b.score !== a.score) return b.score - a.score;
                 if (a.verified !== b.verified) return b.verified ? 1 : -1;
-                if (b.qualityScore !== a.qualityScore) return b.qualityScore - a.qualityScore;
-                return b.score - a.score;
+                return b.qualityScore - a.qualityScore;
             });
             
             if (returnData) return filtered;
@@ -2843,18 +2866,28 @@
 
         function extractNumericAmount(amountStr) {
             if (!amountStr) return 0;
+            // Handle ranges by taking the max value
+            const parts = amountStr.split(/(?:to|-|and|–)/);
+            if (parts.length > 1) {
+                return Math.max(...parts.map(p => extractNumericAmount(p.trim())));
+            }
+
             // Find all £ or 'pounds' amounts and capture optional k/m suffix
             let matches = Array.from(amountStr.matchAll(/(?:£|pounds?)\s?([\d,.]+)\s*([kKmM])?/gi));
 
             // Fallback: match plain numbers with optional k/m if no currency symbol found
             if (matches.length === 0) {
-                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{2,})\s*([kKmM])?(?![0-9])/g));
+                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*([kKmM])?(?![0-9])/g));
             }
 
             let maxVal = 0;
 
             for (const match of matches) {
-                let val = parseFloat(match[1].replace(/,/g, ''));
+                let valStr = match[1].replace(/,/g, '');
+                if (valStr === '.') continue;
+                let val = parseFloat(valStr);
+                if (isNaN(val)) continue;
+
                 const suffix = match[2] ? match[2].toLowerCase() : '';
 
                 if (suffix === 'k') val *= 1000;
