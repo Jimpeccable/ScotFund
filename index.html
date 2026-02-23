@@ -18,9 +18,9 @@
             #sidebar.open { transform: translateX(0); }
         }
         .quality-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
-        .quality-high { background: #dcfce7; color: #166534; }
-        .quality-medium { background: #fef3c7; color: #854d0e; }
-        .quality-low { background: #fee2e2; color: #991b1b; }
+        .quality-high { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .quality-medium { background: #fef3c7; color: #854d0e; border: 1px solid #fde68a; }
+        .quality-low { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .blacklisted-item { opacity: 0.5; text-decoration: line-through; }
         .highlight { background-color: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -91,6 +91,9 @@
             </button>
             <button onclick="showSection('settings')" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium" data-id="settings">
                 <i data-lucide="settings" class="w-5 h-5"></i> Settings
+            </button>
+            <button onclick="showSection('superuser')" id="nav-superuser" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium hidden" data-id="superuser">
+                <i data-lucide="shield-alert" class="w-5 h-5"></i> Super User
             </button>
         </nav>
 
@@ -363,6 +366,131 @@
                     </div>
                     <p class="text-slate-500 font-medium mb-2">No opportunities found</p>
                     <p class="text-slate-400 text-sm">Run a scan to discover verified funding opportunities</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SUPER USER SECTION -->
+        <section id="superuser" class="hidden space-y-8">
+            <header>
+                <h2 class="text-3xl font-bold mb-2">Super User Dashboard</h2>
+                <p class="text-slate-500">System-wide intelligence, reporting and future roadmap</p>
+            </header>
+
+            <!-- Super Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg shadow-indigo-200">
+                    <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-1">Global Funds</p>
+                    <p id="super-stat-total" class="text-4xl font-bold">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Active Sources</p>
+                    <p id="super-stat-sources" class="text-4xl font-bold text-slate-900">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Avg Score</p>
+                    <p id="super-stat-score" class="text-4xl font-bold text-slate-900">0</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Blacklist Items</p>
+                    <p id="super-stat-blacklist" class="text-4xl font-bold text-slate-900">0</p>
+                </div>
+            </div>
+
+            <!-- Tabbed Interface -->
+            <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="flex border-b border-slate-100 bg-slate-50/50">
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
+                    <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
+                </div>
+
+                <div class="p-8">
+                    <!-- Future Requirements Tab -->
+                    <div id="super-panel-future" class="super-panel space-y-6">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="bg-amber-100 text-amber-600 p-2 rounded-lg">
+                                <i data-lucide="database" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900">Database & Persistence Roadmap</h4>
+                                <p class="text-xs text-slate-500">Transitioning from local-first to a full-service cloud architecture.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider">1. Infrastructure Options</h5>
+                                <div class="p-4 bg-slate-50 rounded-xl space-y-3">
+                                    <div class="flex items-start gap-3">
+                                        <div class="mt-1 w-2 h-2 rounded-full bg-indigo-500"></div>
+                                        <p class="text-xs text-slate-700"><strong>Supabase (PostgreSQL):</strong> Recommended for built-in Auth, Realtime updates, and ease of use with JS.</p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <div class="mt-1 w-2 h-2 rounded-full bg-indigo-500"></div>
+                                        <p class="text-xs text-slate-700"><strong>MongoDB Atlas:</strong> Flexible NoSQL schema, ideal for high-volume unstructured fund data.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider">2. Data Schema Design</h5>
+                                <ul class="text-xs text-slate-600 space-y-2 ml-4 list-disc">
+                                    <li><strong>Users Table:</strong> id, email, password_hash, role (User/Admin/Super), profile_json</li>
+                                    <li><strong>Funds Table:</strong> id, title, funder, url, amount_numeric, deadline_date, sector_tags, raw_data</li>
+                                    <li><strong>User_Shortlist Table:</strong> user_id, fund_id, status, notes, custom_tasks</li>
+                                    <li><strong>Sources Table:</strong> id, name, url, active_status, last_scanned</li>
+                                </ul>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider">3. Technical Requirements</h5>
+                                <div class="p-4 border border-indigo-100 rounded-xl bg-indigo-50/30">
+                                    <ul class="text-xs text-indigo-900 space-y-2">
+                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Setup Supabase Project & Auth Policies</li>
+                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Migrate current localStorage data to SQL</li>
+                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Move Scanning Logic to Edge Functions</li>
+                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Implement JWT-based Secure API access</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-2xl text-white">
+                                <h5 class="text-sm font-bold mb-3">Ready to scale?</h5>
+                                <p class="text-[11px] text-indigo-200 leading-relaxed mb-4">Connecting to a database will enable multi-user support, real-time collaboration, and historical fund tracking.</p>
+                                <button onclick="alert('System ready for DB connection. Follow the roadmap above to begin integration.')" class="w-full py-2 bg-indigo-500 hover:bg-indigo-400 rounded-lg text-xs font-bold transition-all">Connect to Supabase (Mock)</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Stats Tab -->
+                    <div id="super-panel-stats" class="super-panel hidden space-y-6">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Global Sector Distribution</h4>
+                                <div id="super-chart-sectors" class="space-y-3"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Quality Score Analysis</h4>
+                                <div class="p-4 bg-slate-50 rounded-xl">
+                                    <p class="text-xs text-slate-500 italic">Average Intelligence Score of all discovered opportunities across all sources.</p>
+                                    <div class="mt-4 flex items-center justify-center h-32">
+                                        <div id="super-avg-score-gauge" class="text-4xl font-black text-indigo-600">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health Tab -->
+                    <div id="super-panel-admin" class="super-panel hidden">
+                        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                            <h4 class="font-bold text-slate-900 mb-4">Proxy Health & Connectivity</h4>
+                            <div class="space-y-3" id="proxy-status-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -736,6 +864,14 @@
                         </select>
                     </div>
                     <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Account Role</label>
+                    <select id="profile-role" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="User">Standard User</option>
+                        <option value="Admin">Administrator</option>
+                        <option value="Super User">Super User</option>
+                    </select>
+                </div>
+                <div>
                         <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Your Name</label>
                         <input type="text" id="profile-user-name" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
@@ -1091,6 +1227,14 @@
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Organisation</label>
                     <input type="text" id="login-org" placeholder="e.g. Glasgow Community Trust" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Initial Role</label>
+                    <select id="login-role" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="User">Standard User</option>
+                        <option value="Admin">Administrator</option>
+                        <option value="Super User">Super User</option>
+                    </select>
+                </div>
                 <div class="pt-4">
                     <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
                         Start Using ScotFund Pro
@@ -1102,12 +1246,46 @@
     </div>
 
     <script>
-        // ========== ENHANCED CONFIGURATION ==========
-        const PROXIES = [
-            'https://api.allorigins.win/raw?url=',
-            'https://corsproxy.io/?',
-            'https://api.codetabs.com/v1/proxy?quest='
-        ];
+        // ========== CORE CONFIGURATION & INTELLIGENCE ==========
+        const CONFIG = {
+            VERSION: '8.2',
+            PROXIES: [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?',
+                'https://api.codetabs.com/v1/proxy?quest='
+            ],
+            KEYWORDS: {
+                funding: ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue', 'subsidy', 'pot'],
+                scotland: ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht', 'grampian', 'tayside', 'lothian', 'borders', 'strathclyde', 'forth valley'],
+                topics: ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health', 'climate', 'biodiversity', 'active travel', 'digital', 'skills', 'employment', 'isolation', 'loneliness', 'care', 'carers', 'refugees', 'addiction', 'recovery', 'animal welfare', 'religious', 'faith', 'human rights', 'justice', 'housing', 'homelessness', 'families', 'early years', 'learning', 'stem', 'digital inclusion', 'food poverty', 'energy crisis'],
+                orgTypes: ['cic', 'scio', 'charity', 'voluntary group', 'trust', 'foundation', 'social enterprise', 'community interest company', 'scottish charitable incorporated organisation', 'third sector', 'ngo'],
+                actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
+            },
+            BLACKLIST: {
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|ttf|msi|apk|dmg|iso|bin)$/i
+            },
+            CATEGORIES: {
+                play: ['play', 'outdoor', 'recreation', 'park'],
+                community: ['community', 'local', 'neighbourhood', 'village', 'area'],
+                youth: ['youth', 'children', 'young people', 'under 25'],
+                charity: ['charity', 'charitable', 'third sector', 'voluntary', 'non-profit'],
+                arts: ['arts', 'culture', 'creative', 'music', 'theatre'],
+                sport: ['sport', 'physical', 'fitness', 'active', 'leisure'],
+                education: ['education', 'training', 'learning', 'skills', 'school'],
+                environment: ['environment', 'conservation', 'green', 'nature', 'climate', 'biodiversity'],
+                health: ['health', 'wellbeing', 'mental', 'care', 'medical'],
+                heritage: ['heritage', 'historic', 'building', 'conservation', 'monument'],
+                social: ['social', 'poverty', 'trauma', 'inclusion', 'equity', 'diversity'],
+                disability: ['disability', 'disabled', 'inclusion', 'accessible'],
+                climate: ['climate', 'carbon', 'energy', 'sustainability', 'net zero'],
+                digital: ['digital', 'online', 'technology', 'it skills', 'web'],
+                food: ['food', 'hunger', 'poverty', 'nutrition', 'pantry'],
+                animal: ['animal', 'wildlife', 'veterinary', 'pet'],
+                housing: ['housing', 'homeless', 'shelter', 'tenancy'],
+                employment: ['employment', 'jobs', 'work', 'vocational', 'training']
+            }
+        };
 
         let currentProxyIndex = 0;
         let currentDetailURL = '';
@@ -1205,6 +1383,9 @@
             { id: 'edinburgh-council', name: 'City of Edinburgh Council Grants', url: 'https://www.edinburgh.gov.uk/grants', keywords: ['edinburgh', 'community', 'grant', 'funding', 'local'] },
             { id: 'fife-council', name: 'Fife Council Funding', url: 'https://www.fife.gov.uk/kb/docs/articles/community-life2/funding', keywords: ['fife', 'community', 'grant', 'funding', 'local'] },
             { id: 'aberdeen-city', name: 'Aberdeen City Council Funding', url: 'https://www.aberdeencity.gov.uk/services/strategy-performance-and-statistics/city-funding', keywords: ['aberdeen', 'community', 'grant', 'funding', 'local'] },
+            { id: 'dundee-city', name: 'Dundee City Council Grants', url: 'https://www.dundeecity.gov.uk/service-area/corporate-services/democratic-and-legal-services/community-grants', keywords: ['dundee', 'community', 'grant', 'funding', 'local'] },
+            { id: 'east-ayrshire-council', name: 'East Ayrshire Council Grants', url: 'https://www.east-ayrshire.gov.uk/CouncilAndGovernment/Grants/Grants.aspx', keywords: ['east ayrshire', 'community', 'grant', 'funding', 'local'] },
+            { id: 'falkirk-council', name: 'Falkirk Council Community Funding', url: 'https://www.falkirk.gov.uk/services/people-communities/community-funding/', keywords: ['falkirk', 'community', 'grant', 'funding', 'local'] },
             { id: 'film-hub-scot', name: 'Film Hub Scotland', url: 'https://www.filmhubscotland.com/funding/', keywords: ['film', 'cinema', 'culture', 'scotland', 'grant'] },
             { id: 'youth-scotland', name: 'Youth Scotland', url: 'https://www.youthscotland.org.uk/funding/', keywords: ['youth', 'young people', 'community', 'scotland', 'grant'] },
             { id: 'arnold-clark', name: 'Arnold Clark Community Fund', url: 'https://www.arnoldclark.com/community-fund', keywords: ['community', 'scotland', 'grant', 'funding'] },
@@ -1468,6 +1649,7 @@
         function login() {
             const name = document.getElementById('login-name').value.trim();
             const org = document.getElementById('login-org').value.trim();
+            const role = document.getElementById('login-role').value;
 
             if (!name || !org) {
                 alert('Please fill in your name and organisation');
@@ -1477,6 +1659,7 @@
             state.user = {
                 name,
                 org,
+                role,
                 orgType: 'Charity',
                 interests: []
             };
@@ -1497,15 +1680,34 @@
         function syncUserDisplay() {
             const display = document.getElementById('user-display');
             const loginModal = document.getElementById('login-modal');
+            const navSuper = document.getElementById('nav-superuser');
 
             if (state.user) {
                 display.classList.remove('hidden');
-                document.getElementById('user-name-display').textContent = state.user.name;
+
+                // Enhanced Role Indicator
+                const role = state.user.role || 'User';
+                let roleHtml = state.user.name;
+                if (role === 'Super User') {
+                    roleHtml += ` <span class="bg-indigo-600 text-white text-[8px] px-1.5 py-0.5 rounded-full ml-1 uppercase">Super</span>`;
+                } else if (role === 'Admin') {
+                    roleHtml += ` <span class="bg-purple-600 text-white text-[8px] px-1.5 py-0.5 rounded-full ml-1 uppercase">Admin</span>`;
+                }
+
+                document.getElementById('user-name-display').innerHTML = roleHtml;
                 document.getElementById('user-org-display').textContent = state.user.org;
+
+                // Show/Hide Super User Nav
+                if (state.user.role === 'Super User') {
+                    navSuper.classList.remove('hidden');
+                } else {
+                    navSuper.classList.add('hidden');
+                }
 
                 // Sync Profile inputs
                 document.getElementById('profile-org-name').value = state.user.org;
                 document.getElementById('profile-org-type').value = state.user.orgType || 'Charity';
+                document.getElementById('profile-role').value = state.user.role || 'User';
                 document.getElementById('profile-user-name').value = state.user.name;
 
                 // Sync interests
@@ -1517,6 +1719,7 @@
             } else {
                 display.classList.add('hidden');
                 loginModal.classList.remove('hidden');
+                navSuper.classList.add('hidden');
             }
             lucide.createIcons();
         }
@@ -1524,6 +1727,7 @@
         function updateProfile() {
             const org = document.getElementById('profile-org-name').value.trim();
             const type = document.getElementById('profile-org-type').value;
+            const role = document.getElementById('profile-role').value;
             const name = document.getElementById('profile-user-name').value.trim();
 
             const interests = [];
@@ -1537,6 +1741,7 @@
             state.user = {
                 name,
                 org,
+                role,
                 orgType: type,
                 interests
             };
@@ -1611,6 +1816,13 @@
         }
 
         function showSection(id) {
+            // Role restriction check
+            if (id === 'superuser' && (!state.user || state.user.role !== 'Super User')) {
+                log('⚠ Unauthorized access attempt to Super User dashboard', 'error');
+                showSection('dashboard');
+                return;
+            }
+
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('.nav-link').forEach(l => {
@@ -1624,6 +1836,7 @@
             if (id === 'hub') lucide.createIcons();
             if (id === 'dashboard') renderDashboard();
             if (id === 'analytics') renderAnalytics();
+            if (id === 'superuser') renderSuperDashboard();
 
             if (window.innerWidth < 1024) toggleSidebar();
             lucide.createIcons();
@@ -1795,7 +2008,7 @@
         async function fetchWithFallback(url, maxRetries = 3) {
             for (let i = 0; i < maxRetries; i++) {
                 try {
-                    const proxy = PROXIES[currentProxyIndex];
+                    const proxy = CONFIG.PROXIES[currentProxyIndex];
                     const response = await fetch(proxy + encodeURIComponent(url), {
                         signal: AbortSignal.timeout(15000)
                     });
@@ -1806,7 +2019,7 @@
                     
                     return text;
                 } catch (err) {
-                    currentProxyIndex = (currentProxyIndex + 1) % PROXIES.length;
+                    currentProxyIndex = (currentProxyIndex + 1) % CONFIG.PROXIES.length;
                     if (i === maxRetries - 1) throw err;
                     await sleep(1000);
                 }
@@ -1957,12 +2170,10 @@
             const combined = urlLower + ' ' + textLower;
             
             // Core irrelevance patterns (always active)
-            const coreIrrelevant = [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i];
-            if (coreIrrelevant.some(p => p.test(combined))) return true;
+            if (CONFIG.BLACKLIST.patterns.some(p => p.test(combined))) return true;
 
             // Strict file extension check for non-funding documents
-            const forbiddenExtensions = /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|ttf)$/i;
-            if (forbiddenExtensions.test(urlLower)) return true;
+            if (CONFIG.BLACKLIST.extensions.test(urlLower)) return true;
 
             return state.blacklist.some(item => {
                 if (!item.active) return false;
@@ -2039,22 +2250,16 @@
             const foundKeywords = [];
             const matchDetails = [];
             
-            // ENHANCED KEYWORD MATCHING
-            const fundingTerms = ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue', 'subsidy', 'pot'];
-            const scotlandTerms = ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht', 'grampian', 'tayside', 'lothian', 'borders', 'strathclyde', 'forth valley'];
-            const targetTerms = ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health', 'climate', 'biodiversity', 'active travel', 'digital', 'skills', 'employment', 'isolation', 'loneliness', 'care', 'carers', 'refugees', 'addiction', 'recovery', 'animal welfare', 'religious', 'faith', 'human rights', 'justice', 'housing', 'homelessness', 'families', 'early years', 'learning', 'stem', 'digital inclusion', 'food poverty', 'energy crisis'];
-            const orgTerms = ['cic', 'scio', 'charity', 'voluntary group', 'trust', 'foundation', 'social enterprise', 'community interest company', 'scottish charitable incorporated organisation', 'third sector', 'ngo'];
-            const actionTerms = ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal'];
-            
+            // INTELLECTUAL KEYWORD MATCHING
             let fundingMatch = false;
-            fundingTerms.forEach(term => { if (text.includes(term)) fundingMatch = true; });
+            CONFIG.KEYWORDS.funding.forEach(term => { if (text.includes(term)) fundingMatch = true; });
             if (fundingMatch) { score += 15; foundKeywords.push('funding'); matchDetails.push({ key: 'Funding Context', points: 15 }); }
 
             let scotMatch = false;
-            scotlandTerms.forEach(term => { if (text.includes(term)) scotMatch = true; });
+            CONFIG.KEYWORDS.scotland.forEach(term => { if (text.includes(term)) scotMatch = true; });
             if (scotMatch) { score += 12; foundKeywords.push('scotland'); matchDetails.push({ key: 'Scottish Focus', points: 12 }); }
 
-            targetTerms.forEach(term => {
+            CONFIG.KEYWORDS.topics.forEach(term => {
                 if (text.includes(term)) {
                     score += 10;
                     foundKeywords.push(term);
@@ -2062,7 +2267,7 @@
                 }
             });
 
-            orgTerms.forEach(term => {
+            CONFIG.KEYWORDS.orgTypes.forEach(term => {
                 if (text.includes(term)) {
                     score += 15;
                     foundKeywords.push(term);
@@ -2071,7 +2276,7 @@
             });
 
             let actionMatch = false;
-            actionTerms.forEach(term => { if (text.includes(term)) actionMatch = true; });
+            CONFIG.KEYWORDS.actions.forEach(term => { if (text.includes(term)) actionMatch = true; });
             if (actionMatch) { score += 8; foundKeywords.push('actionable'); matchDetails.push({ key: 'Apply Instructions', points: 8 }); }
 
             sourceKeywords.forEach(term => {
@@ -2097,10 +2302,16 @@
             // User Interest Boost
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
-                    if (text.toLowerCase().includes(interest.toLowerCase())) {
+                    const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
+                    let match = false;
+                    interestKeywords.forEach(k => {
+                        if (text.toLowerCase().includes(k.toLowerCase())) match = true;
+                    });
+
+                    if (match) {
                         score += 35;
                         foundKeywords.push(interest);
-                        matchDetails.push({ key: `User Interest: ${interest}`, points: 35 });
+                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: 35 });
                     }
                 });
             }
@@ -2178,26 +2389,13 @@
                 details.deadline = 'Rolling deadline';
             }
             
-            // ENHANCED CATEGORISATION (18 categories)
+            // DYNAMIC CATEGORISATION
             const categories = [];
-            if (text.includes('play') || text.includes('outdoor') || text.includes('recreation') || text.includes('park')) categories.push('play');
-            if (text.includes('community') || text.includes('local') || text.includes('neighbourhood') || text.includes('village') || text.includes('area')) categories.push('community');
-            if (text.includes('youth') || text.includes('children') || text.includes('young people') || text.includes('under 25')) categories.push('youth');
-            if (text.includes('charity') || text.includes('charitable') || text.includes('third sector') || text.includes('voluntary') || text.includes('non-profit')) categories.push('charity');
-            if (text.includes('arts') || text.includes('culture') || text.includes('creative') || text.includes('music') || text.includes('theatre')) categories.push('arts');
-            if (text.includes('sport') || text.includes('physical') || text.includes('fitness') || text.includes('active') || text.includes('leisure')) categories.push('sport');
-            if (text.includes('education') || text.includes('training') || text.includes('learning') || text.includes('skills') || text.includes('school')) categories.push('education');
-            if (text.includes('environment') || text.includes('conservation') || text.includes('green') || text.includes('nature') || text.includes('climate') || text.includes('biodiversity')) categories.push('environment');
-            if (text.includes('health') || text.includes('wellbeing') || text.includes('mental') || text.includes('care') || text.includes('medical')) categories.push('health');
-            if (text.includes('heritage') || text.includes('historic') || text.includes('building') || text.includes('conservation') || text.includes('monument')) categories.push('heritage');
-            if (text.includes('social') || text.includes('poverty') || text.includes('trauma') || text.includes('inclusion') || text.includes('equity') || text.includes('diversity')) categories.push('social');
-            if (text.includes('disability') || text.includes('disabled') || text.includes('inclusion') || text.includes('accessible')) categories.push('disability');
-            if (text.includes('climate') || text.includes('carbon') || text.includes('energy') || text.includes('sustainability') || text.includes('net zero')) categories.push('climate');
-            if (text.includes('digital') || text.includes('online') || text.includes('technology') || text.includes('it skills') || text.includes('web')) categories.push('digital');
-            if (text.includes('food') || text.includes('hunger') || text.includes('poverty') || text.includes('nutrition') || text.includes('pantry')) categories.push('food');
-            if (text.includes('animal') || text.includes('wildlife') || text.includes('veterinary') || text.includes('pet')) categories.push('animal');
-            if (text.includes('housing') || text.includes('homeless') || text.includes('shelter') || text.includes('tenancy')) categories.push('housing');
-            if (text.includes('employment') || text.includes('jobs') || text.includes('work') || text.includes('vocational') || text.includes('training')) categories.push('employment');
+            Object.entries(CONFIG.CATEGORIES).forEach(([cat, terms]) => {
+                if (terms.some(term => text.includes(term))) {
+                    categories.push(cat);
+                }
+            });
             
             details.category = categories.length > 0 ? categories : ['general'];
 
@@ -2526,10 +2724,10 @@
                             const textColors = ['text-indigo-300', 'text-purple-300', 'text-slate-300'];
 
                             html += `
-                                <div class="bg-gradient-to-br ${gradients[i]} rounded-2xl p-6 text-white border shadow-xl flex flex-col cursor-pointer hover:scale-[1.02] transition-transform" onclick="showDetails('${opp.id}')">
-                                    <p class="${textColors[i]} text-[10px] font-bold uppercase tracking-widest mb-2">⭐ Top Pick ${i + 1}</p>
-                                    <h3 class="text-lg font-bold mb-2 line-clamp-2">${escapeHTML(opp.title)}</h3>
-                                    <p class="text-white/70 text-xs mb-4 leading-relaxed line-clamp-3">${escapeHTML(opp.description)}</p>
+                                <div class="bg-gradient-to-br ${gradients[i]} rounded-2xl p-6 text-white border shadow-2xl flex flex-col cursor-pointer hover:scale-[1.03] transition-all duration-300" onclick="showDetails('${opp.id}')">
+                                    <p class="${textColors[i]} text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center gap-1.5"><i data-lucide="star" class="w-3 h-3 fill-current"></i> Top Pick ${i + 1}</p>
+                                    <h3 class="text-lg font-bold mb-2 line-clamp-2 drop-shadow-sm">${escapeHTML(opp.title)}</h3>
+                                    <p class="text-white/80 text-xs mb-4 leading-relaxed line-clamp-3">${escapeHTML(opp.description)}</p>
                                     <div class="mt-auto space-y-2">
                                         <div class="flex items-center justify-between text-[10px] font-bold opacity-80 mb-1">
                                             <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Found: ${new Date(opp.dateDiscovered).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
@@ -2866,32 +3064,40 @@
 
         function extractNumericAmount(amountStr) {
             if (!amountStr) return 0;
+
+            // Handle specific "varies" or empty cases quickly
+            if (amountStr.toLowerCase().includes('varies') || amountStr.toLowerCase().includes('see website')) return 0;
+
             // Handle ranges by taking the max value
             const parts = amountStr.split(/(?:to|-|and|–)/);
             if (parts.length > 1) {
-                return Math.max(...parts.map(p => extractNumericAmount(p.trim())));
+                const values = parts.map(p => extractNumericAmount(p.trim())).filter(v => v > 0);
+                return values.length > 0 ? Math.max(...values) : 0;
             }
 
-            // Find all £ or 'pounds' amounts and capture optional k/m suffix
-            let matches = Array.from(amountStr.matchAll(/(?:£|pounds?)\s?([\d,.]+)\s*([kKmM])?/gi));
+            // More aggressive numeric extraction for £/pounds with k/m suffixes
+            // Pattern: £ symbol (optional), then digits/commas/dots, then optional k/m/million/thousand
+            let matches = Array.from(amountStr.matchAll(/(?:£|pounds?|gbp)?\s?([\d,.]+)\s*([kKmM]|million|thousand)?/gi));
 
-            // Fallback: match plain numbers with optional k/m if no currency symbol found
-            if (matches.length === 0) {
+            // Fallback: match plain numbers if no symbol/suffix indicators
+            if (matches.length === 0 || matches.every(m => !m[1])) {
                 matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*([kKmM])?(?![0-9])/g));
             }
 
             let maxVal = 0;
 
             for (const match of matches) {
+                if (!match[1]) continue;
                 let valStr = match[1].replace(/,/g, '');
-                if (valStr === '.') continue;
+                if (valStr === '.' || valStr === '') continue;
+
                 let val = parseFloat(valStr);
                 if (isNaN(val)) continue;
 
                 const suffix = match[2] ? match[2].toLowerCase() : '';
 
-                if (suffix === 'k') val *= 1000;
-                else if (suffix === 'm') val *= 1000000;
+                if (suffix === 'k' || suffix === 'thousand') val *= 1000;
+                else if (suffix === 'm' || suffix === 'million') val *= 1000000;
 
                 if (val > maxVal) maxVal = val;
             }
@@ -2900,7 +3106,9 @@
         }
 
         function updateStats() {
-            document.getElementById('stat-total').textContent = state.opportunities.length;
+            const statTotal = document.getElementById('stat-total');
+            if (!statTotal) return;
+            statTotal.textContent = state.opportunities.length;
             
             const verified = state.opportunities.filter(opp => opp.verified).length;
             document.getElementById('stat-verified').textContent = verified;
@@ -3840,6 +4048,77 @@
             a.download = filename;
             a.click();
             URL.revokeObjectURL(url);
+        }
+
+        // ========== SUPER USER DASHBOARD LOGIC ==========
+        function switchSuperTab(panelId) {
+            document.querySelectorAll('.super-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(`super-panel-${panelId}`).classList.remove('hidden');
+
+            document.querySelectorAll('[id^="super-tab-"]').forEach(t => {
+                t.classList.remove('border-indigo-600', 'text-indigo-600');
+                t.classList.add('border-transparent', 'text-slate-500');
+            });
+            const activeTab = document.getElementById(`super-tab-${panelId}`);
+            activeTab.classList.add('border-indigo-600', 'text-indigo-600');
+            activeTab.classList.remove('border-transparent', 'text-slate-500');
+        }
+
+        function renderSuperDashboard() {
+            if (!state.user || state.user.role !== 'Super User') return;
+
+            // 1. Global Stats
+            document.getElementById('super-stat-total').textContent = state.opportunities.length;
+            document.getElementById('super-stat-sources').textContent = state.sources.length;
+            document.getElementById('super-stat-blacklist').textContent = state.blacklist.length;
+
+            const avgScore = state.opportunities.length > 0
+                ? Math.round(state.opportunities.reduce((acc, o) => acc + o.score, 0) / state.opportunities.length)
+                : 0;
+            document.getElementById('super-stat-score').textContent = avgScore;
+            document.getElementById('super-avg-score-gauge').textContent = avgScore;
+
+            // 2. Global Sector Distribution
+            const sectorCounts = {};
+            state.opportunities.forEach(o => {
+                if (o.category) {
+                    o.category.forEach(cat => {
+                        sectorCounts[cat] = (sectorCounts[cat] || 0) + 1;
+                    });
+                }
+            });
+            const sortedSectors = Object.entries(sectorCounts).sort((a, b) => b[1] - a[1]);
+            const sectorsChart = document.getElementById('super-chart-sectors');
+            if (sortedSectors.length > 0) {
+                const max = sortedSectors[0][1];
+                sectorsChart.innerHTML = sortedSectors.map(([cat, count]) => `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-[10px] font-bold text-slate-500 uppercase">
+                            <span>${cat}</span>
+                            <span>${count}</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-indigo-600 transition-all" style="width: ${(count/max)*100}%"></div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                sectorsChart.innerHTML = '<p class="text-xs text-slate-400 italic">No fund data available</p>';
+            }
+
+            // 3. Proxy Health (Mock)
+            const proxyList = document.getElementById('proxy-status-list');
+            proxyList.innerHTML = CONFIG.PROXIES.map((p, i) => `
+                <div class="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100">
+                    <span class="text-xs font-medium text-slate-600 truncate mr-4">${p}</span>
+                    <span class="flex items-center gap-1.5 text-[10px] font-bold ${i === currentProxyIndex ? 'text-green-600' : 'text-slate-400'}">
+                        <span class="w-1.5 h-1.5 rounded-full ${i === currentProxyIndex ? 'bg-green-600 animate-pulse' : 'bg-slate-300'}"></span>
+                        ${i === currentProxyIndex ? 'ACTIVE' : 'STANDBY'}
+                    </span>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
         }
 
         window.onload = init;
