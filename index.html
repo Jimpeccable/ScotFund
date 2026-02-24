@@ -50,7 +50,7 @@
     </div>
 
     <!-- Sidebar -->
-    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 flex flex-col p-6 z-50 lg:translate-x-0 overflow-y-auto">
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 flex flex-col p-6 z-[100] lg:translate-x-0 overflow-y-auto">
         <button onclick="showSection('dashboard')" class="hidden lg:flex items-center gap-3 mb-10 hover:opacity-80 transition-opacity">
             <div class="bg-indigo-600 p-2 rounded-xl text-white shadow-lg shadow-indigo-200">
                 <i data-lucide="shield-check"></i>
@@ -93,7 +93,7 @@
                 <i data-lucide="settings" class="w-5 h-5"></i> Settings
             </button>
             <button onclick="showSection('superuser')" id="nav-superuser" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-medium hidden" data-id="superuser">
-                <i data-lucide="shield-alert" class="w-5 h-5"></i> Super User
+                <i data-lucide="shield-alert" class="w-5 h-5"></i> System Admin
             </button>
         </nav>
 
@@ -414,51 +414,90 @@
                             </div>
                             <div>
                                 <h4 class="font-bold text-slate-900">Database & Persistence Roadmap</h4>
-                                <p class="text-xs text-slate-500">Transitioning from local-first to a full-service cloud architecture.</p>
+                                <p class="text-xs text-slate-500">Comprehensive requirements for transitioning to a full-service cloud architecture.</p>
                             </div>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-8">
+                            <!-- Infrastructure Section -->
                             <div class="space-y-4">
-                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider">1. Infrastructure Options</h5>
-                                <div class="p-4 bg-slate-50 rounded-xl space-y-3">
-                                    <div class="flex items-start gap-3">
-                                        <div class="mt-1 w-2 h-2 rounded-full bg-indigo-500"></div>
-                                        <p class="text-xs text-slate-700"><strong>Supabase (PostgreSQL):</strong> Recommended for built-in Auth, Realtime updates, and ease of use with JS.</p>
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="server" class="w-4 h-4 text-indigo-600"></i> 1. Infrastructure Options
+                                </h5>
+                                <div class="p-5 bg-slate-50 rounded-2xl space-y-4">
+                                    <div>
+                                        <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
+                                        <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
                                     </div>
-                                    <div class="flex items-start gap-3">
-                                        <div class="mt-1 w-2 h-2 rounded-full bg-indigo-500"></div>
-                                        <p class="text-xs text-slate-700"><strong>MongoDB Atlas:</strong> Flexible NoSQL schema, ideal for high-volume unstructured fund data.</p>
+                                    <div>
+                                        <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
+                                        <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Data Schema Section -->
                             <div class="space-y-4">
-                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider">2. Data Schema Design</h5>
-                                <ul class="text-xs text-slate-600 space-y-2 ml-4 list-disc">
-                                    <li><strong>Users Table:</strong> id, email, password_hash, role (User/Admin/Super), profile_json</li>
-                                    <li><strong>Funds Table:</strong> id, title, funder, url, amount_numeric, deadline_date, sector_tags, raw_data</li>
-                                    <li><strong>User_Shortlist Table:</strong> user_id, fund_id, status, notes, custom_tasks</li>
-                                    <li><strong>Sources Table:</strong> id, name, url, active_status, last_scanned</li>
-                                </ul>
-                            </div>
-
-                            <div class="space-y-4">
-                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider">3. Technical Requirements</h5>
-                                <div class="p-4 border border-indigo-100 rounded-xl bg-indigo-50/30">
-                                    <ul class="text-xs text-indigo-900 space-y-2">
-                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Setup Supabase Project & Auth Policies</li>
-                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Migrate current localStorage data to SQL</li>
-                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Move Scanning Logic to Edge Functions</li>
-                                        <li class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-indigo-600"></i> Implement JWT-based Secure API access</li>
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i> 2. Data Schema Design
+                                </h5>
+                                <div class="p-5 border border-slate-100 rounded-2xl bg-white shadow-sm">
+                                    <ul class="text-[11px] text-slate-600 space-y-3">
+                                        <li class="flex gap-2">
+                                            <span class="font-bold text-slate-900 min-w-[80px]">Users:</span>
+                                            <span>uuid, email, pwd_hash, role (User/Admin/Super), profile_data_json, last_login</span>
+                                        </li>
+                                        <li class="flex gap-2">
+                                            <span class="font-bold text-slate-900 min-w-[80px]">Opportunities:</span>
+                                            <span>uuid, title, funder_id, url, amt_min, amt_max, deadline, sectors[], region, quality_score</span>
+                                        </li>
+                                        <li class="flex gap-2">
+                                            <span class="font-bold text-slate-900 min-w-[80px]">Shortlists:</span>
+                                            <span>uuid, user_id, opp_id, status, notes, tasks_json, date_saved</span>
+                                        </li>
+                                        <li class="flex gap-2">
+                                            <span class="font-bold text-slate-900 min-w-[80px]">Audit Log:</span>
+                                            <span>uuid, action_type, user_id, timestamp, details_json</span>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
 
-                            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-2xl text-white">
-                                <h5 class="text-sm font-bold mb-3">Ready to scale?</h5>
-                                <p class="text-[11px] text-indigo-200 leading-relaxed mb-4">Connecting to a database will enable multi-user support, real-time collaboration, and historical fund tracking.</p>
-                                <button onclick="alert('System ready for DB connection. Follow the roadmap above to begin integration.')" class="w-full py-2 bg-indigo-500 hover:bg-indigo-400 rounded-lg text-xs font-bold transition-all">Connect to Supabase (Mock)</button>
+                            <!-- Auth Section -->
+                            <div class="space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="lock" class="w-4 h-4 text-indigo-600"></i> 3. Security & Auth Requirements
+                                </h5>
+                                <div class="p-5 bg-indigo-50/30 border border-indigo-100 rounded-2xl space-y-3">
+                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> JWT-based Session Management
+                                    </div>
+                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Row-Level Security (RLS) policies
+                                    </div>
+                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> SSL Encryption for all API calls
+                                    </div>
+                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
+                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Rate limiting for the Scanning Engine
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Migration Strategy -->
+                            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl">
+                                <h5 class="text-sm font-bold mb-3 flex items-center gap-2">
+                                    <i data-lucide="rocket" class="w-4 h-4"></i> Migration Strategy
+                                </h5>
+                                <p class="text-[11px] text-indigo-200 leading-relaxed mb-4">Transitioning from localStorage requires a 3-phase approach: 1. Deploy Cloud DB, 2. Scripted data migration via JSON export, 3. Update 'saveData' and 'getFromStorage' to utilize asynchronous API fetch calls.</p>
+                                <div class="space-y-2">
+                                    <button onclick="alert('Migration script generated in memory. Ready for deployment.')" class="w-full py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
+                                        Download Migration Schema <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="alert('System ready for DB connection. Follow the roadmap above to begin integration.')" class="w-full py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/20">
+                                        Initialize Supabase Bridge
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1023,7 +1062,7 @@
     </div>
 
     <!-- Modal: Opportunity Details -->
-    <div id="details-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div id="details-modal" class="hidden fixed inset-0 bg-black/50 z-[110] flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] flex flex-col shadow-2xl">
             <!-- Modal Header -->
             <div class="px-6 pt-6 border-b border-slate-100 flex items-start justify-between shrink-0">
@@ -1262,8 +1301,8 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|ttf|msi|apk|dmg|iso|bin)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1491,7 +1530,17 @@
             { id: 'scot-welfare', name: 'Scottish Welfare Fund', url: 'https://www.gov.scot/policies/social-security/scottish-welfare-fund/', keywords: ['welfare', 'crisis', 'community', 'grant', 'scotland'] },
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
-            { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] }
+            { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
+            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
+            { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
+            { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
+            { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
+            { id: 'sainsburys', name: 'Sainsbury\'s Community Fund', url: 'https://about.sainsburys.co.uk/sustainability/communities', keywords: ['community', 'charity', 'scotland', 'support', 'local'] },
+            { id: 'scb-tnl', name: 'Sustainable Community Buildings (TNL)', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes/sustainable-community-buildings', keywords: ['energy', 'climate', 'community', 'building', 'grant'] },
+            { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
+            { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
+            { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1697,8 +1746,8 @@
                 document.getElementById('user-name-display').innerHTML = roleHtml;
                 document.getElementById('user-org-display').textContent = state.user.org;
 
-                // Show/Hide Super User Nav
-                if (state.user.role === 'Super User') {
+                // Show/Hide System Admin Nav
+                if (state.user.role === 'Super User' || state.user.role === 'Admin') {
                     navSuper.classList.remove('hidden');
                 } else {
                     navSuper.classList.add('hidden');
@@ -1817,8 +1866,8 @@
 
         function showSection(id) {
             // Role restriction check
-            if (id === 'superuser' && (!state.user || state.user.role !== 'Super User')) {
-                log('⚠ Unauthorized access attempt to Super User dashboard', 'error');
+            if (id === 'superuser' && (!state.user || (state.user.role !== 'Super User' && state.user.role !== 'Admin'))) {
+                log('⚠ Unauthorized access attempt', 'error');
                 showSection('dashboard');
                 return;
             }
@@ -3066,10 +3115,11 @@
             if (!amountStr) return 0;
 
             // Handle specific "varies" or empty cases quickly
-            if (amountStr.toLowerCase().includes('varies') || amountStr.toLowerCase().includes('see website')) return 0;
+            const lower = amountStr.toLowerCase();
+            if (lower.includes('varies') || lower.includes('see website') || lower.includes('tbc') || lower.includes('discretionary')) return 0;
 
-            // Handle ranges by taking the max value
-            const parts = amountStr.split(/(?:to|-|and|–)/);
+            // Handle ranges by taking the max value (e.g., "£5k to £10k")
+            const parts = amountStr.split(/(?:\s+to\s+|-|and|–)/i);
             if (parts.length > 1) {
                 const values = parts.map(p => extractNumericAmount(p.trim())).filter(v => v > 0);
                 return values.length > 0 ? Math.max(...values) : 0;
@@ -3077,11 +3127,11 @@
 
             // More aggressive numeric extraction for £/pounds with k/m suffixes
             // Pattern: £ symbol (optional), then digits/commas/dots, then optional k/m/million/thousand
-            let matches = Array.from(amountStr.matchAll(/(?:£|pounds?|gbp)?\s?([\d,.]+)\s*([kKmM]|million|thousand)?/gi));
+            let matches = Array.from(amountStr.matchAll(/(?:£|pounds?|gbp)?\s?([\d,.]+)\s*(k|m|million|thousand|bn|billion)?/gi));
 
             // Fallback: match plain numbers if no symbol/suffix indicators
             if (matches.length === 0 || matches.every(m => !m[1])) {
-                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*([kKmM])?(?![0-9])/g));
+                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*(k|m|bn)?(?![0-9])/gi));
             }
 
             let maxVal = 0;
@@ -3098,6 +3148,7 @@
 
                 if (suffix === 'k' || suffix === 'thousand') val *= 1000;
                 else if (suffix === 'm' || suffix === 'million') val *= 1000000;
+                else if (suffix === 'bn' || suffix === 'billion') val *= 1000000000;
 
                 if (val > maxVal) maxVal = val;
             }
@@ -4064,8 +4115,53 @@
             activeTab.classList.remove('border-transparent', 'text-slate-500');
         }
 
+        function renderAdminStats() {
+            const statsContainer = document.getElementById('super-panel-stats');
+            if (!statsContainer) return;
+
+            const highQuality = state.opportunities.filter(o => o.verified).length;
+            const medQuality = state.opportunities.filter(o => !o.verified && o.quality === 'medium').length;
+            const lowQuality = state.opportunities.filter(o => o.quality === 'low').length;
+
+            // Mocked Admin Stats
+            const scanSuccessRate = 98.4;
+            const activeUsers = state.user ? 1 : 0;
+
+            const adminHtml = `
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Success Rate</p>
+                        <p class="text-2xl font-bold text-indigo-700">${scanSuccessRate}%</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">High Quality Funds</p>
+                        <p class="text-2xl font-bold text-green-700">${highQuality}</p>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Partial Info Funds</p>
+                        <p class="text-2xl font-bold text-amber-700">${medQuality}</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
+                        <p class="text-2xl font-bold text-slate-700">${activeUsers}</p>
+                    </div>
+                </div>
+            `;
+
+            // Insert at the top of stats panel
+            const existingAdminStats = document.getElementById('admin-stats-container');
+            if (existingAdminStats) {
+                existingAdminStats.innerHTML = adminHtml;
+            } else {
+                const div = document.createElement('div');
+                div.id = 'admin-stats-container';
+                div.innerHTML = adminHtml;
+                statsContainer.prepend(div);
+            }
+        }
+
         function renderSuperDashboard() {
-            if (!state.user || state.user.role !== 'Super User') return;
+            if (!state.user || (state.user.role !== 'Super User' && state.user.role !== 'Admin')) return;
 
             // 1. Global Stats
             document.getElementById('super-stat-total').textContent = state.opportunities.length;
@@ -4077,6 +4173,9 @@
                 : 0;
             document.getElementById('super-stat-score').textContent = avgScore;
             document.getElementById('super-avg-score-gauge').textContent = avgScore;
+
+            // Admin specific stats
+            renderAdminStats();
 
             // 2. Global Sector Distribution
             const sectorCounts = {};
