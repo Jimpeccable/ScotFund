@@ -27,6 +27,11 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* World Class UI Refinements */
+        .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
+        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-[#1e293b]">
@@ -141,27 +146,27 @@
 
             <!-- Enhanced Stats Grid -->
             <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-200 hover:shadow-lg transition-all">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Total</p>
                     <p id="stat-total" class="text-3xl font-bold text-slate-900">0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-green-200 hover:shadow-lg transition-all">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Verified</p>
                     <p id="stat-verified" class="text-3xl font-bold text-green-600">0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-orange-200 hover:shadow-lg transition-all">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Closing Soon</p>
                     <p id="stat-closing" class="text-3xl font-bold text-orange-600">0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-200 hover:shadow-lg transition-all">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Large Grants</p>
                     <p id="stat-large" class="text-3xl font-bold text-purple-600">0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Avg Amount</p>
                     <p id="stat-avg" class="text-2xl font-bold text-slate-900">£0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all">
                     <p class="text-xs font-bold text-slate-400 uppercase mb-1">Last Scan</p>
                     <p id="stat-last-scan" class="text-xs font-bold text-slate-900">Never</p>
                 </div>
@@ -253,6 +258,11 @@
                             <option value="animal">Animal Welfare</option>
                             <option value="housing">Housing & Homeless</option>
                             <option value="employment">Employment & Training</option>
+                            <option value="justice">Justice & Rights</option>
+                            <option value="veterans">Veterans</option>
+                            <option value="elderly">Elderly & Older People</option>
+                            <option value="faith">Faith Groups</option>
+                            <option value="rural">Rural & Island Communities</option>
                         </select>
                     </div>
                     <div>
@@ -500,6 +510,42 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Technical Requirements Checklist -->
+                        <div class="mt-8 border-t border-slate-100 pt-8">
+                            <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i> 5. Database Connection Requirements Checklist
+                            </h5>
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Supabase (SQL)</p>
+                                    <ul class="text-[11px] text-slate-600 space-y-2">
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Project URL & Anon Key</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Service Role Key (Admin)</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> PostgreSQL Connection String</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> RLS Policies Definition</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">MongoDB (NoSQL)</p>
+                                    <ul class="text-[11px] text-slate-600 space-y-2">
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Atlas Cluster URI</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Database & Collection Names</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> API Key / Access Credentials</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> IP Whitelist Configuration</li>
+                                    </ul>
+                                </div>
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Application Level</p>
+                                    <ul class="text-[11px] text-slate-600 space-y-2">
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> .env File for Secrets</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Fetch API Bridge (async/await)</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Error Boundary Implementation</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Offline Sync Strategy</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Advanced Stats Tab -->
@@ -522,12 +568,74 @@
                     </div>
 
                     <!-- System Health Tab -->
-                    <div id="super-panel-admin" class="super-panel hidden">
-                        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                            <h4 class="font-bold text-slate-900 mb-4">Proxy Health & Connectivity</h4>
-                            <div class="space-y-3" id="proxy-status-list">
-                                <!-- Populated by JS -->
+                    <div id="super-panel-admin" class="super-panel hidden space-y-8">
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                                <h4 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i data-lucide="server" class="w-5 h-5 text-indigo-600"></i> Proxy Health & Connectivity
+                                </h4>
+                                <div class="space-y-3" id="proxy-status-list">
+                                    <!-- Populated by JS -->
+                                </div>
                             </div>
+                            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                                <h4 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                    <i data-lucide="activity" class="w-5 h-5 text-indigo-600"></i> System Audit Log
+                                </h4>
+                                <div class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar text-[10px]" id="super-audit-log">
+                                    <div class="p-2 bg-white rounded border-l-2 border-green-500 flex justify-between">
+                                        <span>System initialised successfully</span>
+                                        <span class="text-slate-400">Just now</span>
+                                    </div>
+                                    <div class="p-2 bg-white rounded border-l-2 border-blue-500 flex justify-between">
+                                        <span>Configuration synced with localStorage</span>
+                                        <span class="text-slate-400">2 mins ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                            <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                                <h4 class="font-bold text-sm text-slate-900 flex items-center gap-2">
+                                    <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> User Management Simulation
+                                </h4>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">3 Active Sessions</span>
+                            </div>
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 font-bold uppercase">
+                                    <tr>
+                                        <th class="px-4 py-3">User</th>
+                                        <th class="px-4 py-3">Organisation</th>
+                                        <th class="px-4 py-3">Role</th>
+                                        <th class="px-4 py-3">Last Active</th>
+                                        <th class="px-4 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="px-4 py-3 font-medium">Jane Doe</td>
+                                        <td class="px-4 py-3 text-slate-500">Glasgow Community Trust</td>
+                                        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full font-bold">Admin</span></td>
+                                        <td class="px-4 py-3 text-slate-400">Online Now</td>
+                                        <td class="px-4 py-3 text-right"><button class="text-indigo-600 font-bold hover:underline">Manage</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-medium">John Smith</td>
+                                        <td class="px-4 py-3 text-slate-500">Edinburgh Youth Project</td>
+                                        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">User</span></td>
+                                        <td class="px-4 py-3 text-slate-400">14 mins ago</td>
+                                        <td class="px-4 py-3 text-right"><button class="text-indigo-600 font-bold hover:underline">Manage</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-medium">System Bot</td>
+                                        <td class="px-4 py-3 text-slate-500">ScotFund Pro Internal</td>
+                                        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full font-bold">Service</span></td>
+                                        <td class="px-4 py-3 text-slate-400">Online Now</td>
+                                        <td class="px-4 py-3 text-right"><button class="text-indigo-600 font-bold hover:underline">Logs</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -862,6 +970,18 @@
                         <li><a href="https://scvo.scot/membership" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> SCVO Membership</a></li>
                         <li><a href="https://www.dtascot.org.uk/" target="_blank" class="text-xs font-medium text-indigo-600 hover:underline flex items-center gap-2"><i data-lucide="external-link" class="w-3 h-3"></i> DTAS Resources</a></li>
                     </ul>
+                    <div class="pt-4 border-t border-slate-50">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">TSI Directory (Quick Search)</p>
+                        <select onchange="window.open(this.value, '_blank')" class="w-full text-[10px] p-2 bg-slate-50 border border-slate-100 rounded outline-none">
+                            <option value="">Select Region...</option>
+                            <option value="https://www.gcvs.org.uk/">Glasgow (GCVS)</option>
+                            <option value="https://www.evoc.org.uk/">Edinburgh (EVOC)</option>
+                            <option value="https://acvo.org.uk/">Aberdeen (ACVO)</option>
+                            <option value="https://www.dundeevoluntaryaction.org.uk/">Dundee (DVA)</option>
+                            <option value="https://www.fva.org/">Fife (FVA)</option>
+                            <option value="https://www.highlandtsi.org.uk/">Highlands (HTSI)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -969,6 +1089,21 @@
                         </label>
                         <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
                             <input type="checkbox" value="employment" class="rounded border-slate-300"> <span class="text-xs font-medium">Employment</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="justice" class="rounded border-slate-300"> <span class="text-xs font-medium">Justice & Rights</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="veterans" class="rounded border-slate-300"> <span class="text-xs font-medium">Veterans</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="elderly" class="rounded border-slate-300"> <span class="text-xs font-medium">Elderly</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="faith" class="rounded border-slate-300"> <span class="text-xs font-medium">Faith</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="rural" class="rounded border-slate-300"> <span class="text-xs font-medium">Rural</span>
                         </label>
                     </div>
                 </div>
@@ -1296,7 +1431,7 @@
             KEYWORDS: {
                 funding: ['fund', 'grant', 'award', 'scheme', 'programme', 'support', 'finance', 'bursary', 'funding', 'money', 'investment', 'capital', 'revenue', 'subsidy', 'pot'],
                 scotland: ['scotland', 'scottish', 'scot', 'alba', 'highlands', 'islands', 'lowlands', 'central belt', 'argyll', 'orkney', 'shetland', 'hebrides', 'gaeltacht', 'grampian', 'tayside', 'lothian', 'borders', 'strathclyde', 'forth valley'],
-                topics: ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health', 'climate', 'biodiversity', 'active travel', 'digital', 'skills', 'employment', 'isolation', 'loneliness', 'care', 'carers', 'refugees', 'addiction', 'recovery', 'animal welfare', 'religious', 'faith', 'human rights', 'justice', 'housing', 'homelessness', 'families', 'early years', 'learning', 'stem', 'digital inclusion', 'food poverty', 'energy crisis'],
+                topics: ['play', 'outdoor', 'community', 'youth', 'charity', 'voluntary', 'organisation', 'children', 'sport', 'education', 'environment', 'health', 'wellbeing', 'social', 'heritage', 'culture', 'arts', 'sustainability', 'nursery', 'pre-school', 'toddler', 'elderly', 'disability', 'inclusion', 'diversity', 'equality', 'poverty', 'crisis', 'homeless', 'veterans', 'mental health', 'climate', 'biodiversity', 'active travel', 'digital', 'skills', 'employment', 'isolation', 'loneliness', 'care', 'carers', 'refugees', 'addiction', 'recovery', 'animal welfare', 'religious', 'faith', 'human rights', 'justice', 'housing', 'homelessness', 'families', 'early years', 'learning', 'stem', 'digital inclusion', 'food poverty', 'energy crisis', 'refugee', 'asylum', 'migrant', 'justice', 'human rights', 'older people', 'rural', 'island', 'farming', 'crofting', 'remote community', 'loneliness', 'isolation'],
                 orgTypes: ['cic', 'scio', 'charity', 'voluntary group', 'trust', 'foundation', 'social enterprise', 'community interest company', 'scottish charitable incorporated organisation', 'third sector', 'ngo'],
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
@@ -1322,7 +1457,12 @@
                 food: ['food', 'hunger', 'poverty', 'nutrition', 'pantry'],
                 animal: ['animal', 'wildlife', 'veterinary', 'pet'],
                 housing: ['housing', 'homeless', 'shelter', 'tenancy'],
-                employment: ['employment', 'jobs', 'work', 'vocational', 'training']
+                employment: ['employment', 'jobs', 'work', 'vocational', 'training'],
+                justice: ['justice', 'rights', 'legal', 'equality', 'human rights', 'law'],
+                veterans: ['veterans', 'military', 'armed forces', 'ex-service'],
+                elderly: ['elderly', 'older people', 'seniors', 'ageing', 'loneliness'],
+                faith: ['faith', 'religious', 'church', 'christian', 'muslim', 'jewish', 'sikh', 'hindu', 'spiritual'],
+                rural: ['rural', 'island', 'remote', 'village', 'agriculture', 'farming', 'crofting']
             }
         };
 
@@ -1488,6 +1628,21 @@
             { id: 'orkney-council', name: 'Orkney Islands Council Funding', url: 'https://www.orkney.gov.uk/Service-Directory/C/community-council-grant-schemes.htm', keywords: ['orkney', 'community', 'grant', 'local'] },
             { id: 'shetland-council', name: 'Shetland Islands Council Grants', url: 'https://www.shetland.gov.uk/community/grants-funding', keywords: ['shetland', 'community', 'grant', 'local'] },
             { id: 'western-isles-council', name: 'Na h-Eileanan Siar Council Funding', url: 'https://www.cne-siar.gov.uk/social-care-and-health/community-grants/', keywords: ['western isles', 'lewis', 'harris', 'community', 'grant', 'local'] },
+            { id: 'artemis', name: 'Artemis Charitable Foundation', url: 'https://www.artemisfoundation.org.uk/', keywords: ['scotland', 'charity', 'health', 'poverty', 'education', 'environment'] },
+            { id: 'binks', name: 'Binks Trust', url: 'https://www.binkstrust.org.uk/', keywords: ['scotland', 'arts', 'culture', 'heritage', 'environment', 'education'] },
+            { id: 'carnegie-dunfermline', name: 'Carnegie Dunfermline Trust', url: 'https://carnegiedunfermline.org/', keywords: ['fife', 'dunfermline', 'community', 'arts', 'sport', 'education'] },
+            { id: 'carnegie-hero', name: 'Carnegie Hero Fund Trust', url: 'https://carnegieherofund.org.uk/', keywords: ['scotland', 'heroism', 'bravery', 'relief', 'community'] },
+            { id: 'carnegie-uni', name: 'Carnegie Trust for the Universities of Scotland', url: 'https://www.carnegie-trust.org/', keywords: ['scotland', 'university', 'research', 'education', 'student'] },
+            { id: 'dunlossit', name: 'Dunlossit and Islay Community Trust', url: 'https://www.dunlossitestate.co.uk/community-trust', keywords: ['islay', 'community', 'rural', 'island', 'scotland'] },
+            { id: 'fife-health', name: 'Fife Health Charity', url: 'https://www.fifehealthcharity.org.uk/', keywords: ['fife', 'health', 'wellbeing', 'nhs', 'patient', 'community'] },
+            { id: 'future-woodlands', name: 'Future Woodlands Scotland', url: 'https://www.futurewoodlands.org.uk/', keywords: ['scotland', 'woodland', 'environment', 'climate', 'nature', 'trees'] },
+            { id: 'hillcrest', name: 'Hillcrest Foundation', url: 'https://www.hillcrest.org.uk/foundation/', keywords: ['dundee', 'scotland', 'housing', 'community', 'poverty', 'inclusion'] },
+            { id: 'mushroom', name: 'The Mushroom Trust', url: 'http://www.mushroomtrust.org.uk/', keywords: ['scotland', 'green space', 'garden', 'urban', 'environment', 'community'] },
+            { id: 'nancy-bateman', name: 'The Nancy Bateman Charitable Trust', url: 'https://www.nancybatemanct.org.uk/', keywords: ['scotland', 'charity', 'poverty', 'health', 'education'] },
+            { id: 'robertson-ness', name: 'The Robertson Ness Trust', url: 'http://www.robertsonnesstrust.org.uk/', keywords: ['scotland', 'poverty', 'social', 'community', 'disadvantage'] },
+            { id: 'sylvia-aitken', name: 'The Sylvia Aitken Charitable Trust', url: 'https://www.sylviaaitkentrust.org.uk/', keywords: ['scotland', 'medical', 'health', 'charity', 'community'] },
+            { id: 'wa-cargill', name: 'The WA Cargill Charitable Trust', url: 'https://www.wacargilltrust.org.uk/', keywords: ['scotland', 'arts', 'health', 'charity', 'community'] },
+            { id: 'hunter-foundation', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['scotland', 'entrepreneurship', 'education', 'poverty', 'leadership'] },
 
             // Regional TSIs & Specialized Portals
             { id: 'htsi', name: 'Highland TSI Funding', url: 'https://www.highlandtsi.org.uk/funding', keywords: ['highland', 'tsi', 'charity', 'funding', 'support'] },
@@ -1598,8 +1753,12 @@
             { pattern: '/my-account', description: 'User accounts', active: true },
             { pattern: '/careers', description: 'Job openings', active: true },
             { pattern: '/jobs', description: 'Job openings', active: true },
-            { pattern: '/vacancy', description: 'Vacancies', active: true },
+            { pattern: '/working-for-us', description: 'Job openings', active: true },
             { pattern: '/vacancies', description: 'Vacancies', active: true },
+            { pattern: '/vacancy', description: 'Vacancies', active: true },
+            { pattern: '/annual-report', description: 'Corporate reports', active: true },
+            { pattern: '/governance', description: 'Governance pages', active: true },
+            { pattern: '/transparency', description: 'Corporate pages', active: true },
             { pattern: '/donate', description: 'Donation pages', active: true },
             { pattern: '/accessibility', description: 'Accessibility', active: true },
             { pattern: '/sitemap', description: 'Sitemap', active: true },
@@ -2105,7 +2264,7 @@
                 const ariaLabel = link.getAttribute('aria-label');
                 const linkTitle = link.getAttribute('title');
 
-                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit)$/i.test(text) || text.length < 5) {
+                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit|find out)$/i.test(text) || text.length < 5) {
                     if (ariaLabel && ariaLabel.trim().length > 5) {
                         text = ariaLabel.trim();
                     } else if (linkTitle && linkTitle.trim().length > 5) {
@@ -2114,12 +2273,15 @@
                         // Try to find a heading in current or parent containers
                         let heading = null;
                         let currentSearch = parent;
-                        for (let depth = 0; depth < 3 && currentSearch && !heading; depth++) {
+                        for (let depth = 0; depth < 4 && currentSearch && !heading; depth++) {
                             heading = currentSearch.querySelector('h1, h2, h3, h4, h5, h6, strong, b');
                             if (!heading) {
-                                // Try previous sibling if we're in a container that might be just the link
+                                // Try previous sibling or adjacent sibling headings
                                 let prev = currentSearch.previousElementSibling;
-                                if (prev) heading = prev.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(prev.tagName) ? prev : null);
+                                while (prev && !heading) {
+                                    heading = prev.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(prev.tagName) ? prev : null);
+                                    prev = prev.previousElementSibling;
+                                }
                             }
                             if (!heading) currentSearch = currentSearch.parentElement;
                         }
@@ -2396,11 +2558,12 @@
             const amountPatterns = [
                 /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
                 /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
-                /([\d,kKmM.]+)\s*(?:grant|funding|award)/i,
-                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)/i
+                /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)/i,
+                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)/i,
+                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)/i
             ];
             
             for (const pattern of amountPatterns) {
@@ -2421,9 +2584,11 @@
                 /closes?[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /(?:by|before|until)[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /apply by[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
+                /submission\s+by\s+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/,
                 /(\d{1,2}\s+\w+\s+\d{2,4})/,
-                /(\w+\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})/
+                /(\w+\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})/,
+                /(?:closes|deadline)\s+on\s+(\d{1,2}(?:st|nd|rd|th)?\s+\w+)/i
             ];
             
             for (const pattern of deadlinePatterns) {
