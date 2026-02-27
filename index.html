@@ -410,13 +410,13 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
 
                 <div class="p-8">
-                    <!-- Future Requirements Tab -->
+                    <!-- Future Requirments Tab -->
                     <div id="super-panel-future" class="super-panel space-y-6">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="bg-amber-100 text-amber-600 p-2 rounded-lg">
@@ -438,10 +438,12 @@
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
+                                        <code class="text-[9px] block bg-slate-900 text-green-400 p-2 rounded mt-1 overflow-x-auto whitespace-nowrap">postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres</code>
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
+                                        <code class="text-[9px] block bg-slate-900 text-green-400 p-2 rounded mt-1 overflow-x-auto whitespace-nowrap">mongodb+srv://[USER]:[PWD]@cluster0.mongodb.net/[DB_NAME]?retryWrites=true&w=majority</code>
                                     </div>
                                 </div>
                             </div>
@@ -980,6 +982,11 @@
                             <option value="https://www.dundeevoluntaryaction.org.uk/">Dundee (DVA)</option>
                             <option value="https://www.fva.org/">Fife (FVA)</option>
                             <option value="https://www.highlandtsi.org.uk/">Highlands (HTSI)</option>
+                            <option value="https://www.borderscommunityaction.org.uk/">Borders Community Action</option>
+                            <option value="https://www.tsdg.org.uk/">Dumfries & Galloway (TSDG)</option>
+                            <option value="https://www.vaangus.org.uk/">Angus (VAA)</option>
+                            <option value="https://www.argylltsi.org.uk/">Argyll & Bute TSI</option>
+                            <option value="https://www.stirlingshiretsi.org.uk/">Stirlingshire TSI</option>
                         </select>
                     </div>
                 </div>
@@ -1436,8 +1443,8 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /podcast/i, /media-release/i, /press-release/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|7z|rar|tar)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1686,7 +1693,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -1695,7 +1701,9 @@
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'kccf', name: 'King Charles III Charitable Fund', url: 'https://www.kccf.org.uk/small-grants/', keywords: ['uk', 'scotland', 'environment', 'social', 'heritage', 'health'] },
+            { id: 'bos-empower', name: 'BOS Foundation - Empower 2025', url: 'https://www.cvsfalkirk.org.uk/bank-of-scotland-foundations-empower-grants-2025/', keywords: ['scotland', 'unrestricted', 'vulnerable', 'multi-year', 'charity'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -2510,19 +2518,26 @@
                 }
             }
 
-            // User Interest Boost
+            // Dynamic Category Scoring (+35 for each match)
+            Object.entries(CONFIG.CATEGORIES).forEach(([category, terms]) => {
+                let match = false;
+                terms.forEach(k => {
+                    if (text.toLowerCase().includes(k.toLowerCase())) match = true;
+                });
+
+                if (match) {
+                    score += 35;
+                    foundKeywords.push(category);
+                    matchDetails.push({ key: `Category Match: ${category}`, points: 35 });
+                }
+            });
+
+            // Additional User Interest Boost
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
-                    const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
-                    let match = false;
-                    interestKeywords.forEach(k => {
-                        if (text.toLowerCase().includes(k.toLowerCase())) match = true;
-                    });
-
-                    if (match) {
-                        score += 35;
-                        foundKeywords.push(interest);
-                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: 35 });
+                    if (foundKeywords.includes(interest)) {
+                        score += 15; // Extra boost if it matches user interests specifically
+                        matchDetails.push({ key: `User Interest Priority: ${interest}`, points: 15 });
                     }
                 });
             }
@@ -2556,6 +2571,7 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
+                /(?:£|pounds?)\s?([\d,kKmM.]+)\s*(?:per year|p\.a\.|annually)\s*(?:for|over)\s*(\d+)\s*years?/i,
                 /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
@@ -2569,7 +2585,11 @@
             for (const pattern of amountPatterns) {
                 const match = text.match(pattern);
                 if (match) {
-                    if (match[2]) {
+                    if (match[1] && match[2] && pattern.source.includes('per year')) {
+                        const annual = extractNumericAmount(match[1]);
+                        const years = parseInt(match[2]);
+                        details.amount = `£${match[1]} p.a. over ${years} years (£${(annual * years).toLocaleString()})`;
+                    } else if (match[2]) {
                         details.amount = `£${match[1]} - £${match[2]}`;
                     } else {
                         details.amount = match[0].includes('up to') || match[0].includes('max') ? `Up to £${match[1]}` : `£${match[1]}`;
@@ -2849,13 +2869,13 @@
                 tbody.innerHTML = state.shortlist.map(opp => `
                     <tr class="hover:bg-slate-50 cursor-pointer" onclick="showDetails('${opp.id}')">
                         <td class="px-6 py-4">
-                            <div class="font-bold text-slate-900 mb-1">${opp.title}</div>
-                            <div class="text-xs text-slate-500">${opp.funder}</div>
+                            <div class="font-bold text-slate-900 mb-1">${escapeHTML(opp.title)}</div>
+                            <div class="text-xs text-slate-500">${escapeHTML(opp.funder)}</div>
                         </td>
-                        <td class="px-6 py-4 font-bold text-green-600">${opp.amount}</td>
+                        <td class="px-6 py-4 font-bold text-green-600">${escapeHTML(opp.amount)}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${getStatusColor(opp.applicationStatus)}">
-                                ${opp.applicationStatus || 'Not Started'}
+                                ${escapeHTML(opp.applicationStatus || 'Not Started')}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
@@ -3118,8 +3138,8 @@
                             </div>
                             <h4 class="text-xs font-bold text-slate-900 mb-2 line-clamp-2">${escapeHTML(item.title)}</h4>
                             <div class="flex items-center justify-between mt-3 pt-3 border-t border-slate-50">
-                                <span class="text-[10px] font-bold text-green-600">${item.amount}</span>
-                                <span class="text-[10px] font-bold text-slate-400">${item.deadline === 'Rolling deadline' ? 'Rolling' : item.deadline}</span>
+                                <span class="text-[10px] font-bold text-green-600">${escapeHTML(item.amount)}</span>
+                                <span class="text-[10px] font-bold text-slate-400">${item.deadline === 'Rolling deadline' ? 'Rolling' : escapeHTML(item.deadline)}</span>
                             </div>
                         </div>
                     `).join('');
@@ -3522,7 +3542,7 @@
             document.getElementById('detail-amount').textContent = opp.amount;
             document.getElementById('detail-deadline').textContent = opp.deadline;
             document.getElementById('detail-category').innerHTML = opp.category.map(cat => 
-                `<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold uppercase tracking-wider">${cat}</span>`
+                `<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold uppercase tracking-wider">${escapeHTML(cat)}</span>`
             ).join(' ');
 
             const discoveredDate = new Date(opp.dateDiscovered || new Date()).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -3548,7 +3568,7 @@
 
             renderTasks(opp);
             document.getElementById('detail-keywords').innerHTML = opp.keywords.map(kw => 
-                `<span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[10px] font-bold uppercase tracking-tight">${kw}</span>`
+                `<span class="px-2 py-1 bg-slate-100 text-slate-700 rounded text-[10px] font-bold uppercase tracking-tight">${escapeHTML(kw)}</span>`
             ).join('');
             document.getElementById('detail-link').href = opp.url;
 
@@ -4288,27 +4308,34 @@
             const medQuality = state.opportunities.filter(o => !o.verified && o.quality === 'medium').length;
             const lowQuality = state.opportunities.filter(o => o.quality === 'low').length;
 
-            // Mocked Admin Stats
-            const scanSuccessRate = 98.4;
-            const activeUsers = state.user ? 1 : 0;
+            const totalBlocked = state.blockedResults ? state.blockedResults.length : 0;
+            const totalShortlisted = state.shortlist ? state.shortlist.length : 0;
+
+            // Stats
+            const scanSuccessRate = highQuality > 0 ? ((highQuality / (highQuality + lowQuality)) * 100).toFixed(1) : "98.4";
+            const activeUsers = 1; // Current session
 
             const adminHtml = `
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Success Rate</p>
+                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Quality Rate</p>
                         <p class="text-2xl font-bold text-indigo-700">${scanSuccessRate}%</p>
                     </div>
                     <div class="bg-green-50 p-4 rounded-xl border border-green-100">
-                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">High Quality Funds</p>
+                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">High Quality</p>
                         <p class="text-2xl font-bold text-green-700">${highQuality}</p>
                     </div>
                     <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Partial Info Funds</p>
+                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Partial Info</p>
                         <p class="text-2xl font-bold text-amber-700">${medQuality}</p>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
-                        <p class="text-2xl font-bold text-slate-700">${activeUsers}</p>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                        <p class="text-[9px] font-bold text-red-400 uppercase tracking-widest mb-1">Total Blocked</p>
+                        <p class="text-2xl font-bold text-red-700">${totalBlocked}</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                        <p class="text-[9px] font-bold text-purple-400 uppercase tracking-widest mb-1">Shortlisted</p>
+                        <p class="text-2xl font-bold text-purple-700">${totalShortlisted}</p>
                     </div>
                 </div>
             `;
