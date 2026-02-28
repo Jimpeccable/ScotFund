@@ -410,7 +410,7 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
@@ -438,10 +438,17 @@
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
+                                        <code class="block mt-2 p-2 bg-slate-900 text-green-400 text-[9px] rounded font-mono">
+                                            const { createClient } = require('@supabase/supabase-js');<br>
+                                            const supabase = createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+                                        </code>
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
+                                        <code class="block mt-2 p-2 bg-slate-900 text-green-400 text-[9px] rounded font-mono">
+                                            mongodb+srv://admin:&lt;password&gt;@cluster0.mongodb.net/?retryWrites=true&amp;w=majority
+                                        </code>
                                     </div>
                                 </div>
                             </div>
@@ -1642,6 +1649,11 @@
             { id: 'robertson-ness', name: 'The Robertson Ness Trust', url: 'http://www.robertsonnesstrust.org.uk/', keywords: ['scotland', 'poverty', 'social', 'community', 'disadvantage'] },
             { id: 'sylvia-aitken', name: 'The Sylvia Aitken Charitable Trust', url: 'https://www.sylviaaitkentrust.org.uk/', keywords: ['scotland', 'medical', 'health', 'charity', 'community'] },
             { id: 'wa-cargill', name: 'The WA Cargill Charitable Trust', url: 'https://www.wacargilltrust.org.uk/', keywords: ['scotland', 'arts', 'health', 'charity', 'community'] },
+            { id: 'king-charles', name: 'King Charles III Charitable Fund', url: 'https://www.kccf.org.uk/grant-making/', keywords: ['scotland', 'environment', 'community', 'health', 'education'] },
+            { id: 'comic-relief', name: 'Comic Relief', url: 'https://www.comicrelief.com/funding/', keywords: ['scotland', 'social', 'poverty', 'inclusion', 'justice'] },
+            { id: 'dulverton', name: 'The Dulverton Trust', url: 'https://www.dulverton-trust.org.uk/', keywords: ['scotland', 'youth', 'environment', 'heritage', 'community'] },
+            { id: 'mercers', name: 'The Mercers\' Company', url: 'https://www.mercers.co.uk/philanthropy/', keywords: ['scotland', 'education', 'social', 'welfare', 'community'] },
+            { id: 'goldsmiths', name: 'The Goldsmiths\' Company Charity', url: 'https://www.thegoldsmiths.co.uk/charity/our-grant-making/', keywords: ['scotland', 'education', 'youth', 'community', 'skills'] },
             { id: 'hunter-foundation', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['scotland', 'entrepreneurship', 'education', 'poverty', 'leadership'] },
 
             // Regional TSIs & Specialized Portals
@@ -1686,7 +1698,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -1771,6 +1782,9 @@
             { pattern: '/wp-login', description: 'Login area', active: true },
 
             // File Extensions & Media
+            { pattern: 'podcast', description: 'Podcasts', active: true },
+            { pattern: 'media-release', description: 'Media/Press', active: true },
+            { pattern: 'press-release', description: 'News/Press', active: true },
             { pattern: '.jpg', description: 'Images', active: true },
             { pattern: '.png', description: 'Images', active: true },
             { pattern: '.jpeg', description: 'Images', active: true },
@@ -2556,9 +2570,9 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:p\.?a\.?|per\s+annum)?\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:p\.?a\.?|per\s+annum)?/i,
                 /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:p\.?a\.?|per\s+annum)?/i,
                 /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
                 /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
                 /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)/i,
