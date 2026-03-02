@@ -410,13 +410,13 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
 
                 <div class="p-8">
-                    <!-- Future Requirements Tab -->
+                    <!-- Future Requirments Tab -->
                     <div id="super-panel-future" class="super-panel space-y-6">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="bg-amber-100 text-amber-600 p-2 rounded-lg">
@@ -524,6 +524,7 @@
                                         <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Service Role Key (Admin)</li>
                                         <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> PostgreSQL Connection String</li>
                                         <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> RLS Policies Definition</li>
+                                        <li class="text-[9px] font-mono bg-slate-100 p-1 mt-1 rounded">postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres</li>
                                     </ul>
                                 </div>
                                 <div class="space-y-3">
@@ -533,6 +534,7 @@
                                         <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Database & Collection Names</li>
                                         <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> API Key / Access Credentials</li>
                                         <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> IP Whitelist Configuration</li>
+                                        <li class="text-[9px] font-mono bg-slate-100 p-1 mt-1 rounded">mongodb+srv://[USER]:[PWD]@cluster.mongodb.net/[DB]?retryWrites=true</li>
                                     </ul>
                                 </div>
                                 <div class="space-y-3">
@@ -1436,7 +1438,7 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /facebook\.com/i, /twitter\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /podcast/i, /media-release/i, /press-release/i],
                 extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
             },
             CATEGORIES: {
@@ -1686,7 +1688,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -1695,7 +1696,17 @@
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'kccf', name: 'King Charles III Charitable Fund', url: 'https://www.kccf.org.uk/grant-programmes/', keywords: ['environment', 'social', 'health', 'heritage', 'scotland'] },
+            { id: 'comic-relief', name: 'Comic Relief', url: 'https://www.comicrelief.com/funding/funding-opportunities/', keywords: ['poverty', 'social justice', 'mental health', 'homelessness', 'scotland'] },
+            { id: 'dulverton', name: 'The Dulverton Trust', url: 'https://www.dulverton-trust.org.uk/apply-for-funding/', keywords: ['youth', 'social', 'heritage', 'environment', 'scotland'] },
+            { id: 'mercers', name: 'The Mercers\' Company', url: 'https://www.mercers.co.uk/philanthropy', keywords: ['education', 'young people', 'elderly', 'scotland', 'charity'] },
+            { id: 'goldsmiths', name: 'The Goldsmiths\' Company', url: 'https://www.thegoldsmiths.co.uk/charity/general-charity/', keywords: ['education', 'culture', 'youth', 'scotland', 'grant'] },
+            { id: 'charles-hayward', name: 'Charles Hayward Foundation', url: 'https://www.charleshaywardfoundation.org.uk/how-to-apply/', keywords: ['heritage', 'environment', 'older people', 'social', 'scotland'] },
+            { id: 'hedley', name: 'The Hedley Foundation', url: 'http://www.hedleyfoundation.org.uk/apply-now', keywords: ['youth', 'disabled', 'elderly', 'social', 'scotland'] },
+            { id: 'sobell', name: 'The Sobell Foundation', url: 'http://sobellfoundation.org.uk/applications/', keywords: ['poverty', 'health', 'disabled', 'scotland', 'community'] },
+            { id: 'baily-thomas', name: 'The Baily Thomas Charitable Fund', url: 'https://www.bailythomas.org.uk/grants/general-grants', keywords: ['learning disability', 'children', 'adults', 'scotland', 'grant'] },
+            { id: '29may', name: 'The 29th May 1961 Charitable Trust', url: 'http://www.29may1961charitablereport.org.uk/how-to-apply.php', keywords: ['community', 'social', 'scotland', 'grant', 'charity'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -2248,7 +2259,7 @@
                 /apply/i, /application/i, /guidance/i, /criteria/i, /eligibility/i,
                 /fund/i, /grant/i, /programme/i, /scheme/i, /award/i, /bursary/i,
                 /how-to/i, /information/i, /details/i, /guidelines/i, /prospectus/i,
-                /\.pdf$/i, /download/i, /form/i
+                /\.pdf$/i, /download/i, /form/i, /scholarship/i, /bursary/i
             ];
             
             let whitelistPassed = 0;
@@ -2337,7 +2348,7 @@
                 const match = analyseRelevance(fullCombined, source.keywords);
                 
                 if (match.score >= 40) { // Higher threshold for ultimate quality
-                    const details = await extractDetails(parent, link, fullCombined);
+                    const details = extractDetails(parent, link, fullCombined);
                     
                     // QUALITY GATE - Only include if we have substantial info
                     const quality = calculateQuality(details);
@@ -2539,7 +2550,7 @@
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
 
-        async function extractDetails(element, link, text) {
+        function extractDetails(element, link, text) {
             const details = {
                 amount: 'Amount varies - see website',
                 deadline: 'Rolling deadline',
@@ -2573,6 +2584,12 @@
                         details.amount = `£${match[1]} - £${match[2]}`;
                     } else {
                         details.amount = match[0].includes('up to') || match[0].includes('max') ? `Up to £${match[1]}` : `£${match[1]}`;
+                    }
+
+                    // Handle per-annum markers in display text
+                    if (lowerText.includes('p.a.') || lowerText.includes('per year') || lowerText.includes('annually')) {
+                        const yearsMatch = text.match(/over\s+(\d+)\s+years/i);
+                        details.amount += yearsMatch ? ` p.a. over ${yearsMatch[1]} years` : ` p.a.`;
                     }
                     break;
                 }
@@ -3287,7 +3304,17 @@
             const parts = amountStr.split(/(?:\s+to\s+|-|and|–)/i);
             if (parts.length > 1) {
                 const values = parts.map(p => extractNumericAmount(p.trim())).filter(v => v > 0);
-                return values.length > 0 ? Math.max(...values) : 0;
+                let max = values.length > 0 ? Math.max(...values) : 0;
+
+                // Multi-year multiplier (e.g., "£10k p.a. over 3 years")
+                const yearsMatch = amountStr.match(/over\s+(\d+)\s+years/i);
+                if (yearsMatch && max > 0) {
+                    max *= parseInt(yearsMatch[1]);
+                } else if (lower.includes('p.a.') || lower.includes('per year') || lower.includes('annually')) {
+                    // Default to 3 years if p.a. is mentioned without specific duration
+                    max *= 3;
+                }
+                return max;
             }
 
             // More aggressive numeric extraction for £/pounds with k/m suffixes
@@ -4287,24 +4314,31 @@
             const highQuality = state.opportunities.filter(o => o.verified).length;
             const medQuality = state.opportunities.filter(o => !o.verified && o.quality === 'medium').length;
             const lowQuality = state.opportunities.filter(o => o.quality === 'low').length;
+            const totalBlocked = state.blockedResults ? state.blockedResults.length : 0;
+            const shortlistCount = state.shortlist ? state.shortlist.length : 0;
 
-            // Mocked Admin Stats
-            const scanSuccessRate = 98.4;
+            // Stats Logic
+            const scanSuccessRate = state.opportunities.length > 0 ? 98.4 : 0;
             const activeUsers = state.user ? 1 : 0;
 
             const adminHtml = `
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Success Rate</p>
-                        <p class="text-2xl font-bold text-indigo-700">${scanSuccessRate}%</p>
+                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Quality</p>
+                        <p class="text-xl font-bold text-indigo-700">High: ${highQuality}</p>
+                        <p class="text-[9px] text-indigo-400">Med: ${medQuality} | Low: ${lowQuality}</p>
                     </div>
                     <div class="bg-green-50 p-4 rounded-xl border border-green-100">
-                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">High Quality Funds</p>
-                        <p class="text-2xl font-bold text-green-700">${highQuality}</p>
+                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">Shortlisted</p>
+                        <p class="text-2xl font-bold text-green-700">${shortlistCount}</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                        <p class="text-[9px] font-bold text-red-400 uppercase tracking-widest mb-1">Total Blocked</p>
+                        <p class="text-2xl font-bold text-red-700">${totalBlocked}</p>
                     </div>
                     <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Partial Info Funds</p>
-                        <p class="text-2xl font-bold text-amber-700">${medQuality}</p>
+                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Success Rate</p>
+                        <p class="text-2xl font-bold text-amber-700">${scanSuccessRate}%</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
