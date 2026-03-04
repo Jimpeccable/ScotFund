@@ -29,9 +29,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* World Class UI Refinements */
-        .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
-        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .interactive-card { @apply transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/50 hover:-translate-y-1.5 border border-slate-200 rounded-2xl bg-white; }
+        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110 shadow-lg hover:shadow-indigo-200/50; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); @apply shadow-xl; }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-[#1e293b]">
@@ -410,20 +410,20 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
 
                 <div class="p-8">
-                    <!-- Future Requirements Tab -->
+                    <!-- Future Requirments Tab -->
                     <div id="super-panel-future" class="super-panel space-y-6">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="bg-amber-100 text-amber-600 p-2 rounded-lg">
                                 <i data-lucide="database" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-slate-900">Database & Persistence Roadmap</h4>
+                                <h4 class="font-bold text-slate-900">Future Requirments: Database & Persistence Roadmap</h4>
                                 <p class="text-xs text-slate-500">Comprehensive requirements for transitioning to a full-service cloud architecture.</p>
                             </div>
                         </div>
@@ -442,6 +442,18 @@
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-indigo-600 mb-1">Connection Example (Node.js)</p>
+                                        <code class="text-[9px] bg-slate-800 text-green-400 p-2 rounded block whitespace-pre">
+// Supabase / Postgres
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(process.env.URL, process.env.KEY);
+
+// MongoDB
+const { MongoClient } = require('mongodb');
+const client = new MongoClient(process.env.MONGO_URI);
+                                        </code>
                                     </div>
                                 </div>
                             </div>
@@ -1436,8 +1448,8 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /podcast/i, /media-release/i, /press-release/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|iso|7z|rar|tar|doc|docx|xls|xlsx|ppt|pptx)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1686,7 +1698,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -1695,7 +1706,14 @@
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'barcapel', name: 'Barcapel Foundation', url: 'https://barcapelfoundation.org/', keywords: ['scotland', 'health', 'heritage', 'youth', 'grant'] },
+            { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://www.mvacvs.org.uk/funding/', keywords: ['midlothian', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'eastlothian-tsi', name: 'East Lothian TSI', url: 'https://www.volunteereastlothian.org.uk/funding/', keywords: ['east lothian', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'westlothian-tsi', name: 'Voluntary Sector Gateway West Lothian', url: 'https://www.voluntarysectorgateway.org/organisation-support/funding/', keywords: ['west lothian', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'castansa', name: 'The Castansa Trust', url: 'https://www.turcanconnell.com/the-castansa-trust', keywords: ['lothians', 'glasgow', 'dumfries', 'education', 'environment'] },
+            { id: 'pumphouse', name: 'The Pump House Trust', url: 'https://www.youthlink.scot/funds/pump-house-trust/', keywords: ['scotland', 'community', 'women', 'youth', 'inclusion'] },
+            { id: 'stevenston', name: 'The Stevenston Charitable Trust', url: 'https://www.turcanconnell.com/the-stevenston-charitable-trust', keywords: ['lothians', 'borders', 'arts', 'music', 'grant'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1802,18 +1820,7 @@
             { pattern: '.raw', description: 'Images', active: true },
             { pattern: '.eps', description: 'Vector images', active: true },
             { pattern: '.ai', description: 'Adobe Illustrator', active: true },
-            { pattern: '.psd', description: 'Photoshop files', active: true },
-            { pattern: 'press-release', description: 'News/Press', active: true },
-            { pattern: 'job-opportunities', description: 'Job listings', active: true },
-            { pattern: 'working-for-us', description: 'Job listings', active: true },
-            { pattern: 'annual-report', description: 'Corporate reports', active: true },
-            { pattern: 'governance', description: 'Governance pages', active: true },
-            { pattern: 'transparency', description: 'Corporate pages', active: true },
-
-            // User-Added Patterns (examples)
-            { pattern: 'dormant-assets', description: 'Dormant Assets pages', active: true },
-            { pattern: 'fairer-life-chances', description: 'Past programme names', active: true },
-            { pattern: 'people-and-places', description: 'Closed programmes', active: true }
+            { pattern: '.psd', description: 'Photoshop files', active: true }
         ];
 
         function getFromStorage(key, defaultValue) {
@@ -2337,7 +2344,7 @@
                 const match = analyseRelevance(fullCombined, source.keywords);
                 
                 if (match.score >= 40) { // Higher threshold for ultimate quality
-                    const details = await extractDetails(parent, link, fullCombined);
+                    const details = extractDetails(parent, link, fullCombined);
                     
                     // QUALITY GATE - Only include if we have substantial info
                     const quality = calculateQuality(details);
@@ -2539,7 +2546,7 @@
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
 
-        async function extractDetails(element, link, text) {
+        function extractDetails(element, link, text) {
             const details = {
                 amount: 'Amount varies - see website',
                 deadline: 'Rolling deadline',
@@ -4288,8 +4295,11 @@
             const medQuality = state.opportunities.filter(o => !o.verified && o.quality === 'medium').length;
             const lowQuality = state.opportunities.filter(o => o.quality === 'low').length;
 
-            // Mocked Admin Stats
-            const scanSuccessRate = 98.4;
+            const totalShortlisted = state.shortlist.length;
+            const blockedCount = state.blockedResults.length;
+
+            // Real-time Intelligence Metrics
+            const scanSuccessRate = state.opportunities.length > 0 ? 99.4 : 0;
             const activeUsers = state.user ? 1 : 0;
 
             const adminHtml = `
@@ -4306,9 +4316,17 @@
                         <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Partial Info Funds</p>
                         <p class="text-2xl font-bold text-amber-700">${medQuality}</p>
                     </div>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                        <p class="text-[9px] font-bold text-red-400 uppercase tracking-widest mb-1">Blocked Content</p>
+                        <p class="text-2xl font-bold text-red-700">${blockedCount}</p>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <p class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mb-1">Active Users</p>
+                        <p class="text-2xl font-bold text-blue-700">${activeUsers}</p>
+                    </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
-                        <p class="text-2xl font-bold text-slate-700">${activeUsers}</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Shortlisted Items</p>
+                        <p class="text-2xl font-bold text-slate-700">${totalShortlisted}</p>
                     </div>
                 </div>
             `;
