@@ -30,8 +30,9 @@
 
         /* World Class UI Refinements */
         .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
-        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
+        .nav-link.active { @apply bg-indigo-50 text-indigo-600; }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-[#1e293b]">
@@ -247,6 +248,7 @@
                             <option value="youth">Youth & Children</option>
                             <option value="charity">Charity & Third Sector</option>
                             <option value="arts">Arts & Culture</option>
+                            <option value="heritage">Heritage & Historic</option>
                             <option value="sport">Sport & Recreation</option>
                             <option value="education">Education & Training</option>
                             <option value="environment">Environment</option>
@@ -410,7 +412,7 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
@@ -507,6 +509,45 @@
                                     <button onclick="alert('System ready for DB connection. Follow the roadmap above to begin integration.')" class="w-full py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/20">
                                         Initialize Supabase Bridge
                                     </button>
+                                </div>
+                            </div>
+
+                            <!-- DB Connection Examples -->
+                            <div class="md:col-span-2 space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="code-2" class="w-4 h-4 text-indigo-600"></i> 4. Technical Integration Snippets (Node.js)
+                                </h5>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="p-4 bg-slate-900 rounded-2xl overflow-x-auto">
+                                        <p class="text-[10px] font-bold text-indigo-400 mb-2 uppercase">Supabase Client</p>
+                                        <pre class="text-[9px] text-indigo-100"><code>const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(process.env.URL, process.env.KEY);
+
+async function syncFunds(funds) {
+  const { data, error } = await supabase
+    .from('opportunities')
+    .upsert(funds, { onConflict: 'url' });
+  return { data, error };
+}</code></pre>
+                                    </div>
+                                    <div class="p-4 bg-slate-900 rounded-2xl overflow-x-auto">
+                                        <p class="text-[10px] font-bold text-green-400 mb-2 uppercase">MongoDB Atlas</p>
+                                        <pre class="text-[9px] text-green-100"><code>const { MongoClient } = require('mongodb');
+const client = new MongoClient(process.env.MONGO_URI);
+
+async function saveFunds(funds) {
+  const db = client.db('scotfund');
+  const coll = db.collection('opportunities');
+  const ops = funds.map(f => ({
+    updateOne: {
+      filter: { url: f.url },
+      update: { $set: f },
+      upsert: true
+    }
+  }));
+  return await coll.bulkWrite(ops);
+}</code></pre>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1105,6 +1146,9 @@
                         <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
                             <input type="checkbox" value="rural" class="rounded border-slate-300"> <span class="text-xs font-medium">Rural</span>
                         </label>
+                        <label class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
+                            <input type="checkbox" value="heritage" class="rounded border-slate-300"> <span class="text-xs font-medium">Heritage</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -1436,8 +1480,8 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /\/media\//i, /\/press\//i, /\/podcast\//i, /cookie-policy/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar|docx?|xlsx?|pptx?)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1596,6 +1640,18 @@
             { id: 'gcvs', name: 'GCVS (Glasgow TSI)', url: 'https://www.gcvs.org.uk/funding/', keywords: ['glasgow', 'voluntary', 'charity', 'funding', 'support'] },
             { id: 'evoc', name: 'EVOC (Edinburgh TSI)', url: 'https://www.evoc.org.uk/funding/', keywords: ['edinburgh', 'voluntary', 'charity', 'funding', 'support'] },
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'east-lothian-tsi', name: 'STRIVE (East Lothian)', url: 'https://strive.me.uk/funding/', keywords: ['east lothian', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'west-lothian-tsi', name: 'VSGWL (West Lothian)', url: 'https://vsgwl.org/funding/', keywords: ['west lothian', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'hunter-foundation', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneurship', 'education', 'poverty', 'scotland', 'leadership'] },
+            { id: 'king-charles-fund', name: 'King Charles III Charitable Fund', url: 'https://www.kccf.org.uk/small-grants/', keywords: ['heritage', 'environment', 'social', 'inclusion', 'community'] },
+            { id: 'comic-relief', name: 'Comic Relief', url: 'https://www.comicrelief.com/funding/funding-opportunities/', keywords: ['poverty', 'justice', 'health', 'equality', 'scotland'] },
+            { id: 'dulverton-trust', name: 'The Dulverton Trust', url: 'https://www.dulverton.org.uk/', keywords: ['youth', 'heritage', 'environment', 'social', 'inclusion'] },
+            { id: 'mercers-company', name: 'The Mercers\' Company', url: 'https://www.mercers.co.uk/philanthropy', keywords: ['education', 'social', 'inclusion', 'heritage', 'arts'] },
+            { id: 'barcapel', name: 'Barcapel Foundation', url: 'https://www.barcapelfoundation.org/', keywords: ['health', 'heritage', 'arts', 'scotland', 'community'] },
+            { id: 'castansa', name: 'Castansa Trust', url: 'https://www.castansatrust.org/', keywords: ['disadvantage', 'poverty', 'scotland', 'community', 'social'] },
+            { id: 'pumphouse', name: 'Pump House Trust', url: 'https://pumphousetrust.org.uk/', keywords: ['environment', 'social', 'justice', 'community', 'scotland'] },
+            { id: 'stevenston', name: 'Stevenston Charitable Trust', url: 'http://www.stevenstontrust.org.uk/', keywords: ['scotland', 'community', 'arts', 'education', 'health'] },
             { id: 'fife-voluntary', name: 'Fife Voluntary Action', url: 'https://www.fva.org/funding.asp', keywords: ['fife', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'aberdeen-tsi', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'voluntary', 'charity', 'funding', 'support'] },
             { id: 'scot-ent', name: 'Scottish Enterprise', url: 'https://www.scottish-enterprise.com/support-for-businesses/funding-and-grants', keywords: ['business', 'innovation', 'growth', 'scotland', 'grant'] },
@@ -1642,7 +1698,6 @@
             { id: 'robertson-ness', name: 'The Robertson Ness Trust', url: 'http://www.robertsonnesstrust.org.uk/', keywords: ['scotland', 'poverty', 'social', 'community', 'disadvantage'] },
             { id: 'sylvia-aitken', name: 'The Sylvia Aitken Charitable Trust', url: 'https://www.sylviaaitkentrust.org.uk/', keywords: ['scotland', 'medical', 'health', 'charity', 'community'] },
             { id: 'wa-cargill', name: 'The WA Cargill Charitable Trust', url: 'https://www.wacargilltrust.org.uk/', keywords: ['scotland', 'arts', 'health', 'charity', 'community'] },
-            { id: 'hunter-foundation', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['scotland', 'entrepreneurship', 'education', 'poverty', 'leadership'] },
 
             // Regional TSIs & Specialized Portals
             { id: 'htsi', name: 'Highland TSI Funding', url: 'https://www.highlandtsi.org.uk/funding', keywords: ['highland', 'tsi', 'charity', 'funding', 'support'] },
@@ -1892,10 +1947,11 @@
 
             if (state.user) {
                 display.classList.remove('hidden');
+                loginModal.classList.add('hidden');
 
                 // Enhanced Role Indicator
                 const role = state.user.role || 'User';
-                let roleHtml = state.user.name;
+                let roleHtml = escapeHTML(state.user.name);
                 if (role === 'Super User') {
                     roleHtml += ` <span class="bg-indigo-600 text-white text-[8px] px-1.5 py-0.5 rounded-full ml-1 uppercase">Super</span>`;
                 } else if (role === 'Admin') {
@@ -2032,10 +2088,14 @@
             }
 
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+            const targetSection = document.getElementById(id);
+            if (targetSection) targetSection.classList.remove('hidden');
+
             document.querySelectorAll('.nav-link').forEach(l => {
-                l.classList.toggle('bg-indigo-50', l.dataset.id === id);
-                l.classList.toggle('text-indigo-600', l.dataset.id === id);
+                const isActive = l.dataset.id === id;
+                l.classList.toggle('active', isActive);
+                l.classList.toggle('bg-indigo-50', isActive);
+                l.classList.toggle('text-indigo-600', isActive);
             });
 
             if (id === 'shortlist') renderShortlist();
@@ -2337,7 +2397,7 @@
                 const match = analyseRelevance(fullCombined, source.keywords);
                 
                 if (match.score >= 40) { // Higher threshold for ultimate quality
-                    const details = await extractDetails(parent, link, fullCombined);
+                    const details = extractDetails(parent, link, fullCombined);
                     
                     // QUALITY GATE - Only include if we have substantial info
                     const quality = calculateQuality(details);
@@ -2514,15 +2574,17 @@
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
                     const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
-                    let match = false;
+                    let matchCount = 0;
                     interestKeywords.forEach(k => {
-                        if (text.toLowerCase().includes(k.toLowerCase())) match = true;
+                        if (text.toLowerCase().includes(k.toLowerCase())) matchCount++;
                     });
 
-                    if (match) {
-                        score += 35;
+                    if (matchCount > 0) {
+                        // Dynamic boost based on match density
+                        const boost = Math.min(60, 35 + (matchCount * 5));
+                        score += boost;
                         foundKeywords.push(interest);
-                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: 35 });
+                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: boost });
                     }
                 });
             }
@@ -2539,7 +2601,7 @@
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
 
-        async function extractDetails(element, link, text) {
+        function extractDetails(element, link, text) {
             const details = {
                 amount: 'Amount varies - see website',
                 deadline: 'Rolling deadline',
@@ -3305,6 +3367,9 @@
                 if (!match[1]) continue;
                 let valStr = match[1].replace(/,/g, '');
                 if (valStr === '.' || valStr === '') continue;
+
+                // Ignore 4-digit years (e.g., 2024, 2025) to prevent false amount detection
+                if (/^\d{4}$/.test(valStr) && !match[2]) continue;
 
                 let val = parseFloat(valStr);
                 if (isNaN(val)) continue;
