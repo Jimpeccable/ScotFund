@@ -410,21 +410,21 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
 
                 <div class="p-8">
-                    <!-- Future Requirements Tab -->
+                    <!-- Future Requirments Tab -->
                     <div id="super-panel-future" class="super-panel space-y-6">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="bg-amber-100 text-amber-600 p-2 rounded-lg">
                                 <i data-lucide="database" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-slate-900">Database & Persistence Roadmap</h4>
-                                <p class="text-xs text-slate-500">Comprehensive requirements for transitioning to a full-service cloud architecture.</p>
+                                <h4 class="font-bold text-slate-900">Database & Cloud Integration Requirements</h4>
+                                <p class="text-xs text-slate-500">Comprehensive requirements and code integration examples for production scaling.</p>
                             </div>
                         </div>
 
@@ -432,30 +432,75 @@
                             <!-- Infrastructure Section -->
                             <div class="space-y-4">
                                 <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="server" class="w-4 h-4 text-indigo-600"></i> 1. Infrastructure Options
+                                    <i data-lucide="server" class="w-4 h-4 text-indigo-600"></i> 1. Supabase Implementation (PostgreSQL)
                                 </h5>
                                 <div class="p-5 bg-slate-50 rounded-2xl space-y-4">
                                     <div>
-                                        <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
-                                        <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
+                                        <p class="text-xs font-bold text-indigo-600 mb-2">Integration Snippet (Node.js/JS)</p>
+                                        <pre class="text-[9px] bg-slate-900 text-indigo-300 p-3 rounded-lg overflow-x-auto">
+// Install: npm install @supabase/supabase-js
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  'https://your-project.supabase.co',
+  process.env.SUPABASE_KEY
+)
+
+// Fetch Opportunities
+const { data, error } = await supabase
+  .from('opportunities')
+  .select('*')
+  .order('dateDiscovered', { ascending: false })
+                                        </pre>
                                     </div>
+                                    <ul class="text-[10px] text-slate-600 space-y-1 pl-4 list-disc">
+                                        <li>Built-in Auth/RBAC support</li>
+                                        <li>Real-time data synchronization</li>
+                                        <li>Scottish/UK Data Residency options</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- MongoDB Section -->
+                            <div class="space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i> 2. MongoDB Atlas (NoSQL)
+                                </h5>
+                                <div class="p-5 bg-slate-50 rounded-2xl space-y-4">
                                     <div>
-                                        <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
-                                        <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
+                                        <p class="text-xs font-bold text-indigo-600 mb-2">Integration Snippet (Node.js)</p>
+                                        <pre class="text-[9px] bg-slate-900 text-indigo-300 p-3 rounded-lg overflow-x-auto">
+// Install: npm install mongodb
+const { MongoClient } = require('mongodb');
+
+const client = new MongoClient(process.env.MONGO_URI);
+await client.connect();
+
+const db = client.db('scotfund');
+const opportunities = db.collection('opportunities');
+
+// Insert new scan data
+await opportunities.insertMany(newResults);
+                                        </pre>
                                     </div>
+                                    <ul class="text-[10px] text-slate-600 space-y-1 pl-4 list-disc">
+                                        <li>Flexible schema for varying fund data</li>
+                                        <li>Powerful text-search indexing</li>
+                                        <li>Atlas Search for relevance ranking</li>
+                                    </ul>
                                 </div>
                             </div>
 
                             <!-- Data Schema Section -->
                             <div class="space-y-4">
                                 <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="layout-grid" class="w-4 h-4 text-indigo-600"></i> 2. Data Schema Design
+                                    <i data-lucide="database" class="w-4 h-4 text-indigo-600"></i> 3. Core Data Schema
                                 </h5>
                                 <div class="p-5 border border-slate-100 rounded-2xl bg-white shadow-sm">
                                     <ul class="text-[11px] text-slate-600 space-y-3">
                                         <li class="flex gap-2">
                                             <span class="font-bold text-slate-900 min-w-[80px]">Users:</span>
-                                            <span>uuid, email, pwd_hash, role (User/Admin/Super), profile_data_json, last_login</span>
+                                            <span>uuid, email, pwd_hash, role (User/Admin/Super), profile_json, last_login</span>
                                         </li>
                                         <li class="flex gap-2">
                                             <span class="font-bold text-slate-900 min-w-[80px]">Opportunities:</span>
@@ -465,47 +510,19 @@
                                             <span class="font-bold text-slate-900 min-w-[80px]">Shortlists:</span>
                                             <span>uuid, user_id, opp_id, status, notes, tasks_json, date_saved</span>
                                         </li>
-                                        <li class="flex gap-2">
-                                            <span class="font-bold text-slate-900 min-w-[80px]">Audit Log:</span>
-                                            <span>uuid, action_type, user_id, timestamp, details_json</span>
-                                        </li>
                                     </ul>
-                                </div>
-                            </div>
-
-                            <!-- Auth Section -->
-                            <div class="space-y-4">
-                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="lock" class="w-4 h-4 text-indigo-600"></i> 3. Security & Auth Requirements
-                                </h5>
-                                <div class="p-5 bg-indigo-50/30 border border-indigo-100 rounded-2xl space-y-3">
-                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
-                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> JWT-based Session Management
-                                    </div>
-                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
-                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Row-Level Security (RLS) policies
-                                    </div>
-                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
-                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> SSL Encryption for all API calls
-                                    </div>
-                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
-                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Rate limiting for the Scanning Engine
-                                    </div>
                                 </div>
                             </div>
 
                             <!-- Migration Strategy -->
                             <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl">
                                 <h5 class="text-sm font-bold mb-3 flex items-center gap-2">
-                                    <i data-lucide="rocket" class="w-4 h-4"></i> Migration Strategy
+                                    <i data-lucide="rocket" class="w-4 h-4"></i> Migration Roadmap
                                 </h5>
-                                <p class="text-[11px] text-indigo-200 leading-relaxed mb-4">Transitioning from localStorage requires a 3-phase approach: 1. Deploy Cloud DB, 2. Scripted data migration via JSON export, 3. Update 'saveData' and 'getFromStorage' to utilize asynchronous API fetch calls.</p>
+                                <p class="text-[11px] text-indigo-200 leading-relaxed mb-4">Moving from localStorage to Cloud DB requires a 3-step bridge: 1. Set up VPC/Secrets, 2. Deploy API endpoints (Vercel/Netlify), 3. Update 'saveData' and 'getFromStorage' to async fetch calls.</p>
                                 <div class="space-y-2">
-                                    <button onclick="alert('Migration script generated in memory. Ready for deployment.')" class="w-full py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
-                                        Download Migration Schema <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                    </button>
-                                    <button onclick="alert('System ready for DB connection. Follow the roadmap above to begin integration.')" class="w-full py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/20">
-                                        Initialize Supabase Bridge
+                                    <button onclick="alert('System architecture mapped. Connection bridge ready for API deployment.')" class="w-full py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/20">
+                                        Download Integration Roadmap
                                     </button>
                                 </div>
                             </div>
@@ -514,34 +531,31 @@
                         <!-- Technical Requirements Checklist -->
                         <div class="mt-8 border-t border-slate-100 pt-8">
                             <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i> 5. Database Connection Requirements Checklist
+                                <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i> 4. Technical Requirements Checklist
                             </h5>
                             <div class="grid md:grid-cols-3 gap-6">
                                 <div class="space-y-3">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Supabase (SQL)</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Connectivity</p>
                                     <ul class="text-[11px] text-slate-600 space-y-2">
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Project URL & Anon Key</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Service Role Key (Admin)</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> PostgreSQL Connection String</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> RLS Policies Definition</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> REST API or SDK Integration</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> CORS Policy Configuration</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> JWT Session Handling</li>
                                     </ul>
                                 </div>
                                 <div class="space-y-3">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">MongoDB (NoSQL)</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Security</p>
                                     <ul class="text-[11px] text-slate-600 space-y-2">
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Atlas Cluster URI</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Database & Collection Names</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> API Key / Access Credentials</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> IP Whitelist Configuration</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Environment Secret Storage</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Row-Level Security Policies</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> SSL Encryption (Transit)</li>
                                     </ul>
                                 </div>
                                 <div class="space-y-3">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Application Level</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">DevOps</p>
                                     <ul class="text-[11px] text-slate-600 space-y-2">
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> .env File for Secrets</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Fetch API Bridge (async/await)</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Error Boundary Implementation</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Offline Sync Strategy</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> CI/CD Pipeline Integration</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Automated DB Backups</li>
+                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Staging vs Prod DB Instances</li>
                                     </ul>
                                 </div>
                             </div>
@@ -1436,8 +1450,8 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /press-release/i, /media-release/i, /podcast/i, /news\/media/i, /\/media\//i, /\/press\//i, /\/podcast\//i, /facebook\.com/i, /twitter\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar|docx|xlsx|pptx)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1643,6 +1657,14 @@
             { id: 'sylvia-aitken', name: 'The Sylvia Aitken Charitable Trust', url: 'https://www.sylviaaitkentrust.org.uk/', keywords: ['scotland', 'medical', 'health', 'charity', 'community'] },
             { id: 'wa-cargill', name: 'The WA Cargill Charitable Trust', url: 'https://www.wacargilltrust.org.uk/', keywords: ['scotland', 'arts', 'health', 'charity', 'community'] },
             { id: 'hunter-foundation', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['scotland', 'entrepreneurship', 'education', 'poverty', 'leadership'] },
+            { id: 'kccf', name: 'King Charles III Charitable Fund', url: 'https://www.kccf.org.uk/', keywords: ['environment', 'social', 'health', 'education', 'scotland'] },
+            { id: 'comic-relief', name: 'Comic Relief', url: 'https://www.comicrelief.com/funding/', keywords: ['poverty', 'social justice', 'mental health', 'scotland', 'grant'] },
+            { id: 'dulverton', name: 'Dulverton Trust', url: 'https://www.dulverton-trust.org.uk/', keywords: ['youth', 'outdoor', 'heritage', 'scotland', 'grant'] },
+            { id: 'mercers', name: 'Mercers\' Company', url: 'https://www.mercers.co.uk/charity', keywords: ['education', 'social welfare', 'heritage', 'scotland', 'grant'] },
+            { id: 'barcapel', name: 'Barcapel Foundation', url: 'https://www.barcapelfoundation.org/', keywords: ['health', 'heritage', 'youth', 'scotland', 'grant'] },
+            { id: 'castansa', name: 'Castansa Trust', url: 'https://www.castansatrust.org/', keywords: ['social welfare', 'community', 'scotland', 'grant'] },
+            { id: 'pumphouse', name: 'Pump House Trust', url: 'http://www.pumphousetrust.org.uk/', keywords: ['social', 'educational', 'environmental', 'scotland', 'grant'] },
+            { id: 'stevenston', name: 'Stevenston Charitable Trust', url: 'https://www.stevenston-charitable-trust.org.uk/', keywords: ['social', 'educational', 'medical', 'scotland', 'grant'] },
 
             // Regional TSIs & Specialized Portals
             { id: 'htsi', name: 'Highland TSI Funding', url: 'https://www.highlandtsi.org.uk/funding', keywords: ['highland', 'tsi', 'charity', 'funding', 'support'] },
@@ -1686,7 +1708,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -1695,7 +1716,10 @@
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'midlothian-tsi', name: 'MVA (Midlothian TSI)', url: 'https://mva.org.uk/', keywords: ['midlothian', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'eastlothian-tsi', name: 'STRIVE (East Lothian TSI)', url: 'https://strive.me.uk/', keywords: ['east lothian', 'voluntary', 'community', 'grant', 'funding'] },
+            { id: 'westlothian-tsi', name: 'VSGWL (West Lothian TSI)', url: 'https://www.vsgwl.org/', keywords: ['west lothian', 'voluntary', 'community', 'grant', 'funding'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -2281,6 +2305,15 @@
                                 while (prev && !heading) {
                                     heading = prev.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(prev.tagName) ? prev : null);
                                     prev = prev.previousElementSibling;
+                                }
+
+                                if (!heading) {
+                                    // Try searching inside adjacent siblings' children
+                                    let next = currentSearch.nextElementSibling;
+                                    while (next && !heading) {
+                                        heading = next.querySelector('h1, h2, h3, h4, h5, h6, strong, b') || (['H1','H2','H3','H4','H5','H6','STRONG','B'].includes(next.tagName) ? next : null);
+                                        next = next.nextElementSibling;
+                                    }
                                 }
                             }
                             if (!heading) currentSearch = currentSearch.parentElement;
