@@ -29,7 +29,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* World Class UI Refinements */
-        .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
+        .interactive-card { @apply transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/50 hover:-translate-y-1 border border-slate-200; }
         .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
     </style>
@@ -410,13 +410,13 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
 
                 <div class="p-8">
-                    <!-- Future Requirements Tab -->
+                    <!-- Future Requirments Tab -->
                     <div id="super-panel-future" class="super-panel space-y-6">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="bg-amber-100 text-amber-600 p-2 rounded-lg">
@@ -507,6 +507,44 @@
                                     <button onclick="alert('System ready for DB connection. Follow the roadmap above to begin integration.')" class="w-full py-3 bg-indigo-500 hover:bg-indigo-400 rounded-xl text-xs font-bold transition-all shadow-lg shadow-indigo-500/20">
                                         Initialize Supabase Bridge
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Code Snippets for Database Connection -->
+                        <div class="mt-8 border-t border-slate-100 pt-8">
+                            <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <i data-lucide="code" class="w-4 h-4 text-indigo-600"></i> 4. Technical Implementation (Node.js)
+                            </h5>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Supabase Connection</p>
+                                    <pre class="bg-slate-900 text-indigo-300 p-4 rounded-xl text-[10px] overflow-x-auto">
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+// Fetch opportunities
+const { data, error } = await supabase
+  .from('opportunities')
+  .select('*')</pre>
+                                </div>
+                                <div class="space-y-3">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">MongoDB Atlas Connection</p>
+                                    <pre class="bg-slate-900 text-indigo-300 p-4 rounded-xl text-[10px] overflow-x-auto">
+const { MongoClient } = require('mongodb');
+
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri);
+
+async function run() {
+  await client.connect();
+  const db = client.db('scotfund');
+  const collection = db.collection('funds');
+  const funds = await collection.find({}).toArray();
+}</pre>
                                 </div>
                             </div>
                         </div>
@@ -1436,8 +1474,8 @@
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /facebook\.com/i, /twitter\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /\/media\//i, /\/press\//i, /\/podcast\//i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar|docx|xlsx|pptx)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1462,7 +1500,10 @@
                 veterans: ['veterans', 'military', 'armed forces', 'ex-service'],
                 elderly: ['elderly', 'older people', 'seniors', 'ageing', 'loneliness'],
                 faith: ['faith', 'religious', 'church', 'christian', 'muslim', 'jewish', 'sikh', 'hindu', 'spiritual'],
-                rural: ['rural', 'island', 'remote', 'village', 'agriculture', 'farming', 'crofting']
+                rural: ['rural', 'island', 'remote', 'village', 'agriculture', 'farming', 'crofting'],
+                justice_social: ['social justice', 'equity', 'equality', 'human rights', 'civil rights'],
+                animal_welfare: ['animal', 'wildlife', 'pets', 'animal rescue', 'veterinary'],
+                housing_homeless: ['housing', 'homelessness', 'shelter', 'tenancy', 'accommodation']
             }
         };
 
@@ -1598,6 +1639,16 @@
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
             { id: 'fife-voluntary', name: 'Fife Voluntary Action', url: 'https://www.fva.org/funding.asp', keywords: ['fife', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'aberdeen-tsi', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'voluntary', 'charity', 'funding', 'support'] },
+            { id: 'nhs-tayside', name: 'NHS Tayside Charitable Foundation', url: 'https://www.nhstayside.scot.nhs.uk/OurServicesA-Z/CharitableFunds/index.htm', keywords: ['health', 'wellbeing', 'tayside', 'community', 'grant'] },
+            { id: 'womens-fund', name: 'Women\'s Fund for Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available/womens-fund-for-scotland', keywords: ['women', 'girls', 'equality', 'scotland', 'grant'] },
+            { id: 'highland-society', name: 'Highland Society of London', url: 'https://www.highlandsocietyoflondon.org/grants', keywords: ['highland', 'culture', 'heritage', 'arts', 'grant'] },
+            { id: 'newark-trust', name: 'The Newark Trust', url: 'https://www.newarktrust.org.uk/', keywords: ['education', 'social', 'community', 'scotland', 'grant'] },
+            { id: 'scot-forestry', name: 'The Scottish Forestry Trust', url: 'http://www.scottishforestrytrust.org.uk/', keywords: ['forestry', 'environment', 'education', 'research', 'scotland'] },
+            { id: 'king-charles', name: 'King Charles III Charitable Fund', url: 'https://www.kccf.org.uk/small-grants/', keywords: ['environment', 'social', 'community', 'health', 'heritage'] },
+            { id: 'comic-relief', name: 'Comic Relief Scotland', url: 'https://www.comicrelief.com/funding/funding-opportunities/', keywords: ['social justice', 'poverty', 'mental health', 'children', 'scotland'] },
+            { id: 'dulverton', name: 'Dulverton Trust', url: 'https://www.dulverton-trust.org.uk/apply-for-funding/', keywords: ['scotland', 'youth', 'social', 'heritage', 'environment'] },
+            { id: 'mercers', name: 'The Mercers\' Company', url: 'https://www.mercers.co.uk/philanthropy', keywords: ['education', 'social', 'heritage', 'church', 'scotland'] },
+            { id: 'barcapel', name: 'Barcapel Foundation', url: 'https://www.barcapel.co.uk/', keywords: ['scotland', 'health', 'heritage', 'youth', 'grant'] },
             { id: 'scot-ent', name: 'Scottish Enterprise', url: 'https://www.scottish-enterprise.com/support-for-businesses/funding-and-grants', keywords: ['business', 'innovation', 'growth', 'scotland', 'grant'] },
             { id: 'bus-gateway', name: 'Business Gateway', url: 'https://www.bgateway.com/resources/funding', keywords: ['business', 'startup', 'funding', 'scotland', 'advice'] },
             { id: 'social-ent-scot', name: 'Social Enterprise Scotland', url: 'https://socialenterprise.scot/funding/', keywords: ['social enterprise', 'cic', 'scio', 'impact', 'funding'] },
@@ -1686,7 +1737,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -2264,7 +2314,7 @@
                 const ariaLabel = link.getAttribute('aria-label');
                 const linkTitle = link.getAttribute('title');
 
-                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit|find out)$/i.test(text) || text.length < 5) {
+                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit|find out|click here for more information|more information|further information)$/i.test(text) || text.length < 5) {
                     if (ariaLabel && ariaLabel.trim().length > 5) {
                         text = ariaLabel.trim();
                     } else if (linkTitle && linkTitle.trim().length > 5) {
@@ -2337,7 +2387,7 @@
                 const match = analyseRelevance(fullCombined, source.keywords);
                 
                 if (match.score >= 40) { // Higher threshold for ultimate quality
-                    const details = await extractDetails(parent, link, fullCombined);
+                    const details = extractDetails(parent, link, fullCombined);
                     
                     // QUALITY GATE - Only include if we have substantial info
                     const quality = calculateQuality(details);
@@ -2514,15 +2564,16 @@
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
                     const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
-                    let match = false;
+                    let matchCount = 0;
                     interestKeywords.forEach(k => {
-                        if (text.toLowerCase().includes(k.toLowerCase())) match = true;
+                        if (text.toLowerCase().includes(k.toLowerCase())) matchCount++;
                     });
 
-                    if (match) {
-                        score += 35;
+                    if (matchCount > 0) {
+                        const boost = 35 + (matchCount * 2); // Density boost
+                        score += boost;
                         foundKeywords.push(interest);
-                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: 35 });
+                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: boost });
                     }
                 });
             }
@@ -2539,7 +2590,7 @@
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
 
-        async function extractDetails(element, link, text) {
+        function extractDetails(element, link, text) {
             const details = {
                 amount: 'Amount varies - see website',
                 deadline: 'Rolling deadline',
@@ -2556,10 +2607,10 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:p\.a\.\s+)?(?:over\s+\d+\s+years\s+)?(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
                 /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:p\.a\.\s+)?(?:over\s+\d+\s+years\s+)?(?:available|grants?|funding|award|total)/i,
                 /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
                 /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)/i,
                 /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)/i,
@@ -2569,11 +2620,15 @@
             for (const pattern of amountPatterns) {
                 const match = text.match(pattern);
                 if (match) {
+                    // Ignore years like 2024, 2025
+                    if (match[1] && (match[1] === '2024' || match[1] === '2025')) continue;
+
                     if (match[2]) {
                         details.amount = `£${match[1]} - £${match[2]}`;
                     } else {
                         details.amount = match[0].includes('up to') || match[0].includes('max') ? `Up to £${match[1]}` : `£${match[1]}`;
                     }
+                    if (match[0].includes('p.a.') || match[0].includes('per year')) details.amount += ' p.a.';
                     break;
                 }
             }
@@ -2586,6 +2641,7 @@
                 /apply by[:\s]+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /submission\s+by\s+(\d{1,2}(?:st|nd|rd|th)?\s+\w+\s+\d{4})/i,
                 /(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})/,
+                /(\d{4}[/-]\d{1,2}[/-]\d{1,2})/,
                 /(\d{1,2}\s+\w+\s+\d{2,4})/,
                 /(\w+\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})/,
                 /(?:closes|deadline)\s+on\s+(\d{1,2}(?:st|nd|rd|th)?\s+\w+)/i
@@ -3013,7 +3069,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="font-bold text-slate-900 mb-1">
-                                    ${opp.score >= 75 ? '<span class="mr-2 px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold rounded uppercase">Recommended ⭐</span>' : ''}
+                                    ${opp.score >= 75 ? '<span class="mr-2 px-1.5 py-0.5 bg-indigo-600 text-white text-[9px] font-bold rounded uppercase shadow-sm">Recommended ⭐</span>' : ''}
                                     ${displayTitle}
                                 </div>
                                 <div class="text-xs text-slate-500">${displayFunder}</div>
