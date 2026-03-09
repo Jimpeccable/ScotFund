@@ -410,7 +410,7 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
@@ -438,10 +438,30 @@
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
+                                        <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
+// Supabase Connection Example
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient('https://xyz.supabase.co', 'anon-key');
+
+async function syncFunds() {
+  const { data, error } = await supabase
+    .from('opportunities')
+    .upsert(state.opportunities);
+}</pre>
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
+                                        <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
+// MongoDB Connection Example
+const { MongoClient } = require('mongodb');
+const client = new MongoClient('mongodb+srv://user:pass@cluster.mongodb.net');
+
+async function saveToMongo() {
+  await client.connect();
+  const db = client.db('scotfund');
+  await db.collection('funds').insertMany(state.opportunities);
+}</pre>
                                     </div>
                                 </div>
                             </div>
@@ -1596,9 +1616,19 @@
             { id: 'gcvs', name: 'GCVS (Glasgow TSI)', url: 'https://www.gcvs.org.uk/funding/', keywords: ['glasgow', 'voluntary', 'charity', 'funding', 'support'] },
             { id: 'evoc', name: 'EVOC (Edinburgh TSI)', url: 'https://www.evoc.org.uk/funding/', keywords: ['edinburgh', 'voluntary', 'charity', 'funding', 'support'] },
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
-            { id: 'fife-voluntary', name: 'Fife Voluntary Action', url: 'https://www.fva.org/funding.asp', keywords: ['fife', 'voluntary', 'charity', 'funding', 'grant'] },
-            { id: 'aberdeen-tsi', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'voluntary', 'charity', 'funding', 'support'] },
-            { id: 'scot-ent', name: 'Scottish Enterprise', url: 'https://www.scottish-enterprise.com/support-for-businesses/funding-and-grants', keywords: ['business', 'innovation', 'growth', 'scotland', 'grant'] },
+            { id: 'voluntary-action-angus', name: 'Voluntary Action Angus', url: 'https://www.voluntaryactionangus.org.uk/funding/', keywords: ['angus', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'argyll-bute-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllandbutetsi.org.uk/funding/', keywords: ['argyll', 'bute', 'voluntary', 'charity', 'funding'] },
+            { id: 'borders-tsi', name: 'Scottish Borders TSI', url: 'https://www.scotborders-tsi.org.uk/funding/', keywords: ['borders', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'dumfries-galloway-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'voluntary', 'charity', 'funding'] },
+            { id: 'east-lothian-tsi', name: 'Volunteer Centre East Lothian', url: 'https://www.vcel.org.uk/funding/', keywords: ['east lothian', 'voluntary', 'charity', 'funding'] },
+            { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'west-lothian-tsi', name: 'Voluntary Sector Gateway West Lothian', url: 'https://www.vsgwl.org/funding/', keywords: ['west lothian', 'voluntary', 'charity', 'funding'] },
+            { id: 'perth-kinross-tsi', name: 'PKAVS (Perth & Kinross TSI)', url: 'https://www.pkavs.org.uk/third-sector-interface/funding/', keywords: ['perth', 'kinross', 'voluntary', 'charity', 'funding'] },
+            { id: 'stirling-tsi', name: 'Stirling Voluntary Enterprise', url: 'https://www.sventerprise.org.uk/funding/', keywords: ['stirling', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'clackmannanshire-tsi', name: 'CTSI (Clackmannanshire TSI)', url: 'https://www.ctsi.org.uk/funding/', keywords: ['clackmannanshire', 'voluntary', 'charity', 'funding'] },
+            { id: 'nhs-tayside', name: 'NHS Tayside Community Funds', url: 'https://www.nhstayside.scot.nhs.uk/OurServicesA-Z/CommunityInnovationFund/index.htm', keywords: ['tayside', 'nhs', 'community', 'health', 'innovation'] },
+            { id: 'womens-fund-scot', name: 'Women\'s Fund for Scotland', url: 'https://www.womensfundscotland.org/apply/', keywords: ['women', 'girls', 'scotland', 'equality', 'grant'] },
+            { id: 'comic-relief-scot', name: 'Comic Relief Scotland', url: 'https://www.comicrelief.com/funding/funding-opportunities/', keywords: ['scotland', 'social justice', 'poverty', 'community', 'grant'] },
             { id: 'bus-gateway', name: 'Business Gateway', url: 'https://www.bgateway.com/resources/funding', keywords: ['business', 'startup', 'funding', 'scotland', 'advice'] },
             { id: 'social-ent-scot', name: 'Social Enterprise Scotland', url: 'https://socialenterprise.scot/funding/', keywords: ['social enterprise', 'cic', 'scio', 'impact', 'funding'] },
 
@@ -1686,7 +1716,6 @@
             { id: 'scsp', name: 'Smarter Choices, Smarter Places', url: 'https://www.pathsforall.org.uk/active-travel/smarter-choices-smarter-places-1', keywords: ['travel', 'active', 'transport', 'community', 'scotland'] },
             { id: 'clif', name: 'Community Land Investment Fund', url: 'https://www.communitylandscotland.org.uk/clif/', keywords: ['land', 'community', 'investment', 'ownership', 'scotland'] },
             { id: 'fdff', name: 'Fuel Debt Fund', url: 'https://foundation.scot/apply-for-funding/funding-available/fuel-debt-fund', keywords: ['energy', 'poverty', 'fuel', 'debt', 'scotland'] },
-            { id: 'hunter', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['entrepreneur', 'education', 'scotland', 'philanthropy', 'investment'] },
             { id: 'greenspace', name: 'Greenspace Scotland', url: 'https://www.greenspacescotland.org.uk/funding', keywords: ['green', 'space', 'environment', 'community', 'scotland'] },
             { id: 'ksb', name: 'Keep Scotland Beautiful', url: 'https://www.keepscotlandbeautiful.org/community-projects/clean-up-scotland/funding/', keywords: ['environment', 'clean', 'community', 'scotland', 'litter'] },
             { id: 'shell', name: 'The Shell Community Fund', url: 'https://www.shell.co.uk/sustainability/communities/shell-community-grants.html', keywords: ['community', 'fife', 'aberdeen', 'scotland', 'grant'] },
@@ -1875,6 +1904,7 @@
             saveData();
             document.getElementById('login-modal').classList.add('hidden');
             syncUserDisplay();
+            renderDashboard();
             log(`✓ Logged in as ${name} (${org})`, 'success');
         }
 
@@ -2337,7 +2367,7 @@
                 const match = analyseRelevance(fullCombined, source.keywords);
                 
                 if (match.score >= 40) { // Higher threshold for ultimate quality
-                    const details = await extractDetails(parent, link, fullCombined);
+                    const details = extractDetails(parent, link, fullCombined);
                     
                     // QUALITY GATE - Only include if we have substantial info
                     const quality = calculateQuality(details);
@@ -2505,24 +2535,26 @@
             if (state.settings && state.settings.priorityArea && state.settings.priorityArea !== 'National') {
                 const area = state.settings.priorityArea;
                 if (text.toLowerCase().includes(area.toLowerCase())) {
-                    score += 50;
-                    matchDetails.push({ key: `Priority Area: ${area}`, points: 50 });
+                    score += 75;
+                    matchDetails.push({ key: `Priority Area: ${area}`, points: 75 });
                 }
             }
 
             // User Interest Boost
+            // User Interest Boost
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
                     const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
-                    let match = false;
+                    let matchCount = 0;
                     interestKeywords.forEach(k => {
-                        if (text.toLowerCase().includes(k.toLowerCase())) match = true;
+                        if (text.toLowerCase().includes(k.toLowerCase())) matchCount++;
                     });
 
-                    if (match) {
-                        score += 35;
+                    if (matchCount > 0) {
+                        const boost = 35 + (matchCount * 5);
+                        score += boost;
                         foundKeywords.push(interest);
-                        matchDetails.push({ key: `User Interest Match: ${interest}`, points: 35 });
+                        matchDetails.push({ key: `User Interest Match: ${interest} (${matchCount})`, points: boost });
                     }
                 });
             }
@@ -2539,7 +2571,7 @@
             return { score, keywords: [...new Set(foundKeywords)], matchDetails };
         }
 
-        async function extractDetails(element, link, text) {
+        function extractDetails(element, link, text) {
             const details = {
                 amount: 'Amount varies - see website',
                 deadline: 'Rolling deadline',
@@ -2556,23 +2588,24 @@
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)/i,
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)/i,
-                /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)/i,
-                /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)/i,
-                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)/i,
-                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)/i
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i
             ];
             
             for (const pattern of amountPatterns) {
                 const match = text.match(pattern);
                 if (match) {
-                    if (match[2]) {
-                        details.amount = `£${match[1]} - £${match[2]}`;
+                    const multiYear = match[3] ? ` p.a. over ${match[3]} years` : (text.toLowerCase().includes('p.a.') ? ' p.a.' : '');
+                    if (match[2] && !/^\d+$/.test(match[2])) { // Basic check to see if match[2] is a second amount, not just years
+                        details.amount = `£${match[1]} - £${match[2]}${multiYear}`;
                     } else {
-                        details.amount = match[0].includes('up to') || match[0].includes('max') ? `Up to £${match[1]}` : `£${match[1]}`;
+                        details.amount = (match[0].includes('up to') || match[0].includes('max')) ? `Up to £${match[1]}${multiYear}` : `£${match[1]}${multiYear}`;
                     }
                     break;
                 }
@@ -3007,7 +3040,7 @@
                     }
 
                     return `
-                        <tr class="hover:bg-slate-50 cursor-pointer group" onclick="showDetails('${opp.id}')">
+                        <tr class="hover:bg-slate-50 cursor-pointer group interactive-card" onclick="showDetails('${opp.id}')">
                             <td class="px-6 py-4" onclick="event.stopPropagation()">
                                 <input type="checkbox" onchange="toggleSelection('${opp.id}')" ${isSelected ? 'checked' : ''} class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                             </td>
