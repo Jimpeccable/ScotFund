@@ -439,28 +439,43 @@
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
                                         <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
-// Supabase Connection Example
+// Supabase Advanced Implementation
 const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient('https://xyz.supabase.co', 'anon-key');
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-async function syncFunds() {
-  const { data, error } = await supabase
+async function syncAppData() {
+  // Sync Opportunities with Upsert on URL (Conflict)
+  const { data: opps, error: e1 } = await supabase
     .from('opportunities')
-    .upsert(state.opportunities);
+    .upsert(state.opportunities, { onConflict: 'url' });
+
+  // Fetch User specific Shortlist with Joins
+  const { data: list, error: e2 } = await supabase
+    .from('shortlists')
+    .select('*, opportunities(*)')
+    .eq('user_id', state.user.id);
+
+  if (e1 || e2) console.error('Sync Error:', e1 || e2);
 }</pre>
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
                                         <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
-// MongoDB Connection Example
-const { MongoClient } = require('mongodb');
-const client = new MongoClient('mongodb+srv://user:pass@cluster.mongodb.net');
+// MongoDB Atlas Advanced Implementation
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://admin:pass@cluster0.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { serverApi: { version: ServerApiVersion.v1 } });
 
-async function saveToMongo() {
-  await client.connect();
-  const db = client.db('scotfund');
-  await db.collection('funds').insertMany(state.opportunities);
+async function persistBatch() {
+  try {
+    const db = client.db("scotfund_pro");
+    const bulk = db.collection("opportunities").initializeUnorderedBulkOp();
+    state.opportunities.forEach(opp => {
+      bulk.find({ url: opp.url }).upsert().updateOne({ $set: opp });
+    });
+    await bulk.execute();
+  } finally { await client.close(); }
 }</pre>
                                     </div>
                                 </div>
@@ -475,19 +490,19 @@ async function saveToMongo() {
                                     <ul class="text-[11px] text-slate-600 space-y-3">
                                         <li class="flex gap-2">
                                             <span class="font-bold text-slate-900 min-w-[80px]">Users:</span>
-                                            <span>uuid, email, pwd_hash, role (User/Admin/Super), profile_data_json, last_login</span>
+                                            <span>id (UUID), email (Unique), password_hash, role (ENUM: 'User', 'Admin', 'Super'), name, org_name, org_type, interests (TEXT[]), created_at, last_login</span>
                                         </li>
                                         <li class="flex gap-2">
                                             <span class="font-bold text-slate-900 min-w-[80px]">Opportunities:</span>
-                                            <span>uuid, title, funder_id, url, amt_min, amt_max, deadline, sectors[], region, quality_score</span>
+                                            <span>id (UUID), title, funder_name, url (Unique), amount_text, amount_numeric, deadline_text, deadline_date, sectors (TEXT[]), region, quality_score, description, criteria, date_discovered</span>
                                         </li>
                                         <li class="flex gap-2">
                                             <span class="font-bold text-slate-900 min-w-[80px]">Shortlists:</span>
-                                            <span>uuid, user_id, opp_id, status, notes, tasks_json, date_saved</span>
+                                            <span>id (UUID), user_id (FK), opp_id (FK), application_status (ENUM), notes (TEXT), tasks (JSONB), priority_level, created_at, updated_at</span>
                                         </li>
                                         <li class="flex gap-2">
                                             <span class="font-bold text-slate-900 min-w-[80px]">Audit Log:</span>
-                                            <span>uuid, action_type, user_id, timestamp, details_json</span>
+                                            <span>id (UUID), user_id (FK), action_type, entity_id, timestamp, ip_address, user_agent, metadata (JSONB)</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -753,7 +768,7 @@ async function saveToMongo() {
                 <p class="text-slate-500">Insights and trends from the verified funding database</p>
             </header>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="bg-white rounded-2xl border border-slate-200 p-6">
                     <h3 class="font-bold mb-6 flex items-center gap-2">
                         <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i> Sector Distribution
@@ -1456,8 +1471,8 @@ async function saveToMongo() {
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /facebook\.com/i, /twitter\.com/i, /x\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /vimeo\.com/i, /pinterest\.com/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar|docx|xlsx|pptx|odt|ods|odp|heic|webp|raw)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1653,7 +1668,7 @@ async function saveToMongo() {
             { id: 'clacks-council', name: 'Clackmannanshire Community Grants', url: 'https://www.clacks.gov.uk/community/grants/', keywords: ['clackmannanshire', 'community', 'grant', 'local'] },
             { id: 'moray-council', name: 'Moray Council Funding', url: 'http://www.moray.gov.uk/moray_standard/page_100155.html', keywords: ['moray', 'community', 'grant', 'local'] },
             { id: 'dumfries-galloway-council', name: 'Dumfries and Galloway Council Grants', url: 'https://www.dumgal.gov.uk/grants', keywords: ['dumfries', 'galloway', 'community', 'grant', 'local'] },
-            { id: 'south-ayrshire-council', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
+            { id: 'south-ayrshire-grants', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
             { id: 'north-ayrshire-council', name: 'North Ayrshire Community Funding', url: 'https://www.north-ayrshire.gov.uk/community-life/community-funding.aspx', keywords: ['north ayrshire', 'community', 'grant', 'local'] },
             { id: 'orkney-council', name: 'Orkney Islands Council Funding', url: 'https://www.orkney.gov.uk/Service-Directory/C/community-council-grant-schemes.htm', keywords: ['orkney', 'community', 'grant', 'local'] },
             { id: 'shetland-council', name: 'Shetland Islands Council Grants', url: 'https://www.shetland.gov.uk/community/grants-funding', keywords: ['shetland', 'community', 'grant', 'local'] },
@@ -1683,7 +1698,7 @@ async function saveToMongo() {
             { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'borders-community-action', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
 
             // Additional National Funds
@@ -1724,7 +1739,9 @@ async function saveToMongo() {
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'spagan-fund', name: 'The Spagan Community Fund', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available/spagan-community-fund', keywords: ['barra', 'vatersay', 'community', 'scotland', 'grant'] },
+            { id: 'south-ayrshire-council', name: 'South Ayrshire Council Funding', url: 'https://www.south-ayrshire.gov.uk/funding', keywords: ['south ayrshire', 'council', 'community', 'business', 'funding'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -2294,7 +2311,7 @@ async function saveToMongo() {
                 const ariaLabel = link.getAttribute('aria-label');
                 const linkTitle = link.getAttribute('title');
 
-                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit|find out)$/i.test(text) || text.length < 5) {
+                if (/^(read more|click here|apply|apply now|details|more info|here|link|view|download|application|learn more|find out more|visit|find out|open|go to|portal)$/i.test(text) || text.length < 5) {
                     if (ariaLabel && ariaLabel.trim().length > 5) {
                         text = ariaLabel.trim();
                     } else if (linkTitle && linkTitle.trim().length > 5) {
@@ -2551,7 +2568,7 @@ async function saveToMongo() {
                     });
 
                     if (matchCount > 0) {
-                        const boost = 35 + (matchCount * 5);
+                        const boost = 35 + (matchCount * 10); // Increased density boost
                         score += boost;
                         foundKeywords.push(interest);
                         matchDetails.push({ key: `User Interest Match: ${interest} (${matchCount})`, points: boost });
