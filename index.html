@@ -29,9 +29,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* World Class UI Refinements */
-        .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
+        .interactive-card { @apply transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/50 hover:-translate-y-1.5 border border-slate-200; }
         .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-[#1e293b]">
@@ -491,6 +491,44 @@ async function saveToMongo() {
                                         </li>
                                     </ul>
                                 </div>
+                                <div class="p-5 bg-slate-900 text-indigo-300 rounded-2xl text-[9px] mt-4">
+                                    <p class="font-bold text-white mb-2 uppercase">Supabase RLS Example:</p>
+                                    <pre>
+-- Only allow users to see their own shortlist
+CREATE POLICY "Users can only see their own shortlist"
+ON shortlists FOR SELECT
+USING (auth.uid() = user_id);</pre>
+                                </div>
+                            </div>
+
+                            <!-- Technical Stack & Drivers -->
+                            <div class="space-y-4">
+                                <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i> 3. Recommended Tech Stack
+                                </h5>
+                                <div class="p-5 border border-slate-100 rounded-2xl bg-white shadow-sm space-y-3">
+                                    <div class="flex items-start gap-2">
+                                        <div class="p-1 bg-indigo-50 rounded text-indigo-600 mt-0.5"><i data-lucide="check" class="w-3 h-3"></i></div>
+                                        <div>
+                                            <p class="text-[11px] font-bold text-slate-900">Backend Runtime</p>
+                                            <p class="text-[10px] text-slate-500">Node.js (v18+) or Bun for high-performance scraping and API handling.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <div class="p-1 bg-indigo-50 rounded text-indigo-600 mt-0.5"><i data-lucide="check" class="w-3 h-3"></i></div>
+                                        <div>
+                                            <p class="text-[11px] font-bold text-slate-900">ORM / Client Drivers</p>
+                                            <p class="text-[10px] text-slate-500">@supabase/supabase-js for PostgreSQL or mongodb driver for Atlas.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-2">
+                                        <div class="p-1 bg-indigo-50 rounded text-indigo-600 mt-0.5"><i data-lucide="check" class="w-3 h-3"></i></div>
+                                        <div>
+                                            <p class="text-[11px] font-bold text-slate-900">Authentication</p>
+                                            <p class="text-[10px] text-slate-500">Supabase Auth (recommended) or Passport.js with JWT for secure sessions.</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Auth Section -->
@@ -502,7 +540,7 @@ async function saveToMongo() {
                                     <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
                                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> JWT-based Session Management
                                     </div>
-                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
+                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium" title="Row-Level Security ensures data isolation">
                                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Row-Level Security (RLS) policies
                                     </div>
                                     <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
@@ -1042,6 +1080,20 @@ async function saveToMongo() {
                             <option value="Other">Other Non-Profit</option>
                         </select>
                     </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Charity Number</label>
+                            <input type="text" id="profile-charity-number" placeholder="e.g. SC012345" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Annual Turnover</label>
+                            <input type="text" id="profile-turnover" placeholder="e.g. £50,000" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Staff Count (FTE)</label>
+                        <input type="number" id="profile-staff-count" placeholder="0" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
                     <div>
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Account Role</label>
                     <select id="profile-role" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
@@ -1457,7 +1509,7 @@ async function saveToMongo() {
             },
             BLACKLIST: {
                 patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|iso|7z|rar|tar)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1724,7 +1776,25 @@ async function saveToMongo() {
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'womens-fund', name: 'Women\'s Fund for Scotland', url: 'https://www.womensfundscotland.org/grants/', keywords: ['women', 'girls', 'empowerment', 'scotland', 'grant'] },
+            { id: 'nhs-tayside-cif', name: 'NHS Tayside Community Innovation Fund', url: 'https://www.nhstayside.scot.nhs.uk/GettingInvolved/CommunityInnovationFund/index.htm', keywords: ['tayside', 'innovation', 'health', 'community', 'grant'] },
+            { id: 'spagan', name: 'The Spagan Community Fund', url: 'https://www.spagan.co.uk/', keywords: ['community', 'local', 'grant', 'scotland'] },
+            { id: 'south-ayrshire-grants', name: 'South Ayrshire Council Funding', url: 'https://www.south-ayrshire.gov.uk/grants', keywords: ['south ayrshire', 'council', 'community', 'grant'] },
+            { id: 'clacks-tsi', name: 'Clackmannanshire TSI (CTSI)', url: 'https://ctsi.org.uk/funding/', keywords: ['clackmannanshire', 'tsi', 'funding', 'support'] },
+            { id: 'strive', name: 'East Lothian TSI (STRIVE)', url: 'https://strive.me/funding/', keywords: ['east lothian', 'tsi', 'funding', 'support'] },
+            { id: 'vawl', name: 'West Lothian TSI (VAWL)', url: 'https://www.vawl.org.uk/funding', keywords: ['west lothian', 'tsi', 'funding', 'support'] },
+            { id: 'ts-midlothian', name: 'Third Sector Midlothian', url: 'https://www.thirdsectormidlothian.org.uk/funding/', keywords: ['midlothian', 'tsi', 'funding', 'support'] },
+            { id: 'pkavs', name: 'Perth & Kinross TSI (PKAVS)', url: 'https://www.pkavs.org.uk/third-sector-interface/funding/', keywords: ['perth', 'kinross', 'tsi', 'funding', 'support'] },
+            { id: 'engage-renfrew', name: 'Engage Renfrewshire', url: 'https://engagerenfrewshire.org/funding/', keywords: ['renfrewshire', 'tsi', 'funding', 'support'] },
+            { id: 'edva', name: 'East Dunbartonshire VA (EDVA)', url: 'https://www.edva.org/funding/', keywords: ['east dunbartonshire', 'tsi', 'funding', 'support'] },
+            { id: 'wdcvs', name: 'West Dunbartonshire CVS (WDCVS)', url: 'https://wdcvs.com/funding/', keywords: ['west dunbartonshire', 'tsi', 'funding', 'support'] },
+            { id: 'cvs-inverclyde', name: 'CVS Inverclyde', url: 'https://www.cvsinverclyde.org.uk/funding', keywords: ['inverclyde', 'tsi', 'funding', 'support'] },
+            { id: 'vanl', name: 'Voluntary Action North Lanarkshire', url: 'https://www.vanl.org.uk/funding', keywords: ['north lanarkshire', 'tsi', 'funding', 'support'] },
+            { id: 'vaslan', name: 'Voluntary Action South Lanarkshire', url: 'https://www.vaslan.org.uk/funding', keywords: ['south lanarkshire', 'tsi', 'funding', 'support'] },
+            { id: 'tsi-north-ayrshire', name: 'TSI North Ayrshire', url: 'https://www.tsina.org.uk/funding', keywords: ['north ayrshire', 'tsi', 'funding', 'support'] },
+            { id: 'vasa', name: 'Voluntary Action South Ayrshire', url: 'https://www.vasa.scot/funding/', keywords: ['south ayrshire', 'tsi', 'funding', 'support'] },
+            { id: 'cva-east-ayrshire', name: 'CVA East Ayrshire', url: 'https://cvaea.org/funding/', keywords: ['east ayrshire', 'tsi', 'funding', 'support'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1945,6 +2015,9 @@ async function saveToMongo() {
                 // Sync Profile inputs
                 document.getElementById('profile-org-name').value = state.user.org;
                 document.getElementById('profile-org-type').value = state.user.orgType || 'Charity';
+                document.getElementById('profile-charity-number').value = state.user.charityNumber || '';
+                document.getElementById('profile-turnover').value = state.user.turnover || '';
+                document.getElementById('profile-staff-count').value = (state.user.staffCount !== undefined && state.user.staffCount !== null) ? state.user.staffCount : '';
                 document.getElementById('profile-role').value = state.user.role || 'User';
                 document.getElementById('profile-user-name').value = state.user.name;
 
@@ -1965,6 +2038,9 @@ async function saveToMongo() {
         function updateProfile() {
             const org = document.getElementById('profile-org-name').value.trim();
             const type = document.getElementById('profile-org-type').value;
+            const charityNumber = document.getElementById('profile-charity-number').value.trim();
+            const turnover = document.getElementById('profile-turnover').value.trim();
+            const staffCount = document.getElementById('profile-staff-count').value;
             const role = document.getElementById('profile-role').value;
             const name = document.getElementById('profile-user-name').value.trim();
 
@@ -1981,6 +2057,9 @@ async function saveToMongo() {
                 org,
                 role,
                 orgType: type,
+                charityNumber,
+                turnover,
+                staffCount,
                 interests
             };
 
@@ -2437,7 +2516,7 @@ async function saveToMongo() {
             let allDone = true;
 
             // Profile Org Type
-            if (state.user.orgType) {
+            if (state.user.orgType && state.user.charityNumber && state.user.turnover) {
                 checkProfile.classList.remove('opacity-50');
                 const icon = checkProfile.querySelector('.check-icon');
                 if (icon) {
@@ -2540,7 +2619,6 @@ async function saveToMongo() {
                 }
             }
 
-            // User Interest Boost
             // User Interest Boost
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
@@ -3341,6 +3419,10 @@ async function saveToMongo() {
 
                 let val = parseFloat(valStr);
                 if (isNaN(val)) continue;
+
+                // Ignore 4-digit years (e.g., 2024) unless preceded by currency symbol
+                const rawMatch = match[0];
+                if (val >= 1900 && val <= 2100 && valStr.length === 4 && !rawMatch.includes('£') && !rawMatch.toUpperCase().includes('GBP')) continue;
 
                 const suffix = match[2] ? match[2].toLowerCase() : '';
 
@@ -4324,6 +4406,7 @@ async function saveToMongo() {
             // Mocked Admin Stats
             const scanSuccessRate = 98.4;
             const activeUsers = state.user ? 1 : 0;
+            const systemHeartbeat = 'Operational';
 
             const adminHtml = `
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -4342,6 +4425,13 @@ async function saveToMongo() {
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
                         <p class="text-2xl font-bold text-slate-700">${activeUsers}</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 col-span-2 md:col-span-4">
+                        <p class="text-[9px] font-bold text-purple-400 uppercase tracking-widest mb-1">System Heartbeat</p>
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <p class="text-lg font-bold text-purple-700">${systemHeartbeat}</p>
+                        </div>
                     </div>
                 </div>
             `;
