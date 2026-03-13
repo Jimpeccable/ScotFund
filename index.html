@@ -29,8 +29,8 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* World Class UI Refinements */
-        .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
-        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
+        .interactive-card { @apply transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-200/50 hover:-translate-y-1.5 border border-slate-200; }
+        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold; }
         .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
     </style>
 </head>
@@ -103,17 +103,19 @@
         </nav>
 
         <div class="mt-auto pt-6 border-t border-slate-100 space-y-3">
-            <div id="user-display" class="p-3 bg-slate-50 rounded-xl hidden mb-2">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Account</p>
-                <p id="user-name-display" class="text-sm font-bold text-slate-900 truncate"></p>
-                <p id="user-org-display" class="text-[10px] text-slate-500 truncate"></p>
-                <button onclick="logout()" class="text-[9px] font-bold text-red-600 uppercase mt-2 hover:underline">Logout</button>
+            <div id="user-display" class="p-4 bg-slate-50 rounded-2xl hidden mb-3 border border-slate-100">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Active Session</p>
+                <p id="user-name-display" class="text-sm font-bold text-slate-900 truncate flex items-center gap-2"></p>
+                <p id="user-org-display" class="text-[10px] text-slate-500 truncate font-medium"></p>
+                <button onclick="logout()" class="text-[9px] font-bold text-red-500 uppercase mt-3 hover:text-red-600 transition-colors flex items-center gap-1">
+                    <i data-lucide="log-out" class="w-3 h-3"></i> Sign Out
+                </button>
             </div>
-            <div id="scan-status-indicator" class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                <span class="w-2 h-2 rounded-full bg-slate-300"></span> System Idle
+            <div id="scan-status-indicator" class="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                <span class="w-2 h-2 rounded-full bg-slate-300"></span> System Standby
             </div>
-            <button onclick="runUltimateScan()" id="main-scan-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 transition-transform active:scale-95">
-                <i data-lucide="zap" class="w-4 h-4" id="btn-icon"></i> <span id="btn-text">Scan</span>
+            <button onclick="runUltimateScan()" id="main-scan-btn" class="w-full btn-primary py-3.5 rounded-xl shadow-xl shadow-indigo-100/50 flex items-center justify-center gap-2 transition-all">
+                <i data-lucide="zap" class="w-4 h-4" id="btn-icon"></i> <span id="btn-text">Initiate Intelligence Scan</span>
             </button>
         </div>
     </div>
@@ -474,20 +476,24 @@ async function saveToMongo() {
                                 <div class="p-5 border border-slate-100 rounded-2xl bg-white shadow-sm">
                                     <ul class="text-[11px] text-slate-600 space-y-3">
                                         <li class="flex gap-2">
-                                            <span class="font-bold text-slate-900 min-w-[80px]">Users:</span>
-                                            <span>uuid, email, pwd_hash, role (User/Admin/Super), profile_data_json, last_login</span>
+                                            <span class="font-bold text-slate-900 min-w-[100px]">Users Table:</span>
+                                            <span>uuid (PK), email (unique), password_hash, role (Enum: 'User', 'Admin', 'Super User'), profile_json, created_at, last_login_at</span>
                                         </li>
                                         <li class="flex gap-2">
-                                            <span class="font-bold text-slate-900 min-w-[80px]">Opportunities:</span>
-                                            <span>uuid, title, funder_id, url, amt_min, amt_max, deadline, sectors[], region, quality_score</span>
+                                            <span class="font-bold text-slate-900 min-w-[100px]">Funds Table:</span>
+                                            <span>uuid (PK), funder_name, title, description, url (unique), amt_min, amt_max, deadline_date, rolling_deadline (bool), sectors (array), geography, quality_score, date_discovered</span>
                                         </li>
                                         <li class="flex gap-2">
-                                            <span class="font-bold text-slate-900 min-w-[80px]">Shortlists:</span>
-                                            <span>uuid, user_id, opp_id, status, notes, tasks_json, date_saved</span>
+                                            <span class="font-bold text-slate-900 min-w-[100px]">Shortlists:</span>
+                                            <span>uuid (PK), user_id (FK), fund_id (FK), application_status (Enum), personal_notes, tasks_json, created_at, updated_at</span>
                                         </li>
                                         <li class="flex gap-2">
-                                            <span class="font-bold text-slate-900 min-w-[80px]">Audit Log:</span>
-                                            <span>uuid, action_type, user_id, timestamp, details_json</span>
+                                            <span class="font-bold text-slate-900 min-w-[100px]">Blacklists:</span>
+                                            <span>uuid (PK), pattern, reason, created_by (FK), is_active (bool)</span>
+                                        </li>
+                                        <li class="flex gap-2">
+                                            <span class="font-bold text-slate-900 min-w-[100px]">Audit Log:</span>
+                                            <span>uuid (PK), action_type, user_id (FK), table_affected, record_id, metadata_json, created_at</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -534,34 +540,30 @@ async function saveToMongo() {
                         <!-- Technical Requirements Checklist -->
                         <div class="mt-8 border-t border-slate-100 pt-8">
                             <h5 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i> 5. Database Connection Requirements Checklist
+                                <i data-lucide="check-square" class="w-4 h-4 text-indigo-600"></i> 5. Implementation Steps for Database Integration
                             </h5>
                             <div class="grid md:grid-cols-3 gap-6">
-                                <div class="space-y-3">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Supabase (SQL)</p>
-                                    <ul class="text-[11px] text-slate-600 space-y-2">
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Project URL & Anon Key</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Service Role Key (Admin)</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> PostgreSQL Connection String</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> RLS Policies Definition</li>
+                                <div class="space-y-4">
+                                    <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Phase 1: Environment Setup</p>
+                                    <ul class="text-[11px] text-slate-600 space-y-3">
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Initialize Supabase Project:</strong> Set up a new PostgreSQL instance on Supabase and enable the Auth module.</li>
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Configure RLS:</strong> Implement Row-Level Security policies to ensure users can only access their own shortlist and profile data.</li>
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Secrets Management:</strong> Move all API keys and Project URLs to a secure <code>.env</code> file.</li>
                                     </ul>
                                 </div>
-                                <div class="space-y-3">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">MongoDB (NoSQL)</p>
-                                    <ul class="text-[11px] text-slate-600 space-y-2">
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Atlas Cluster URI</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Database & Collection Names</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> API Key / Access Credentials</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> IP Whitelist Configuration</li>
+                                <div class="space-y-4">
+                                    <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Phase 2: Data Migration</p>
+                                    <ul class="text-[11px] text-slate-600 space-y-3">
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>JSON Migration:</strong> Export existing <code>localStorage</code> data to a JSON structure compatible with the new PostgreSQL schema.</li>
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Batch Upsert:</strong> Use the Supabase JS SDK <code>.upsert()</code> method to populate the <code>funds</code> table with historical discovery data.</li>
                                     </ul>
                                 </div>
-                                <div class="space-y-3">
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Application Level</p>
-                                    <ul class="text-[11px] text-slate-600 space-y-2">
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> .env File for Secrets</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Fetch API Bridge (async/await)</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Error Boundary Implementation</li>
-                                        <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-slate-300"></i> Offline Sync Strategy</li>
+                                <div class="space-y-4">
+                                    <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Phase 3: Code Refactoring</p>
+                                    <ul class="text-[11px] text-slate-600 space-y-3">
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Async Data Layer:</strong> Replace <code>saveData()</code> and <code>getFromStorage()</code> with asynchronous <code>fetch()</code> or SDK calls using <code>async/await</code>.</li>
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Real-time Sync:</strong> Implement Supabase Realtime subscriptions to update the dashboard instantly when the scan engine (running in an Edge Function) finds new funds.</li>
+                                        <li class="flex gap-2"><i data-lucide="chevron-right" class="w-3 h-3 mt-0.5 text-indigo-500"></i> <strong>Session Resilience:</strong> Integrate <code>supabase.auth.onAuthStateChange</code> to handle persistent login across sessions.</li>
                                     </ul>
                                 </div>
                             </div>
@@ -1456,8 +1458,8 @@ async function saveToMongo() {
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
-                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /facebook\.com/i, /twitter\.com/i, /x\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /vimeo\.com/i, /pinterest\.com/i],
+                extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar|docx|xlsx|pptx|odt|ods|odp)$/i
             },
             CATEGORIES: {
                 play: ['play', 'outdoor', 'recreation', 'park'],
@@ -1618,7 +1620,7 @@ async function saveToMongo() {
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
             { id: 'voluntary-action-angus', name: 'Voluntary Action Angus', url: 'https://www.voluntaryactionangus.org.uk/funding/', keywords: ['angus', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'argyll-bute-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllandbutetsi.org.uk/funding/', keywords: ['argyll', 'bute', 'voluntary', 'charity', 'funding'] },
-            { id: 'borders-tsi', name: 'Scottish Borders TSI', url: 'https://www.scotborders-tsi.org.uk/funding/', keywords: ['borders', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'borders-community-action', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dumfries-galloway-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'voluntary', 'charity', 'funding'] },
             { id: 'east-lothian-tsi', name: 'Volunteer Centre East Lothian', url: 'https://www.vcel.org.uk/funding/', keywords: ['east lothian', 'voluntary', 'charity', 'funding'] },
             { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'charity', 'funding', 'grant'] },
@@ -1678,13 +1680,17 @@ async function saveToMongo() {
             { id: 'htsi', name: 'Highland TSI Funding', url: 'https://www.highlandtsi.org.uk/funding', keywords: ['highland', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'vaa', name: 'Voluntary Action Angus', url: 'https://www.vaangus.org.uk/funding/', keywords: ['angus', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'ava', name: 'Aberdeenshire Voluntary Action', url: 'https://www.avashire.org.uk/funding/', keywords: ['aberdeenshire', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'acvo', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'dva', name: 'Dundee Voluntary Action', url: 'https://www.dundeevoluntaryaction.org.uk/funding/', keywords: ['dundee', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'fva', name: 'Fife Voluntary Action', url: 'https://www.fva.org/funding.asp', keywords: ['fife', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'womens-fund-scot', name: 'Women’s Fund for Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available/womens-fund-for-scotland', keywords: ['women', 'girls', 'gender', 'empowerment', 'scotland'] },
+            { id: 'spagan', name: 'The Spagan Community Fund', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available/spagan-community-fund', keywords: ['barra', 'vatersay', 'community', 'islands', 'scotland'] },
+            { id: 'nhs-tayside', name: 'NHS Tayside Charitable Foundation', url: 'https://wm2u.co.uk/our-funders', keywords: ['health', 'wellbeing', 'tayside', 'charity', 'scotland'] },
+            { id: 'comic-relief-scot', name: 'Comic Relief Scotland', url: 'https://www.corra.scot/grants/comic-relief/', keywords: ['scotland', 'poverty', 'social', 'justice', 'grant'] },
             { id: 'sve', name: 'Stirling Voluntary Enterprise', url: 'https://www.sventerprise.org.uk/funding/', keywords: ['stirling', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'vas', name: 'Voluntary Action Shetland', url: 'https://www.shetland-tsi.org.uk/funding', keywords: ['shetland', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
 
             // Additional National Funds
             { id: 'forteviot', name: 'The Forteviot Charitable Trust', url: 'https://www.forteviottrust.org.uk/', keywords: ['scotland', 'charity', 'grant', 'community', 'education'] },
@@ -2595,7 +2601,8 @@ async function saveToMongo() {
                 /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
                 /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
                 /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i
+                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
+                /(?:grant|award)\s*(?:of|is)\s*£?([\d,kKmM.]+)/i
             ];
             
             for (const pattern of amountPatterns) {
@@ -3329,7 +3336,8 @@ async function saveToMongo() {
 
             // Fallback: match plain numbers if no symbol/suffix indicators
             if (matches.length === 0 || matches.every(m => !m[1])) {
-                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*(k|m|bn)?(?![0-9])/gi));
+                // Ensure we don't accidentally match 4-digit years (e.g., 2024) as amounts unless prefixed with £
+                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])(?!(?:19|20)\d{2}(?![0-9]))([\d,]{1,})\s*(k|m|bn)?(?![0-9])/gi));
             }
 
             let maxVal = 0;
