@@ -112,7 +112,7 @@
             <div id="scan-status-indicator" class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 <span class="w-2 h-2 rounded-full bg-slate-300"></span> System Idle
             </div>
-            <button onclick="runUltimateScan()" id="main-scan-btn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 transition-transform active:scale-95">
+            <button onclick="runUltimateScan()" id="main-scan-btn" class="btn-primary w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
                 <i data-lucide="zap" class="w-4 h-4" id="btn-icon"></i> <span id="btn-text">Scan</span>
             </button>
         </div>
@@ -135,7 +135,7 @@
                         <input type="checkbox" id="report-new-only" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
                         <label for="report-new-only" class="text-xs font-bold text-slate-600 uppercase">New Only</label>
                     </div>
-                    <button onclick="runUltimateScan()" class="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-bold hover:from-indigo-700 hover:to-purple-700 transition-all flex items-center gap-2">
+                    <button onclick="runUltimateScan()" class="btn-primary px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-bold flex items-center gap-2">
                         <i data-lucide="zap" class="w-4 h-4"></i> Scan
                     </button>
                     <button onclick="generatePDFReport()" class="px-4 py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all flex items-center gap-2">
@@ -389,7 +389,7 @@
 
             <!-- Super Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg shadow-indigo-200">
+                <div class="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg shadow-indigo-200 interactive-card border-none">
                     <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-1">Global Funds</p>
                     <p id="super-stat-total" class="text-4xl font-bold">0</p>
                 </div>
@@ -423,8 +423,8 @@
                                 <i data-lucide="database" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-slate-900">Database & Persistence Roadmap</h4>
-                                <p class="text-xs text-slate-500">Comprehensive requirements for transitioning to a full-service cloud architecture.</p>
+                                <h4 class="font-bold text-slate-900">Future Requirments</h4>
+                                <p class="text-xs text-slate-500">Comprehensive database requirements for transitioning to a full-service cloud architecture.</p>
                             </div>
                         </div>
 
@@ -503,13 +503,23 @@ async function saveToMongo() {
                                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> JWT-based Session Management
                                     </div>
                                     <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
-                                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Row-Level Security (RLS) policies
-                                    </div>
-                                    <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
                                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> SSL Encryption for all API calls
                                     </div>
                                     <div class="flex items-center gap-2 text-[11px] text-indigo-900 font-medium">
                                         <i data-lucide="shield-check" class="w-3.5 h-3.5 text-indigo-600"></i> Rate limiting for the Scanning Engine
+                                    </div>
+                                    <div class="mt-3 p-3 bg-slate-900 rounded-xl overflow-hidden">
+                                        <p class="text-[9px] font-bold text-indigo-300 uppercase mb-2">Example RLS Policy (Supabase)</p>
+                                        <pre class="text-[8px] text-slate-300 leading-tight">
+-- Secure Shortlist Access
+CREATE POLICY "Users can only access own shortlist"
+ON public.shortlists FOR ALL
+USING (auth.uid() = user_id);
+
+-- Global Public Funds
+CREATE POLICY "Anyone can view opportunities"
+ON public.opportunities FOR SELECT
+USING (true);</pre>
                                     </div>
                                 </div>
                             </div>
@@ -517,9 +527,22 @@ async function saveToMongo() {
                             <!-- Migration Strategy -->
                             <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl">
                                 <h5 class="text-sm font-bold mb-3 flex items-center gap-2">
-                                    <i data-lucide="rocket" class="w-4 h-4"></i> Migration Strategy
+                                    <i data-lucide="rocket" class="w-4 h-4"></i> 4. Future Requirments & Migration
                                 </h5>
-                                <p class="text-[11px] text-indigo-200 leading-relaxed mb-4">Transitioning from localStorage requires a 3-phase approach: 1. Deploy Cloud DB, 2. Scripted data migration via JSON export, 3. Update 'saveData' and 'getFromStorage' to utilize asynchronous API fetch calls.</p>
+                                <div class="space-y-3 mb-4">
+                                    <div class="flex gap-3">
+                                        <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold shrink-0">1</div>
+                                        <p class="text-[10px] text-indigo-100"><span class="font-bold text-white">Cloud Deployment:</span> Set up Supabase project and define tables for Users, Funds, and Shortlists.</p>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold shrink-0">2</div>
+                                        <p class="text-[10px] text-indigo-100"><span class="font-bold text-white">API Layer:</span> Implement Edge Functions for the Scanning Engine to bypass CORS and move processing off the client.</p>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-bold shrink-0">3</div>
+                                        <p class="text-[10px] text-indigo-100"><span class="font-bold text-white">Data Bridge:</span> Update frontend 'saveData' to use 'await supabase.from().upsert()' with offline sync fallback.</p>
+                                    </div>
+                                </div>
                                 <div class="space-y-2">
                                     <button onclick="alert('Migration script generated in memory. Ready for deployment.')" class="w-full py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
                                         Download Migration Schema <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -1403,7 +1426,7 @@ async function saveToMongo() {
 
     <!-- Modal: Login / Register -->
     <div id="login-modal" class="fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl">
+        <div class="glass-panel bg-white/90 rounded-3xl max-w-md w-full p-8 shadow-2xl">
             <div class="text-center mb-8">
                 <div class="bg-indigo-600 w-16 h-16 rounded-2xl text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
                     <i data-lucide="shield-check" class="w-8 h-8"></i>
@@ -1456,7 +1479,11 @@ async function saveToMongo() {
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
+                patterns: [
+                    /logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i,
+                    /facebook\.com/i, /twitter\.com/i, /x\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /vimeo\.com/i, /pinterest\.com/i, /tiktok\.com/i,
+                    /\/press\//i, /\/media\//i, /\/podcast\//i, /\/news\//i, /\/blog\//i, /\/event\//i, /media-release/i, /press-release/i
+                ],
                 extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
             },
             CATEGORIES: {
@@ -1618,7 +1645,6 @@ async function saveToMongo() {
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
             { id: 'voluntary-action-angus', name: 'Voluntary Action Angus', url: 'https://www.voluntaryactionangus.org.uk/funding/', keywords: ['angus', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'argyll-bute-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllandbutetsi.org.uk/funding/', keywords: ['argyll', 'bute', 'voluntary', 'charity', 'funding'] },
-            { id: 'borders-tsi', name: 'Scottish Borders TSI', url: 'https://www.scotborders-tsi.org.uk/funding/', keywords: ['borders', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'dumfries-galloway-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'voluntary', 'charity', 'funding'] },
             { id: 'east-lothian-tsi', name: 'Volunteer Centre East Lothian', url: 'https://www.vcel.org.uk/funding/', keywords: ['east lothian', 'voluntary', 'charity', 'funding'] },
             { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'charity', 'funding', 'grant'] },
@@ -1653,7 +1679,7 @@ async function saveToMongo() {
             { id: 'clacks-council', name: 'Clackmannanshire Community Grants', url: 'https://www.clacks.gov.uk/community/grants/', keywords: ['clackmannanshire', 'community', 'grant', 'local'] },
             { id: 'moray-council', name: 'Moray Council Funding', url: 'http://www.moray.gov.uk/moray_standard/page_100155.html', keywords: ['moray', 'community', 'grant', 'local'] },
             { id: 'dumfries-galloway-council', name: 'Dumfries and Galloway Council Grants', url: 'https://www.dumgal.gov.uk/grants', keywords: ['dumfries', 'galloway', 'community', 'grant', 'local'] },
-            { id: 'south-ayrshire-council', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
+            { id: 'south-ayrshire-grants', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
             { id: 'north-ayrshire-council', name: 'North Ayrshire Community Funding', url: 'https://www.north-ayrshire.gov.uk/community-life/community-funding.aspx', keywords: ['north ayrshire', 'community', 'grant', 'local'] },
             { id: 'orkney-council', name: 'Orkney Islands Council Funding', url: 'https://www.orkney.gov.uk/Service-Directory/C/community-council-grant-schemes.htm', keywords: ['orkney', 'community', 'grant', 'local'] },
             { id: 'shetland-council', name: 'Shetland Islands Council Grants', url: 'https://www.shetland.gov.uk/community/grants-funding', keywords: ['shetland', 'community', 'grant', 'local'] },
@@ -1683,7 +1709,7 @@ async function saveToMongo() {
             { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'borders-community-action', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
 
             // Additional National Funds
@@ -1724,7 +1750,9 @@ async function saveToMongo() {
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'womens-fund-scot', name: 'Women’s Fund for Scotland', url: 'https://www.womensfundscotland.org/apply/', keywords: ['women', 'girls', 'scotland', 'equality', 'grant'] },
+            { id: 'spagan', name: 'The Spagan Community Fund', url: 'https://www.spagan.org.uk/grants/', keywords: ['community', 'scotland', 'local', 'grant', 'funding'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -2541,7 +2569,6 @@ async function saveToMongo() {
             }
 
             // User Interest Boost
-            // User Interest Boost
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
                     const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
@@ -2588,20 +2615,21 @@ async function saveToMongo() {
             
             // IMPROVED AMOUNT EXTRACTION with more patterns
             const amountPatterns = [
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i,
-                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per year|each year)?\s*(?:over|for)\s*(\d+)\s*years?)?/i
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and|–|up to)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /(?:between|from)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:to|-|and)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /(?:up\s+to|maximum|max|grants?\s+of|awards?\s+of|valued\s+at|capped\s+at)\s*(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /(?:£|pounds?)\s?([\d,kKmM.]+(?:\.\d{2})?)\s*(?:available|grants?|funding|award|total)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /grants?\s+(?:of|up to|around|approx|typically)\s*(?:£|pounds?)\s?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /([\d,kKmM.]+)\s*(?:grant|funding|award|bursary)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /(?:£|gbp|pounds?)\s*([\d,kKmM.]+)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i,
+                /(?:small\s+grants\s+up\s+to)\s*£?([\d,kKmM.]+)(?:\s*(?:p\.a\.|per annum|per year|each year)?\s*(?:over|for|spread across)\s*(\d+)\s*years?)?/i
             ];
             
             for (const pattern of amountPatterns) {
                 const match = text.match(pattern);
                 if (match) {
-                    const multiYear = match[3] ? ` p.a. over ${match[3]} years` : (text.toLowerCase().includes('p.a.') ? ' p.a.' : '');
+                    const hasPA = /p\.a\.|per annum|per year/i.test(match[0]);
+                    const multiYear = match[3] ? ` p.a. over ${match[3]} years` : (hasPA ? ' p.a.' : '');
                     if (match[2] && !/^\d+$/.test(match[2])) { // Basic check to see if match[2] is a second amount, not just years
                         details.amount = `£${match[1]} - £${match[2]}${multiYear}`;
                     } else {
@@ -2667,9 +2695,10 @@ async function saveToMongo() {
 
             // TURNOVER LIMIT EXTRACTION
             const turnoverPatterns = [
-                /(?:turnover|income)\s+(?:of\s+)?(?:less\s+than|under|up\s+to|not\s+exceeding|maximum)\s+£?([\d,kKmM.]+)/i,
-                /£?([\d,kKmM.]+)\s+maximum\s+(?:annual\s+)?(?:turnover|income)/i,
-                /(?:small\s+charities\s+with\s+income\s+under)\s+£?([\d,kKmM.]+)/i
+                /(?:turnover|income|revenue)\s+(?:of\s+)?(?:less\s+than|under|up\s+to|not\s+exceeding|maximum|below)\s+£?([\d,kKmM.]+)/i,
+                /£?([\d,kKmM.]+)\s+maximum\s+(?:annual\s+)?(?:turnover|income|revenue)/i,
+                /(?:small\s+charities\s+with\s+(?:an\s+)?(?:income|turnover)\s+(?:of\s+)?under)\s+£?([\d,kKmM.]+)/i,
+                /(?:organisations?\s+with\s+(?:an\s+)?annual\s+income\s+of\s+between\s+£?[\d,kKmM.]+\s+and\s+£?([\d,kKmM.]+))/i
             ];
 
             for (const pattern of turnoverPatterns) {
@@ -3342,7 +3371,10 @@ async function saveToMongo() {
                 let val = parseFloat(valStr);
                 if (isNaN(val)) continue;
 
+                // Ignore 4-digit years (2000-2030) if no currency symbol or suffix is present
+                const hasCurrency = match[0].match(/[£$€]|pounds|gbp/i);
                 const suffix = match[2] ? match[2].toLowerCase() : '';
+                if (!hasCurrency && !suffix && val >= 2000 && val <= 2030) continue;
 
                 if (suffix === 'k' || suffix === 'thousand') val *= 1000;
                 else if (suffix === 'm' || suffix === 'million') val *= 1000000;
