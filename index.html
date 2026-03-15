@@ -1050,6 +1050,20 @@ async function saveToMongo() {
                         <option value="Super User">Super User</option>
                     </select>
                 </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Charity Number</label>
+                            <input type="text" id="profile-charity-number" placeholder="SC0..." class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Annual Turnover</label>
+                            <input type="text" id="profile-turnover" placeholder="e.g. £50,000" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Staff Count</label>
+                        <input type="number" id="profile-staff-count" placeholder="0" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
                 <div>
                         <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Your Name</label>
                         <input type="text" id="profile-user-name" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
@@ -1456,7 +1470,7 @@ async function saveToMongo() {
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /facebook\.com/i, /twitter\.com/i, /x\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /\/media\//i, /\/press\//i, /\/podcast\//i],
                 extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
             },
             CATEGORIES: {
@@ -1492,6 +1506,7 @@ async function saveToMongo() {
         // PREMIUM SCOTTISH SOURCES - 25+ verified funding portals
         const DEFAULT_SOURCES = [
             // Major National Funders
+            { id: 'spagan', name: 'The Spagan Community Fund', url: 'https://www.spagan.co.uk/community-fund', keywords: ['community', 'western isles', 'funding', 'grant'] },
             { id: 'tnl', name: 'TNL Community Fund', url: 'https://www.tnlcommunityfund.org.uk/funding/programmes?location=scotland', keywords: ['lottery', 'community', 'scotland', 'grant', 'funding'] },
             { id: 'foundation', name: 'Foundation Scotland', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available', keywords: ['foundation', 'grant', 'scotland', 'charity', 'funding'] },
             { id: 'robertson', name: 'The Robertson Trust', url: 'https://www.therobertsontrust.org.uk/funding/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
@@ -1683,7 +1698,7 @@ async function saveToMongo() {
             { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'borders-community-action', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
 
             // Additional National Funds
@@ -1724,7 +1739,12 @@ async function saveToMongo() {
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'baxter', name: 'The Baxter Foundation', url: 'https://www.baxter.com/foundation', keywords: ['health', 'community', 'wellbeing', 'grant'] },
+            { id: 'skea', name: 'The Skea Trust', url: 'https://www.skeatrust.org.uk/', keywords: ['scotland', 'community', 'charity', 'grant'] },
+            { id: 'polden-puckham', name: 'Polden-Puckham Charitable Foundation', url: 'https://www.polden-puckham.org.uk/', keywords: ['peace', 'sustainable', 'justice', 'environment', 'scotland'] },
+            { id: 'baily-thomas', name: 'Baily Thomas Charitable Fund', url: 'https://www.bailythomas.org.uk/', keywords: ['learning disability', 'scotland', 'grant', 'research'] },
+            { id: 'true-colours', name: 'True Colours Trust', url: 'https://www.truecolourstrust.org.uk/', keywords: ['disability', 'palliative care', 'scotland', 'children', 'grant'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1946,6 +1966,9 @@ async function saveToMongo() {
                 document.getElementById('profile-org-name').value = state.user.org;
                 document.getElementById('profile-org-type').value = state.user.orgType || 'Charity';
                 document.getElementById('profile-role').value = state.user.role || 'User';
+                document.getElementById('profile-charity-number').value = state.user.charityNumber || '';
+                document.getElementById('profile-turnover').value = state.user.turnover || '';
+                document.getElementById('profile-staff-count').value = state.user.staffCount || '';
                 document.getElementById('profile-user-name').value = state.user.name;
 
                 // Sync interests
@@ -1966,6 +1989,9 @@ async function saveToMongo() {
             const org = document.getElementById('profile-org-name').value.trim();
             const type = document.getElementById('profile-org-type').value;
             const role = document.getElementById('profile-role').value;
+            const charityNumber = document.getElementById('profile-charity-number').value.trim();
+            const turnover = document.getElementById('profile-turnover').value.trim();
+            const staffCount = document.getElementById('profile-staff-count').value;
             const name = document.getElementById('profile-user-name').value.trim();
 
             const interests = [];
@@ -1981,6 +2007,9 @@ async function saveToMongo() {
                 org,
                 role,
                 orgType: type,
+                charityNumber,
+                turnover,
+                staffCount,
                 interests
             };
 
@@ -3341,6 +3370,11 @@ async function saveToMongo() {
 
                 let val = parseFloat(valStr);
                 if (isNaN(val)) continue;
+
+                // Ignore 4-digit years (2000-2030) unless accompanied by currency symbols or suffixes
+                if (val >= 2000 && val <= 2030 && !match[0].match(/[£$]|pounds?|gbp/i) && !match[2]) {
+                    continue;
+                }
 
                 const suffix = match[2] ? match[2].toLowerCase() : '';
 
