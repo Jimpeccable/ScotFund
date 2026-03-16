@@ -439,29 +439,30 @@
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
                                         <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
-// Supabase Connection Example
+// Supabase Connection & RLS Example
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient('https://xyz.supabase.co', 'anon-key');
 
-async function syncFunds() {
-  const { data, error } = await supabase
-    .from('opportunities')
-    .upsert(state.opportunities);
-}</pre>
+// Example RLS Policy for opportunities
+// create policy "Allow public read access" on opportunities for select using (true);
+</pre>
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
                                         <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
                                         <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
-// MongoDB Connection Example
-const { MongoClient } = require('mongodb');
-const client = new MongoClient('mongodb+srv://user:pass@cluster.mongodb.net');
-
-async function saveToMongo() {
-  await client.connect();
-  const db = client.db('scotfund');
-  await db.collection('funds').insertMany(state.opportunities);
-}</pre>
+// MongoDB JSON Schema Validation
+{
+  $jsonSchema: {
+    bsonType: "object",
+    required: ["title", "url", "funder"],
+    properties: {
+      title: { bsonType: "string" },
+      url: { bsonType: "string" }
+    }
+  }
+}
+</pre>
                                     </div>
                                 </div>
                             </div>
@@ -1054,6 +1055,20 @@ async function saveToMongo() {
                         <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Your Name</label>
                         <input type="text" id="profile-user-name" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Charity Number</label>
+                            <input type="text" id="profile-charity-no" placeholder="e.g. SC123456" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Staff Count</label>
+                            <input type="number" id="profile-staff-count" placeholder="0" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Annual Turnover (£)</label>
+                        <input type="number" id="profile-turnover" placeholder="e.g. 50000" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
                     <button onclick="updateProfile()" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all">
                         Save Profile
                     </button>
@@ -1422,6 +1437,10 @@ async function saveToMongo() {
                     <input type="text" id="login-org" placeholder="e.g. Glasgow Community Trust" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Password (Simulated)</label>
+                    <input type="password" id="login-pwd" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Initial Role</label>
                     <select id="login-role" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="User">Standard User</option>
@@ -1456,7 +1475,7 @@ async function saveToMongo() {
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
+                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i, /facebook\.com/i, /twitter\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /\/press\//i, /\/media\//i, /\/podcast\//i],
                 extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
             },
             CATEGORIES: {
@@ -1618,7 +1637,7 @@ async function saveToMongo() {
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
             { id: 'voluntary-action-angus', name: 'Voluntary Action Angus', url: 'https://www.voluntaryactionangus.org.uk/funding/', keywords: ['angus', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'argyll-bute-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllandbutetsi.org.uk/funding/', keywords: ['argyll', 'bute', 'voluntary', 'charity', 'funding'] },
-            { id: 'borders-tsi', name: 'Scottish Borders TSI', url: 'https://www.scotborders-tsi.org.uk/funding/', keywords: ['borders', 'voluntary', 'charity', 'funding', 'grant'] },
+            { id: 'borders-community-action', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dumfries-galloway-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'voluntary', 'charity', 'funding'] },
             { id: 'east-lothian-tsi', name: 'Volunteer Centre East Lothian', url: 'https://www.vcel.org.uk/funding/', keywords: ['east lothian', 'voluntary', 'charity', 'funding'] },
             { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'charity', 'funding', 'grant'] },
@@ -1683,7 +1702,6 @@ async function saveToMongo() {
             { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
 
             // Additional National Funds
@@ -1699,6 +1717,8 @@ async function saveToMongo() {
             { id: 'scot-power', name: 'Scottish Power Foundation', url: 'https://www.scottishpowerfoundation.com/', keywords: ['scotland', 'environment', 'education', 'social', 'arts'] },
             { id: 'vattenfall', name: 'Vattenfall Community Funds', url: 'https://group.vattenfall.com/uk/what-we-do/our-projects/community-funds', keywords: ['south west scotland', 'community', 'benefit', 'wind farm'] },
             { id: 'fred-olsen', name: 'Fred. Olsen Renewables Community Benefit', url: 'https://fredolsenrenewables.com/community-benefit/', keywords: ['scotland', 'renewable', 'community', 'benefit', 'local'] },
+            { id: 'spagan-fund', name: 'The Spagan Community Fund', url: 'https://www.spagan.co.uk/community-fund', keywords: ['community', 'scotland', 'grant', 'local', 'support'] },
+            { id: 'nhst-innovation', name: 'NHS Tayside Community Innovation Fund', url: 'https://www.nhstayside.scot.nhs.uk/OurServicesA-Z/CommunityInnovationFund/index.htm', keywords: ['tayside', 'nhs', 'health', 'innovation', 'community'] },
             { id: 'statkraft', name: 'Statkraft Community Benefit', url: 'https://www.statkraft.co.uk/community/', keywords: ['scotland', 'renewable', 'community', 'benefit', 'local'] },
             { id: 'baywa', name: 'BayWa r.e. Community Benefits', url: 'https://www.baywa-re.co.uk/en/communities', keywords: ['scotland', 'renewable', 'community', 'benefit', 'local'] },
             { id: 'sfp', name: 'The Scottish Football Partnership', url: 'https://thesfp.org.uk/', keywords: ['football', 'sport', 'facility', 'community', 'scotland'] },
@@ -1886,10 +1906,11 @@ async function saveToMongo() {
         function login() {
             const name = document.getElementById('login-name').value.trim();
             const org = document.getElementById('login-org').value.trim();
+            const pwd = document.getElementById('login-pwd').value.trim();
             const role = document.getElementById('login-role').value;
 
-            if (!name || !org) {
-                alert('Please fill in your name and organisation');
+            if (!name || !org || !pwd) {
+                alert('Please fill in all fields (including a simulated password)');
                 return;
             }
 
@@ -1947,6 +1968,9 @@ async function saveToMongo() {
                 document.getElementById('profile-org-type').value = state.user.orgType || 'Charity';
                 document.getElementById('profile-role').value = state.user.role || 'User';
                 document.getElementById('profile-user-name').value = state.user.name;
+                document.getElementById('profile-charity-no').value = state.user.charityNo || '';
+                document.getElementById('profile-staff-count').value = state.user.staffCount || 0;
+                document.getElementById('profile-turnover').value = state.user.turnover || 0;
 
                 // Sync interests
                 if (state.user.interests) {
@@ -1967,6 +1991,9 @@ async function saveToMongo() {
             const type = document.getElementById('profile-org-type').value;
             const role = document.getElementById('profile-role').value;
             const name = document.getElementById('profile-user-name').value.trim();
+            const charityNo = document.getElementById('profile-charity-no').value.trim();
+            const staffCount = parseInt(document.getElementById('profile-staff-count').value) || 0;
+            const turnover = parseInt(document.getElementById('profile-turnover').value) || 0;
 
             const interests = [];
             document.querySelectorAll('#profile-interests input:checked').forEach(cb => interests.push(cb.value));
@@ -1981,6 +2008,9 @@ async function saveToMongo() {
                 org,
                 role,
                 orgType: type,
+                charityNo,
+                staffCount,
+                turnover,
                 interests
             };
 
@@ -3342,6 +3372,12 @@ async function saveToMongo() {
                 let val = parseFloat(valStr);
                 if (isNaN(val)) continue;
 
+                // Ignore likely years (2000-2030) unless accompanied by currency or suffix
+                const rawMatch = match[0].toLowerCase();
+                const hasCurrency = /£|pound|gbp/.test(rawMatch);
+                const hasSuffix = match[2] ? true : false;
+                if (val >= 2000 && val <= 2030 && !hasCurrency && !hasSuffix) continue;
+
                 const suffix = match[2] ? match[2].toLowerCase() : '';
 
                 if (suffix === 'k' || suffix === 'thousand') val *= 1000;
@@ -4326,22 +4362,29 @@ async function saveToMongo() {
             const activeUsers = state.user ? 1 : 0;
 
             const adminHtml = `
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Success Rate</p>
+                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Scan Success</p>
                         <p class="text-2xl font-bold text-indigo-700">${scanSuccessRate}%</p>
                     </div>
                     <div class="bg-green-50 p-4 rounded-xl border border-green-100">
-                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">High Quality Funds</p>
+                        <p class="text-[9px] font-bold text-green-400 uppercase tracking-widest mb-1">High Quality</p>
                         <p class="text-2xl font-bold text-green-700">${highQuality}</p>
                     </div>
                     <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Partial Info Funds</p>
-                        <p class="text-2xl font-bold text-amber-700">${medQuality}</p>
+                        <p class="text-[9px] font-bold text-amber-400 uppercase tracking-widest mb-1">Blocked</p>
+                        <p class="text-2xl font-bold text-amber-700">${state.blockedResults.length}</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
                         <p class="text-2xl font-bold text-slate-700">${activeUsers}</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                        <p class="text-[9px] font-bold text-red-400 uppercase tracking-widest mb-1">System Heartbeat</p>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                            <p class="text-sm font-bold text-red-700">Healthy</p>
+                        </div>
                     </div>
                 </div>
             `;
