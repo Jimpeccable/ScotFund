@@ -410,7 +410,7 @@
             <!-- Tabbed Interface -->
             <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                 <div class="flex border-b border-slate-100 bg-slate-50/50">
-                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirments</button>
+                    <button onclick="switchSuperTab('future')" id="super-tab-future" class="px-6 py-4 text-xs font-bold border-b-2 border-indigo-600 text-indigo-600 uppercase tracking-widest">Future Requirements</button>
                     <button onclick="switchSuperTab('stats')" id="super-tab-stats" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">Advanced Stats</button>
                     <button onclick="switchSuperTab('admin')" id="super-tab-admin" class="px-6 py-4 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 uppercase tracking-widest">System Health</button>
                 </div>
@@ -490,6 +490,20 @@ async function saveToMongo() {
                                             <span>uuid, action_type, user_id, timestamp, details_json</span>
                                         </li>
                                     </ul>
+                                </div>
+                                <!-- Bridge Logic Example -->
+                                <div class="p-5 bg-indigo-900 rounded-2xl">
+                                    <p class="text-[10px] font-bold text-indigo-300 uppercase mb-2">Cloud Sync Bridge (Conceptual)</p>
+                                    <pre class="text-[9px] text-indigo-100 overflow-x-auto">
+async function syncToCloud(payload) {
+  const endpoint = state.useSupabase ? '/rest/v1/sync' : '/api/mongo/sync';
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${state.jwt}` },
+    body: JSON.stringify(payload)
+  });
+  return response.ok;
+}</pre>
                                 </div>
                             </div>
 
@@ -620,7 +634,7 @@ async function saveToMongo() {
                                 <h4 class="font-bold text-sm text-slate-900 flex items-center gap-2">
                                     <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> User Management Simulation
                                 </h4>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase">3 Active Sessions</span>
+                                <span id="active-sessions-count" class="text-[10px] font-bold text-slate-400 uppercase">3 Active Sessions</span>
                             </div>
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-50 text-slate-500 font-bold uppercase">
@@ -632,28 +646,8 @@ async function saveToMongo() {
                                         <th class="px-4 py-3 text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    <tr>
-                                        <td class="px-4 py-3 font-medium">Jane Doe</td>
-                                        <td class="px-4 py-3 text-slate-500">Glasgow Community Trust</td>
-                                        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full font-bold">Admin</span></td>
-                                        <td class="px-4 py-3 text-slate-400">Online Now</td>
-                                        <td class="px-4 py-3 text-right"><button class="text-indigo-600 font-bold hover:underline">Manage</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3 font-medium">John Smith</td>
-                                        <td class="px-4 py-3 text-slate-500">Edinburgh Youth Project</td>
-                                        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">User</span></td>
-                                        <td class="px-4 py-3 text-slate-400">14 mins ago</td>
-                                        <td class="px-4 py-3 text-right"><button class="text-indigo-600 font-bold hover:underline">Manage</button></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3 font-medium">System Bot</td>
-                                        <td class="px-4 py-3 text-slate-500">ScotFund Pro Internal</td>
-                                        <td class="px-4 py-3"><span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full font-bold">Service</span></td>
-                                        <td class="px-4 py-3 text-slate-400">Online Now</td>
-                                        <td class="px-4 py-3 text-right"><button class="text-indigo-600 font-bold hover:underline">Logs</button></td>
-                                    </tr>
+                                <tbody id="user-mgmt-body" class="divide-y divide-slate-100">
+                                    <!-- Populated by JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -1043,6 +1037,20 @@ async function saveToMongo() {
                         </select>
                     </div>
                     <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Charity Number (if applicable)</label>
+                        <input type="text" id="profile-charity-num" placeholder="e.g. SC123456" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Annual Turnover</label>
+                            <input type="text" id="profile-turnover" placeholder="e.g. £50,000" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Staff Count</label>
+                            <input type="number" id="profile-staff" placeholder="0" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div>
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Account Role</label>
                     <select id="profile-role" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="User">Standard User</option>
@@ -1422,6 +1430,10 @@ async function saveToMongo() {
                     <input type="text" id="login-org" placeholder="e.g. Glasgow Community Trust" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Password</label>
+                    <input type="password" id="login-pwd" placeholder="••••••••" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Initial Role</label>
                     <select id="login-role" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="User">Standard User</option>
@@ -1456,7 +1468,11 @@ async function saveToMongo() {
                 actions: ['apply', 'application', 'guidance', 'criteria', 'eligibility', 'how to', 'deadline', 'information', 'details', 'prospectus', 'framework', 'form', 'portal']
             },
             BLACKLIST: {
-                patterns: [/logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i],
+                patterns: [
+                    /logo/i, /branding/i, /press kit/i, /media kit/i, /identity guidelines/i, /pixel/i, /tracking/i, /analytics/i, /favicon/i, /wp-content/i, /wp-includes/i, /node_modules/i, /cgi-bin/i, /ads\./i, /doubleclick/i, /\/cart/i, /\/checkout/i, /\/my-account/i, /\/wp-admin/i, /wp-login/i, /newsletter/i, /subscribe/i, /sign-up/i, /login/i, /register/i, /forgot-password/i, /privacy-policy/i, /terms-of-service/i,
+                    /facebook\.com/i, /twitter\.com/i, /linkedin\.com/i, /instagram\.com/i, /youtube\.com/i, /x\.com/i,
+                    /\/press\//i, /\/media\//i, /\/podcast\//i, /\/newsletters?\//i
+                ],
                 extensions: /\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|wav|mov|webm|zip|gz|exe|dmg|msi|apk|app|bin|tif|tiff|heic|raw|eps|ai|psd|ico|woff|woff2|ttf|otf|eot|msi|apk|dmg|iso|bin|msi|7z|rar|tar)$/i
             },
             CATEGORIES: {
@@ -1618,7 +1634,6 @@ async function saveToMongo() {
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
             { id: 'voluntary-action-angus', name: 'Voluntary Action Angus', url: 'https://www.voluntaryactionangus.org.uk/funding/', keywords: ['angus', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'argyll-bute-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllandbutetsi.org.uk/funding/', keywords: ['argyll', 'bute', 'voluntary', 'charity', 'funding'] },
-            { id: 'borders-tsi', name: 'Scottish Borders TSI', url: 'https://www.scotborders-tsi.org.uk/funding/', keywords: ['borders', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'dumfries-galloway-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'voluntary', 'charity', 'funding'] },
             { id: 'east-lothian-tsi', name: 'Volunteer Centre East Lothian', url: 'https://www.vcel.org.uk/funding/', keywords: ['east lothian', 'voluntary', 'charity', 'funding'] },
             { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'charity', 'funding', 'grant'] },
@@ -1653,7 +1668,7 @@ async function saveToMongo() {
             { id: 'clacks-council', name: 'Clackmannanshire Community Grants', url: 'https://www.clacks.gov.uk/community/grants/', keywords: ['clackmannanshire', 'community', 'grant', 'local'] },
             { id: 'moray-council', name: 'Moray Council Funding', url: 'http://www.moray.gov.uk/moray_standard/page_100155.html', keywords: ['moray', 'community', 'grant', 'local'] },
             { id: 'dumfries-galloway-council', name: 'Dumfries and Galloway Council Grants', url: 'https://www.dumgal.gov.uk/grants', keywords: ['dumfries', 'galloway', 'community', 'grant', 'local'] },
-            { id: 'south-ayrshire-council', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
+            { id: 'south-ayrshire-grants', name: 'South Ayrshire Grants', url: 'https://www.south-ayrshire.gov.uk/grants/', keywords: ['south ayrshire', 'community', 'grant', 'local'] },
             { id: 'north-ayrshire-council', name: 'North Ayrshire Community Funding', url: 'https://www.north-ayrshire.gov.uk/community-life/community-funding.aspx', keywords: ['north ayrshire', 'community', 'grant', 'local'] },
             { id: 'orkney-council', name: 'Orkney Islands Council Funding', url: 'https://www.orkney.gov.uk/Service-Directory/C/community-council-grant-schemes.htm', keywords: ['orkney', 'community', 'grant', 'local'] },
             { id: 'shetland-council', name: 'Shetland Islands Council Grants', url: 'https://www.shetland.gov.uk/community/grants-funding', keywords: ['shetland', 'community', 'grant', 'local'] },
@@ -1673,6 +1688,7 @@ async function saveToMongo() {
             { id: 'sylvia-aitken', name: 'The Sylvia Aitken Charitable Trust', url: 'https://www.sylviaaitkentrust.org.uk/', keywords: ['scotland', 'medical', 'health', 'charity', 'community'] },
             { id: 'wa-cargill', name: 'The WA Cargill Charitable Trust', url: 'https://www.wacargilltrust.org.uk/', keywords: ['scotland', 'arts', 'health', 'charity', 'community'] },
             { id: 'hunter-foundation', name: 'The Hunter Foundation', url: 'https://www.thehunterfoundation.co.uk/', keywords: ['scotland', 'entrepreneurship', 'education', 'poverty', 'leadership'] },
+            { id: 'spagan-community-fund', name: 'The Spagan Community Fund', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available/spagan-community-fund', keywords: ['barra', 'vatersay', 'community', 'scotland', 'grant'] },
 
             // Regional TSIs & Specialized Portals
             { id: 'htsi', name: 'Highland TSI Funding', url: 'https://www.highlandtsi.org.uk/funding', keywords: ['highland', 'tsi', 'charity', 'funding', 'support'] },
@@ -1683,8 +1699,11 @@ async function saveToMongo() {
             { id: 'vao', name: 'Voluntary Action Orkney', url: 'https://www.vaorkney.org.uk/funding/', keywords: ['orkney', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'tsimoray', name: 'tsiMORAY', url: 'https://www.tsimoray.org.uk/funding', keywords: ['moray', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'argyll-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllcommunitysupport.org.uk/funding', keywords: ['argyll', 'bute', 'tsi', 'charity', 'funding', 'support'] },
-            { id: 'borders-tsi', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'borders-community-action', name: 'Borders Community Action', url: 'https://www.borderscommunityaction.org.uk/funding/', keywords: ['borders', 'tsi', 'charity', 'funding', 'support'] },
             { id: 'dg-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'acvo', name: 'ACVO (Aberdeen TSI)', url: 'https://acvo.org.uk/funding/', keywords: ['aberdeen', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'dva', name: 'DVA (Dundee TSI)', url: 'https://www.dundeevoluntaryaction.org.uk/funding/', keywords: ['dundee', 'tsi', 'charity', 'funding', 'support'] },
+            { id: 'fva', name: 'FVA (Fife TSI)', url: 'https://www.fva.org/funding.asp', keywords: ['fife', 'tsi', 'charity', 'funding', 'support'] },
 
             // Additional National Funds
             { id: 'forteviot', name: 'The Forteviot Charitable Trust', url: 'https://www.forteviottrust.org.uk/', keywords: ['scotland', 'charity', 'grant', 'community', 'education'] },
@@ -1886,10 +1905,11 @@ async function saveToMongo() {
         function login() {
             const name = document.getElementById('login-name').value.trim();
             const org = document.getElementById('login-org').value.trim();
+            const pwd = document.getElementById('login-pwd').value.trim();
             const role = document.getElementById('login-role').value;
 
-            if (!name || !org) {
-                alert('Please fill in your name and organisation');
+            if (!name || !org || !pwd) {
+                alert('Please fill in your name, organisation and password');
                 return;
             }
 
@@ -1898,7 +1918,10 @@ async function saveToMongo() {
                 org,
                 role,
                 orgType: 'Charity',
-                interests: []
+                interests: [],
+                charityNumber: '',
+                turnover: '',
+                staffCount: ''
             };
 
             saveData();
@@ -1954,6 +1977,11 @@ async function saveToMongo() {
                         cb.checked = state.user.interests.includes(cb.value);
                     });
                 }
+
+                // Sync new profile fields
+                document.getElementById('profile-charity-num').value = state.user.charityNumber || '';
+                document.getElementById('profile-turnover').value = state.user.turnover || '';
+                document.getElementById('profile-staff').value = state.user.staffCount || '';
             } else {
                 display.classList.add('hidden');
                 loginModal.classList.remove('hidden');
@@ -1967,6 +1995,9 @@ async function saveToMongo() {
             const type = document.getElementById('profile-org-type').value;
             const role = document.getElementById('profile-role').value;
             const name = document.getElementById('profile-user-name').value.trim();
+            const charityNum = document.getElementById('profile-charity-num').value.trim();
+            const turnover = document.getElementById('profile-turnover').value.trim();
+            const staff = document.getElementById('profile-staff').value;
 
             const interests = [];
             document.querySelectorAll('#profile-interests input:checked').forEach(cb => interests.push(cb.value));
@@ -1981,7 +2012,10 @@ async function saveToMongo() {
                 org,
                 role,
                 orgType: type,
-                interests
+                interests,
+                charityNumber: charityNum,
+                turnover: turnover,
+                staffCount: staff
             };
 
             saveData();
@@ -2359,7 +2393,7 @@ async function saveToMongo() {
                 const fullCombined = (text + ' ' + href + ' ' + context).toLowerCase();
                 
                 // Skip closed or suspended funds
-                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed|reached capacity|all funds allocated|not currently accepting|scheme has ended|closed for now/i.test(fullCombined)) {
+                if (/closed to applications|currently closed|suspended|paused|no longer accepting|stopped accepting|fully committed|reached capacity|all funds allocated|not currently accepting|scheme has ended|closed for now|reached capacity|all funds allocated/i.test(fullCombined)) {
                     continue;
                 }
 
@@ -2565,6 +2599,21 @@ async function saveToMongo() {
                 if (text.toLowerCase().includes(orgType)) {
                     score += 20;
                     matchDetails.push({ key: `Matching Org Type: ${state.user.orgType}`, points: 20 });
+                }
+            }
+
+            // Turnover Affinity Boost
+            if (state.user && state.user.turnover) {
+                const userTurnover = extractNumericAmount(state.user.turnover);
+                if (userTurnover > 0 && text.includes('turnover')) {
+                    const turnoverMatch = text.match(/(?:turnover|income)\s+(?:of\s+)?(?:less\s+than|under|up\s+to|not\s+exceeding|maximum)\s+£?([\d,kKmM.]+)/i);
+                    if (turnoverMatch) {
+                        const limit = extractNumericAmount(turnoverMatch[1]);
+                        if (limit >= userTurnover) {
+                            score += 25;
+                            matchDetails.push({ key: `Turnover Eligibility Match`, points: 25 });
+                        }
+                    }
                 }
             }
             
@@ -3311,6 +3360,12 @@ async function saveToMongo() {
 
         function extractNumericAmount(amountStr) {
             if (!amountStr) return 0;
+
+            // Ignore 4-digit years (2000-2030) unless currency symbols or suffixes are present
+            if (/^\d{4}$/.test(amountStr.trim())) {
+                const year = parseInt(amountStr.trim());
+                if (year >= 2000 && year <= 2030) return 0;
+            }
 
             // Handle specific "varies" or empty cases quickly
             const lower = amountStr.toLowerCase();
@@ -4323,7 +4378,7 @@ async function saveToMongo() {
 
             // Mocked Admin Stats
             const scanSuccessRate = 98.4;
-            const activeUsers = state.user ? 1 : 0;
+            const activeSessions = (state.user ? 1 : 0) + 2; // Simulated active sessions
 
             const adminHtml = `
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -4340,8 +4395,8 @@ async function saveToMongo() {
                         <p class="text-2xl font-bold text-amber-700">${medQuality}</p>
                     </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Users</p>
-                        <p class="text-2xl font-bold text-slate-700">${activeUsers}</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Sessions</p>
+                        <p class="text-2xl font-bold text-slate-700">${activeSessions}</p>
                     </div>
                 </div>
             `;
@@ -4374,6 +4429,31 @@ async function saveToMongo() {
 
             // Admin specific stats
             renderAdminStats();
+
+            // 1.5 User Management Simulation
+            const userTable = document.getElementById('user-mgmt-body');
+            const sessionCount = document.getElementById('active-sessions-count');
+            if (userTable) {
+                const mockUsers = [
+                    { name: state.user.name, org: state.user.org, role: state.user.role, active: 'Online Now' },
+                    { name: 'Jane Doe', org: 'Glasgow Community Trust', role: 'Admin', active: 'Online Now' },
+                    { name: 'John Smith', org: 'Edinburgh Youth Project', role: 'User', active: '14 mins ago' },
+                    { name: 'System Bot', org: 'ScotFund Pro Internal', role: 'Service', active: 'Online Now' }
+                ];
+                if (sessionCount) sessionCount.textContent = `${mockUsers.filter(u => u.active === 'Online Now').length} Active Sessions`;
+
+                userTable.innerHTML = mockUsers.map(u => `
+                    <tr>
+                        <td class="px-4 py-3 font-medium">${escapeHTML(u.name)}</td>
+                        <td class="px-4 py-3 text-slate-500">${escapeHTML(u.org)}</td>
+                        <td class="px-4 py-3"><span class="px-2 py-0.5 ${u.role === 'Admin' || u.role === 'Super User' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700'} rounded-full font-bold uppercase text-[9px]">${u.role}</span></td>
+                        <td class="px-4 py-3 text-slate-400">${u.active}</td>
+                        <td class="px-4 py-3 text-right">
+                            <button onclick="alert('Simulation: Managing user ${u.name}')" class="text-indigo-600 font-bold hover:underline">Manage</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
 
             // 2. Global Sector Distribution
             const sectorCounts = {};
@@ -4414,6 +4494,24 @@ async function saveToMongo() {
                     </span>
                 </div>
             `).join('');
+
+            // 4. Audit Log (Dynamic Simulation)
+            const auditLog = document.getElementById('super-audit-log');
+            if (auditLog) {
+                const logs = [
+                    { msg: 'Global intelligence scan completed', type: 'green', time: 'Just now' },
+                    { msg: `Discovered ${state.opportunities.length} opportunities across ${state.sources.length} sources`, type: 'indigo', time: '2 mins ago' },
+                    { msg: `System health check: All proxies responsive`, type: 'green', time: '5 mins ago' },
+                    { msg: `Configuration synced with browser persistence`, type: 'blue', time: '12 mins ago' },
+                    { msg: `New source added: The Spagan Community Fund`, type: 'purple', time: '1 hour ago' }
+                ];
+                auditLog.innerHTML = logs.map(l => `
+                    <div class="p-2 bg-white rounded border-l-2 border-${l.type}-500 flex justify-between">
+                        <span>${l.msg}</span>
+                        <span class="text-slate-400">${l.time}</span>
+                    </div>
+                `).join('');
+            }
 
             lucide.createIcons();
         }
