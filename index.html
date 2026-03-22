@@ -29,9 +29,10 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         /* World Class UI Refinements */
-        .interactive-card { @apply transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100/50 hover:-translate-y-1 border border-slate-200; }
-        .btn-primary { @apply transition-all duration-200 active:scale-95 hover:brightness-110; }
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .interactive-card { @apply transition-all duration-500 hover:shadow-2xl hover:shadow-indigo-200/50 hover:-translate-y-1.5 border border-slate-100 bg-white/80 backdrop-blur-sm; }
+        .btn-primary { @apply transition-all duration-300 active:scale-95 hover:brightness-110 hover:shadow-lg hover:shadow-indigo-500/25 bg-gradient-to-r from-indigo-600 to-purple-600 text-white; }
+        .glass-panel { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
+        .sidebar-link-active { @apply bg-indigo-50 text-indigo-600 shadow-sm border-r-4 border-indigo-600; }
     </style>
 </head>
 <body class="bg-[#f8fafc] text-[#1e293b]">
@@ -437,30 +438,34 @@
                                 <div class="p-5 bg-slate-50 rounded-2xl space-y-4">
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Recommended: Supabase (PostgreSQL)</p>
-                                        <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland.</p>
+                                        <p class="text-[11px] text-slate-600 leading-relaxed">Integrated Auth, Realtime DB, and Edge Functions. Perfect for rapid scaling and low latency in Scotland. Use 'supabase-js' for client-side integration.</p>
                                         <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
 // Supabase Connection Example
 const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient('https://xyz.supabase.co', 'anon-key');
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 async function syncFunds() {
   const { data, error } = await supabase
     .from('opportunities')
-    .upsert(state.opportunities);
+    .upsert(state.opportunities, { onConflict: 'url' });
 }</pre>
                                     </div>
                                     <div>
                                         <p class="text-xs font-bold text-indigo-600 mb-1">Alternative: MongoDB Atlas</p>
-                                        <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured.</p>
+                                        <p class="text-[11px] text-slate-600 leading-relaxed">Flexible document-based storage. Ideal if fund data formats become highly varied or unstructured. Requires a Node.js/Vercel serverless backend.</p>
                                         <pre class="bg-slate-900 text-indigo-300 p-3 rounded-lg text-[9px] mt-2 overflow-x-auto">
 // MongoDB Connection Example
 const { MongoClient } = require('mongodb');
-const client = new MongoClient('mongodb+srv://user:pass@cluster.mongodb.net');
+const client = new MongoClient(process.env.MONGODB_URI);
 
 async function saveToMongo() {
   await client.connect();
   const db = client.db('scotfund');
-  await db.collection('funds').insertMany(state.opportunities);
+  await db.collection('funds').bulkWrite(
+    state.opportunities.map(f => ({
+      updateOne: { filter: { url: f.url }, update: { $set: f }, upsert: true }
+    }))
+  );
 }</pre>
                                     </div>
                                 </div>
@@ -1043,6 +1048,10 @@ async function saveToMongo() {
                         </select>
                     </div>
                     <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Annual Turnover (£)</label>
+                        <input type="text" id="profile-turnover" placeholder="e.g. 50000" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
                     <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Account Role</label>
                     <select id="profile-role" class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="User">Standard User</option>
@@ -1401,39 +1410,129 @@ async function saveToMongo() {
         </div>
     </div>
 
-    <!-- Modal: Login / Register -->
+    <!-- Modal: Onboarding Wizard -->
     <div id="login-modal" class="fixed inset-0 bg-slate-900/80 z-[200] flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl">
-            <div class="text-center mb-8">
-                <div class="bg-indigo-600 w-16 h-16 rounded-2xl text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
-                    <i data-lucide="shield-check" class="w-8 h-8"></i>
-                </div>
-                <h3 class="text-2xl font-bold">Welcome to ScotFund Pro</h3>
-                <p class="text-slate-500 text-sm mt-2">Universal Scottish Funding Intelligence</p>
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl transition-all duration-500">
+            <!-- Progress Bar -->
+            <div class="h-1.5 w-full bg-slate-100">
+                <div id="onboarding-progress" class="h-full bg-indigo-600 transition-all duration-500" style="width: 33.33%"></div>
             </div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Full Name</label>
-                    <input type="text" id="login-name" placeholder="e.g. Jane Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+            <div class="p-8">
+                <!-- Step 1: Basics -->
+                <div id="onboarding-step-1" class="onboarding-step space-y-6">
+                    <div class="text-center mb-8">
+                        <div class="bg-indigo-600 w-16 h-16 rounded-2xl text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
+                            <i data-lucide="shield-check" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Welcome to ScotFund Pro</h3>
+                        <p class="text-slate-500 text-sm mt-2">Universal Scottish Funding Intelligence</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Your Name</label>
+                            <input type="text" id="login-name" placeholder="e.g. Jane Doe" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Organisation Name</label>
+                            <input type="text" id="login-org" placeholder="e.g. Glasgow Community Trust" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                        <button onclick="nextOnboardingStep(2)" class="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all">
+                            Next: Organisation Details
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Organisation</label>
-                    <input type="text" id="login-org" placeholder="e.g. Glasgow Community Trust" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+
+                <!-- Step 2: Org Details -->
+                <div id="onboarding-step-2" class="onboarding-step hidden space-y-6">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-slate-900">About Your Group</h3>
+                        <p class="text-slate-500 text-sm mt-2">Help us find the right size of grants for you.</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Organisation Type</label>
+                            <select id="login-org-type" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                                <option value="Charity">Charity / SCIO</option>
+                                <option value="Community Group">Unincorporated Community Group</option>
+                                <option value="Social Enterprise">Social Enterprise / CIC</option>
+                                <option value="Trust">Trust / Foundation</option>
+                                <option value="Other">Other Non-Profit</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Annual Turnover (£)</label>
+                            <input type="text" id="login-turnover" placeholder="e.g. 50000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Initial System Role</label>
+                            <select id="login-role" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                                <option value="User">Standard User</option>
+                                <option value="Admin">Administrator</option>
+                                <option value="Super User">Super User</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="nextOnboardingStep(1)" class="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">Back</button>
+                            <button onclick="nextOnboardingStep(3)" class="flex-1 py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all">
+                                Next: Interests
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase mb-2 block">Initial Role</label>
-                    <select id="login-role" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="User">Standard User</option>
-                        <option value="Admin">Administrator</option>
-                        <option value="Super User">Super User</option>
-                    </select>
-                </div>
-                <div class="pt-4">
-                    <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
-                        Start Using ScotFund Pro
-                    </button>
-                    <p class="text-[10px] text-center text-slate-400 mt-4">By continuing, you agree to store your data locally on this device.</p>
+
+                <!-- Step 3: Interests -->
+                <div id="onboarding-step-3" class="onboarding-step hidden space-y-6">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-slate-900">Your Priorities</h3>
+                        <p class="text-slate-500 text-sm mt-2">Select areas to boost relevant funding.</p>
+                    </div>
+
+                    <div id="onboarding-interests" class="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- Populated similarly to profile -->
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="play" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Play & Outdoor</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="youth" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Youth</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="community" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Community</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="health" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Health</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="environment" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Environment</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="arts" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Arts & Culture</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="education" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Education</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="disability" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Disability</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="digital" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Digital</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="sport" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Sport</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100">
+                            <input type="checkbox" value="animal" class="rounded border-slate-300 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Animals</span>
+                        </label>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <button onclick="login()" class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                            Complete Setup
+                        </button>
+                        <p class="text-[10px] text-center text-slate-400 mt-4">By continuing, you agree to store your data locally on this device.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1618,7 +1717,6 @@ async function saveToMongo() {
             { id: 'falkirk-tsi', name: 'CVS Falkirk', url: 'https://www.cvsfalkirk.org.uk/funding/', keywords: ['falkirk', 'voluntary', 'community', 'grant', 'funding'] },
             { id: 'voluntary-action-angus', name: 'Voluntary Action Angus', url: 'https://www.voluntaryactionangus.org.uk/funding/', keywords: ['angus', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'argyll-bute-tsi', name: 'Argyll & Bute TSI', url: 'https://www.argyllandbutetsi.org.uk/funding/', keywords: ['argyll', 'bute', 'voluntary', 'charity', 'funding'] },
-            { id: 'borders-tsi', name: 'Scottish Borders TSI', url: 'https://www.scotborders-tsi.org.uk/funding/', keywords: ['borders', 'voluntary', 'charity', 'funding', 'grant'] },
             { id: 'dumfries-galloway-tsi', name: 'Third Sector Dumfries & Galloway', url: 'https://www.tsdg.org.uk/funding/', keywords: ['dumfries', 'galloway', 'voluntary', 'charity', 'funding'] },
             { id: 'east-lothian-tsi', name: 'Volunteer Centre East Lothian', url: 'https://www.vcel.org.uk/funding/', keywords: ['east lothian', 'voluntary', 'charity', 'funding'] },
             { id: 'midlothian-tsi', name: 'Midlothian Voluntary Action', url: 'https://mva.org.uk/funding/', keywords: ['midlothian', 'voluntary', 'charity', 'funding', 'grant'] },
@@ -1724,7 +1822,22 @@ async function saveToMongo() {
             { id: 'empowering-communities', name: 'Empowering Communities Fund (ScotGov)', url: 'https://www.gov.scot/policies/community-empowerment/empowering-communities-fund/', keywords: ['government', 'community', 'empowerment', 'scotland', 'grant'] },
             { id: 'henry-duncan', name: 'Henry Duncan Grants (Corra)', url: 'https://www.corra.scot/grants/henry-duncan-grants/', keywords: ['poverty', 'trauma', 'community', 'scotland', 'grant'] },
             { id: 'wee-grants', name: 'Wee Grants (Robertson Trust)', url: 'https://www.therobertsontrust.org.uk/funding/wee-grants/', keywords: ['poverty', 'trauma', 'community', 'small', 'grant'] },
-            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] }
+            { id: 'kpe', name: 'The KPE Charitable Trust', url: 'http://www.kpetrust.org/', keywords: ['scotland', 'charity', 'community', 'social', 'welfare'] },
+            { id: 'macphail', name: 'The Macphail Trust', url: 'https://www.macphailtrust.org.uk/', keywords: ['highlands', 'community', 'education', 'arts'] },
+            { id: 'hct', name: 'Highland Children\'s Trust', url: 'https://www.hct.scot/', keywords: ['highlands', 'children', 'education', 'poverty'] },
+            { id: 'st-nicholas', name: 'St Nicholas Trust (Aberdeen)', url: 'https://stnicholastrust.org.uk/', keywords: ['aberdeen', 'community', 'elderly', 'disability'] },
+            { id: 'morningfield', name: 'Morningfield Association', url: 'https://www.morningfield.org.uk/', keywords: ['aberdeen', 'disability', 'health', 'wellbeing'] },
+            { id: 'thomson-trust', name: 'Thomson Charitable Trust', url: 'https://www.thomsoncharitabletrust.co.uk/', keywords: ['dundee', 'arts', 'culture', 'community'] },
+            { id: 'edinburgh-trust', name: 'The Edinburgh Trust (Turn2us)', url: 'https://www.turn2us.org.uk/get-support/our-local-grants/the-edinburgh-trust', keywords: ['edinburgh', 'poverty', 'crisis', 'individuals'] },
+            { id: 'bellahouston', name: 'Bellahouston Bequest Fund', url: 'https://www.glasgow.gov.uk/index.aspx?articleid=17613', keywords: ['glasgow', 'arts', 'education', 'health'] },
+            { id: 'kinburn', name: 'Kinburn Charitable Trust', url: 'https://www.kinburn.org.uk/', keywords: ['st andrews', 'fife', 'community', 'education'] },
+            { id: 'common-good', name: 'Common Good Funds (Scotland)', url: 'https://www.gov.scot/publications/common-good-property-guidance-for-local-authorities/', keywords: ['local', 'community', 'common good', 'council'] },
+            { id: 'boshier-hinton', name: 'Boshier-Hinton Foundation', url: 'https://www.boshierhintonfoundation.org.uk/', keywords: ['disability', 'scotland', 'national', 'grant'] },
+            { id: 'hedley', name: 'The Hedley Foundation', url: 'http://www.hedleyfoundation.org.uk/', keywords: ['youth', 'elderly', 'disability', 'scotland'] },
+            { id: 'charles-hayward', name: 'Charles Hayward Foundation', url: 'http://www.charleshaywardfoundation.org.uk/', keywords: ['justice', 'heritage', 'elderly', 'scotland'] },
+            { id: 'kelly-family', name: 'The Kelly Family Charitable Trust', url: 'https://kfct.org.uk/', keywords: ['family', 'social', 'community', 'scotland'] },
+            { id: 'woodward', name: 'Woodward Charitable Trust', url: 'http://woodwardcharitabletrust.org.uk/', keywords: ['children', 'isolation', 'poverty', 'scotland'] },
+            { id: 'scot-communities', name: 'Foundation Scotland - Community Benefit Funds', url: 'https://www.foundationscotland.org.uk/apply-for-funding/funding-available', keywords: ['local', 'community', 'wind farm', 'benefit'] }
         ];
 
         // ENHANCED BLACKLIST - Comprehensive pattern matching
@@ -1883,29 +1996,43 @@ async function saveToMongo() {
             initScheduler();
         }
 
+        function nextOnboardingStep(step) {
+            document.querySelectorAll('.onboarding-step').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`onboarding-step-${step}`).classList.remove('hidden');
+            document.getElementById('onboarding-progress').style.width = (step * 33.33) + '%';
+            lucide.createIcons();
+        }
+
         function login() {
             const name = document.getElementById('login-name').value.trim();
             const org = document.getElementById('login-org').value.trim();
             const role = document.getElementById('login-role').value;
+            const orgType = document.getElementById('login-org-type').value;
+            const turnover = document.getElementById('login-turnover').value.trim();
 
             if (!name || !org) {
                 alert('Please fill in your name and organisation');
+                nextOnboardingStep(1);
                 return;
             }
+
+            const interests = [];
+            document.querySelectorAll('#onboarding-interests input:checked').forEach(cb => interests.push(cb.value));
 
             state.user = {
                 name,
                 org,
                 role,
-                orgType: 'Charity',
-                interests: []
+                orgType,
+                turnover,
+                interests
             };
 
             saveData();
             document.getElementById('login-modal').classList.add('hidden');
             syncUserDisplay();
             renderDashboard();
-            log(`✓ Logged in as ${name} (${org})`, 'success');
+            log(`✓ Welcome ${name}! Profile created for ${org}`, 'success');
         }
 
         function logout() {
@@ -1945,6 +2072,7 @@ async function saveToMongo() {
                 // Sync Profile inputs
                 document.getElementById('profile-org-name').value = state.user.org;
                 document.getElementById('profile-org-type').value = state.user.orgType || 'Charity';
+                document.getElementById('profile-turnover').value = state.user.turnover || '';
                 document.getElementById('profile-role').value = state.user.role || 'User';
                 document.getElementById('profile-user-name').value = state.user.name;
 
@@ -1965,6 +2093,7 @@ async function saveToMongo() {
         function updateProfile() {
             const org = document.getElementById('profile-org-name').value.trim();
             const type = document.getElementById('profile-org-type').value;
+            const turnover = document.getElementById('profile-turnover').value.trim();
             const role = document.getElementById('profile-role').value;
             const name = document.getElementById('profile-user-name').value.trim();
 
@@ -1981,6 +2110,7 @@ async function saveToMongo() {
                 org,
                 role,
                 orgType: type,
+                turnover,
                 interests
             };
 
@@ -2064,8 +2194,7 @@ async function saveToMongo() {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(id).classList.remove('hidden');
             document.querySelectorAll('.nav-link').forEach(l => {
-                l.classList.toggle('bg-indigo-50', l.dataset.id === id);
-                l.classList.toggle('text-indigo-600', l.dataset.id === id);
+                l.classList.toggle('sidebar-link-active', l.dataset.id === id);
             });
 
             if (id === 'shortlist') renderShortlist();
@@ -2541,7 +2670,6 @@ async function saveToMongo() {
             }
 
             // User Interest Boost
-            // User Interest Boost
             if (state.user && state.user.interests) {
                 state.user.interests.forEach(interest => {
                     const interestKeywords = CONFIG.CATEGORIES[interest] || [interest];
@@ -2565,6 +2693,19 @@ async function saveToMongo() {
                 if (text.toLowerCase().includes(orgType)) {
                     score += 20;
                     matchDetails.push({ key: `Matching Org Type: ${state.user.orgType}`, points: 20 });
+                }
+            }
+
+            // Turnover Affinity Boost
+            if (state.user && state.user.turnover) {
+                const userTurnover = extractNumericAmount(state.user.turnover);
+                const fundTurnoverMatch = text.match(/(?:turnover|income)\s+(?:of\s+)?(?:less\s+than|under|up\s+to|not\s+exceeding|maximum)\s+£?([\d,kKmM.]+)/i);
+                if (fundTurnoverMatch) {
+                    const fundTurnoverLimit = extractNumericAmount(fundTurnoverMatch[1]);
+                    if (userTurnover <= fundTurnoverLimit) {
+                        score += 40;
+                        matchDetails.push({ key: `Turnover Affinity Boost`, points: 40 });
+                    }
                 }
             }
             
@@ -3098,6 +3239,18 @@ async function saveToMongo() {
         }
 
 
+        function updateApplicationStatus(id, newStatus) {
+            const updateObj = (list) => {
+                const item = list.find(o => o.id === id);
+                if (item) item.applicationStatus = newStatus;
+            };
+            updateObj(state.opportunities);
+            updateObj(state.shortlist);
+            saveData();
+            renderPipeline();
+            log(`✓ Pipeline updated: ${newStatus}`, 'success');
+        }
+
         function renderPipeline() {
             const statuses = {
                 'Not Started': { id: 'pipeline-not-started', count: 'count-not-started', items: [] },
@@ -3142,11 +3295,18 @@ async function saveToMongo() {
                     container.innerHTML = `<p class="text-[10px] text-slate-400 italic text-center py-10">No items</p>`;
                 } else {
                     container.innerHTML = config.items.map(item => `
-                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group" onclick="showDetails('${item.id}')">
+                        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer group relative" onclick="showDetails('${item.id}')">
                             <div class="flex justify-between items-start mb-2">
                                 <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${escapeHTML(item.funder)}</span>
-                                <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <i data-lucide="more-vertical" class="w-3 h-3 text-slate-400"></i>
+                                <div class="relative inline-block text-left" onclick="event.stopPropagation()">
+                                    <button class="p-1 hover:bg-slate-50 rounded opacity-0 group-hover:opacity-100 transition-opacity" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                        <i data-lucide="more-vertical" class="w-3 h-3 text-slate-400"></i>
+                                    </button>
+                                    <div class="hidden absolute right-0 mt-1 w-32 bg-white border border-slate-200 rounded-lg shadow-xl z-10 text-[10px] font-bold uppercase overflow-hidden">
+                                        ${['Not Started', 'In Progress', 'Submitted', 'Awarded', 'Declined'].filter(s => s !== item.applicationStatus).map(s => `
+                                            <button onclick="updateApplicationStatus('${item.id}', '${s}')" class="w-full text-left px-3 py-2 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">${s}</button>
+                                        `).join('')}
+                                    </div>
                                 </div>
                             </div>
                             <h4 class="text-xs font-bold text-slate-900 mb-2 line-clamp-2">${escapeHTML(item.title)}</h4>
@@ -3316,20 +3476,22 @@ async function saveToMongo() {
             const lower = amountStr.toLowerCase();
             if (lower.includes('varies') || lower.includes('see website') || lower.includes('tbc') || lower.includes('discretionary')) return 0;
 
+            // Remove years (2000-2030) to prevent misidentification as grant amounts
+            let cleanStr = amountStr.replace(/\b(20[0-2][0-9]|2030)\b/g, '');
+
             // Handle ranges by taking the max value (e.g., "£5k to £10k")
-            const parts = amountStr.split(/(?:\s+to\s+|-|and|–)/i);
+            const parts = cleanStr.split(/(?:\s+to\s+|-|and|–)/i);
             if (parts.length > 1) {
                 const values = parts.map(p => extractNumericAmount(p.trim())).filter(v => v > 0);
                 return values.length > 0 ? Math.max(...values) : 0;
             }
 
             // More aggressive numeric extraction for £/pounds with k/m suffixes
-            // Pattern: £ symbol (optional), then digits/commas/dots, then optional k/m/million/thousand
-            let matches = Array.from(amountStr.matchAll(/(?:£|pounds?|gbp)?\s?([\d,.]+)\s*(k|m|million|thousand|bn|billion)?/gi));
+            let matches = Array.from(cleanStr.matchAll(/(?:£|pounds?|gbp)?\s?([\d,.]+)\s*(k|m|million|thousand|bn|billion)?/gi));
 
             // Fallback: match plain numbers if no symbol/suffix indicators
             if (matches.length === 0 || matches.every(m => !m[1])) {
-                matches = Array.from(amountStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*(k|m|bn)?(?![0-9])/gi));
+                matches = Array.from(cleanStr.matchAll(/(?:^|[^0-9])([\d,]{1,})\s*(k|m|bn)?(?![0-9])/gi));
             }
 
             let maxVal = 0;
